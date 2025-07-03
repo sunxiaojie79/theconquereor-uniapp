@@ -1,468 +1,759 @@
 <template>
-	<view class="page">
-		<!-- 用户信息卡片 -->
-		<view class="user-card">
-			<image class="bg-image" src="/static/bg/home-bg.jpg" mode="aspectFill"></image>
-			<view class="user-info">
-				<view class="user-header">
-					<view class="user-avatar">
-						<image :src="userInfo.avatar" mode="aspectFill"></image>
-						<view class="notification-btn">
-							<text class="icon">🔔</text>
-							<view class="notification-dot"></view>
-						</view>
-					</view>
-				</view>
-				<view class="user-detail">
-					<text class="nickname">{{ userInfo.nickname }}</text>
-					<text class="level">{{ userLevel }}</text>
-				</view>
-			</view>
-			
-			<!-- 今日运动数据 -->
-			<view class="today-sports">
-				<view class="sports-item">
-					<text class="label">今日运动</text>
-					<text class="value">{{ todaySteps }} <text class="unit">步</text></text>
-				</view>
-				<view class="sports-item">
-					<text class="label">约等于</text>
-					<text class="value">{{ todayDistance }} <text class="unit">公里</text></text>
-				</view>
-			</view>
-		</view>
+  <view class="page">
+    <!-- 顶部搜索栏 -->
+    <view class="search-header">
+      <view class="search-bar">
+        <input
+          class="item-input"
+          placeholder="挑战项目"
+          placeholder-style="color: #999;"
+        />
+      </view>
+    </view>
 
-		<!-- 快捷入口 -->
-		<view class="quick-menu">
-			<text class="section-title">快捷入口</text>
-			<view class="menu-grid">
-				<view class="menu-item" @click="navigateTo('/pages/challenge-square/index')">
-					<view class="menu-icon primary">
-						<text class="icon">🗺️</text>
-					</view>
-					<text class="menu-text">挑战广场</text>
-				</view>
-				<view class="menu-item" @click="navigateTo('/pages/profile/index')">
-					<view class="menu-icon secondary">
-						<text class="icon">👤</text>
-					</view>
-					<text class="menu-text">个人中心</text>
-				</view>
-				<view class="menu-item" @click="navigateTo('/pages/team-challenge/index')">
-					<view class="menu-icon accent">
-						<text class="icon">👥</text>
-					</view>
-					<text class="menu-text">我的队伍</text>
-				</view>
-				<view class="menu-item" @click="navigateTo('/pages/reward-store/index')">
-					<view class="menu-icon purple">
-						<text class="icon">🏆</text>
-					</view>
-					<text class="menu-text">成就勋章</text>
-				</view>
-			</view>
-		</view>
+    <!-- 挑战口令输入区域 -->
+    <view class="challenge-code-section">
+      <text class="section-title">输入您的挑战口令</text>
+      <view class="input-area">
+        <input
+          class="code-input"
+          placeholder="填写您的挑战口令"
+          placeholder-style="color: #999;"
+          v-model="challengeCode"
+        />
+        <view class="submit-btn" @click="submitChallengeCode">
+          <text class="arrow">→</text>
+        </view>
+      </view>
+    </view>
 
-		<!-- 进行中挑战 -->
-		<view class="active-challenges">
-			<text class="section-title">进行中挑战</text>
-			<view class="challenge-list">
-				<view 
-					v-for="challenge in activeChallenges" 
-					:key="challenge.challengeId"
-					class="challenge-card"
-					@click="navigateTo(`/pages/route-detail/index?id=${challenge.challengeId}`)"
-				>
-					<image class="challenge-image" :src="challenge.challenge.image" mode="aspectFill"></image>
-					<view class="challenge-info">
-						<view class="challenge-header">
-							<text class="challenge-name">{{ challenge.challenge.name }}</text>
-							<text class="challenge-progress">{{ challenge.progress }}%</text>
-						</view>
-						<view class="progress-bar">
-							<view class="progress-fill" :style="{width: challenge.progress + '%'}"></view>
-						</view>
-						<view class="challenge-stats">
-							<text class="stat-text">已完成 {{ challenge.currentDistance }}/{{ challenge.challenge.totalDistance }} 公里</text>
-							<text class="stat-text">预计还需{{ calculateDaysLeft(challenge) }}天</text>
-						</view>
-					</view>
-				</view>
-			</view>
-		</view>
+    <!-- 我的挑战 -->
+    <view class="my-challenges">
+      <view class="section-header">
+        <text class="section-title">我的挑战</text>
+        <image
+          class="more-icon"
+          src="/static/arrow-right.png"
+          mode="aspectFill"
+        ></image>
+      </view>
+      <scroll-view
+        class="challenge-scroll"
+        scroll-x="true"
+        show-scrollbar="false"
+      >
+        <view
+          v-for="challenge in myChallenges"
+          :key="challenge.id"
+          class="challenge-item"
+          @click="navigateTo(`/pages/route-detail/index?id=${challenge.id}`)"
+        >
+          <image
+            class="challenge-avatar"
+            :src="challenge.avatar"
+            mode="aspectFill"
+          ></image>
+          <view class="challenge-info">
+            <text class="challenge-title">{{ challenge.title }}</text>
+            <view class="challenge-stats">
+              <image
+                class="distance-icon"
+                src="/static/distance.png"
+                mode="aspectFill"
+              ></image>
+              <view>
+                <text class="distance">{{ challenge.distance }}</text>
+                <text class="distance-unit">km</text>
+              </view>
+              <view>
+                <text class="progress">{{ challenge.progress }} </text>
+                <text class="progress-unit">%</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
 
-		<!-- 如果没有进行中的挑战 -->
-		<view v-if="activeChallenges.length === 0" class="no-challenges">
-			<text class="no-challenges-text">暂无进行中的挑战</text>
-			<button class="start-challenge-btn" @click="navigateTo('/pages/challenge-square/index')">
-				开始挑战
-			</button>
-		</view>
-	</view>
+    <!-- 挑战项目 -->
+    <view class="challenge-projects">
+      <view class="section-header">
+        <text class="section-title">挑战项目</text>
+        <image
+          class="more-icon"
+          src="/static/arrow-right.png"
+          mode="aspectFill"
+        ></image>
+      </view>
+      <view class="projects-grid">
+        <view
+          v-for="project in challengeProjects"
+          :key="project.id"
+          class="project-card"
+          @click="navigateTo(`/pages/route-detail/index?id=${project.id}`)"
+        >
+          <view class="card-header">
+            <image
+              class="project-image"
+              :src="project.image"
+              mode="aspectFill"
+            ></image>
+            <view
+              class="like-btn"
+              :class="{ liked: project.isLiked }"
+              @click.stop="toggleLike(project.id)"
+            >
+              <text class="heart">{{ project.isLiked ? "❤️" : "🤍" }}</text>
+            </view>
+          </view>
+          <view class="card-content">
+            <text class="project-title">{{ project.title }}</text>
+            <text class="project-desc">{{ project.description }}</text>
+            <button
+              class="join-btn"
+              @click.stop="
+                navigateTo(
+                  `/pages/challenge-square/index?projectId=${project.id}`
+                )
+              "
+            >
+              加入挑战
+            </button>
+          </view>
+        </view>
+      </view>
+
+      <button class="view-all-btn">查看全部挑战项目</button>
+    </view>
+
+    <!-- 常见问题解答 -->
+    <view class="faq-section">
+      <view class="section-header">
+        <text class="section-title">常见问题解答</text>
+        <image
+          class="more-icon"
+          src="/static/arrow-right.png"
+          mode="aspectFill"
+        ></image>
+      </view>
+      <view class="faq-list">
+        <view
+          v-for="faq in faqList"
+          :key="faq.id"
+          class="faq-item"
+          @click="handleFaqClick(faq.id)"
+        >
+          <text class="faq-question">{{ faq.question }}</text>
+          <image
+            class="more-icon"
+            src="/static/arrow-right.png"
+            mode="aspectFill"
+          ></image>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 弹框提示 -->
+  <view v-if="showToast" class="toast-overlay" @click="showToast = false">
+    <view class="toast-container" @click.stop>
+      <view class="toast-content">
+        <image
+          class="toast-icon"
+          :src="
+            toastType === 'success' ? '/static/done.png' : '/static/error.png'
+          "
+          mode="aspectFit"
+        />
+        <text class="toast-text">{{
+          toastType === "success" ? "绑定成功" : "绑定失败"
+        }}</text>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useUserStore, useChallengeStore } from '@/stores'
+import { computed, onMounted, ref } from "vue";
+import { useUserStore, useChallengeStore } from "@/stores";
 
-const userStore = useUserStore()
-const challengeStore = useChallengeStore()
+const userStore = useUserStore();
+const challengeStore = useChallengeStore();
+
+// 挑战口令相关
+const challengeCode = ref("");
+const showToast = ref(false);
+const toastType = ref("success"); // success | error
+
+// mock数据
+const myChallenges = ref([
+  {
+    id: 1,
+    title: "万里长城徒步挑战",
+    avatar: "/static/challenges/great-wall.jpg",
+    distance: "78.121",
+    progress: 80,
+  },
+  {
+    id: 2,
+    title: "撒哈拉沙漠穿越",
+    avatar: "/static/challenges/sahara.jpg",
+    distance: "156.8",
+    progress: 45,
+  },
+  {
+    id: 3,
+    title: "丝绸之路探索",
+    avatar: "/static/challenges/silk-road.jpg",
+    distance: "89.5",
+    progress: 92,
+  },
+  {
+    id: 4,
+    title: "亚马逊雨林冒险",
+    avatar: "/static/challenges/amazon.jpg",
+    distance: "67.3",
+    progress: 38,
+  },
+  {
+    id: 5,
+    title: "喜马拉雅山脉挑战",
+    avatar: "/static/challenges/great-wall.jpg",
+    distance: "124.7",
+    progress: 15,
+  },
+  {
+    id: 6,
+    title: "北极圈极地探险",
+    avatar: "/static/challenges/sahara.jpg",
+    distance: "45.2",
+    progress: 73,
+  },
+]);
+
+const challengeProjects = ref([
+  {
+    id: 1,
+    title: "万里长城征途",
+    description: "踏上古老长城，感受千年历史的厚重",
+    image: "/static/challenges/great-wall.jpg",
+    isLiked: false,
+  },
+  {
+    id: 2,
+    title: "撒哈拉沙漠探索",
+    description: "穿越金色沙海，挑战极限耐力",
+    image: "/static/challenges/sahara.jpg",
+    isLiked: true,
+  },
+  {
+    id: 3,
+    title: "亚马逊雨林冒险",
+    description: "深入神秘雨林，探寻自然奥秘",
+    image: "/static/challenges/amazon.jpg",
+    isLiked: false,
+  },
+  {
+    id: 4,
+    title: "丝绸之路重走",
+    description: "重走古丝路，体验商旅文化",
+    image: "/static/challenges/silk-road.jpg",
+    isLiked: false,
+  },
+]);
+
+const faqList = ref([
+  {
+    id: 1,
+    question: "如何开始我的第一个挑战？",
+    answer:
+      "在挑战广场选择适合的项目，点击加入挑战即可开始您的征程。建议新手先从简单的挑战开始。",
+  },
+  {
+    id: 2,
+    question: "挑战口令是什么？如何使用？",
+    answer:
+      "挑战口令是特殊的邀请码，输入后可以解锁专属挑战或获得额外奖励。口令通常由官方或好友分享。",
+  },
+  {
+    id: 3,
+    question: "如何邀请朋友一起参加挑战？",
+    answer:
+      "在挑战详情页面点击邀请按钮，分享给您的朋友即可组队挑战。组队完成挑战会获得额外的团队奖励。",
+  },
+  {
+    id: 4,
+    question: "完成挑战后会获得什么奖励？",
+    answer:
+      "完成挑战将获得相应的勋章、积分和专属称号，还有机会获得实物奖励。不同难度的挑战奖励也不同。",
+  },
+  {
+    id: 5,
+    question: "如何查看我的挑战进度？",
+    answer:
+      "在个人中心或挑战详情页面都可以查看您的实时进度和历史记录。系统会自动记录您的运动数据。",
+  },
+]);
 
 // 计算属性
-const userInfo = computed(() => userStore.userInfo)
-const userLevel = computed(() => userStore.userLevel)
-const todaySteps = computed(() => userStore.todaySteps)
-const todayDistance = computed(() => userStore.todayDistance)
-const activeChallenges = computed(() => challengeStore.activeChallenges)
+const userInfo = computed(() => userStore.userInfo);
+const activeChallenges = computed(() => challengeStore.activeChallenges);
 
 // 方法
 const navigateTo = (url: string) => {
-	// 判断是否为tabBar页面
-	const tabBarPages = [
-		'/pages/index/index',
-		'/pages/challenge-square/index',
-		'/pages/my-sports/index',
-		'/pages/profile/index'
-	]
-	
-	if (tabBarPages.includes(url)) {
-		uni.switchTab({ url })
-	} else {
-		uni.navigateTo({ url })
-	}
-}
+  const tabBarPages = [
+    "/pages/index/index",
+    "/pages/challenge-square/index",
+    "/pages/my-sports/index",
+    "/pages/profile/index",
+  ];
 
-const calculateDaysLeft = (challenge: any) => {
-	const currentDate = new Date()
-	const finishDate = new Date(challenge.estimatedFinishDate)
-	const timeDiff = finishDate.getTime() - currentDate.getTime()
-	const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24))
-	return daysDiff > 0 ? daysDiff : 0
-}
+  if (tabBarPages.includes(url)) {
+    uni.switchTab({ url });
+  } else {
+    uni.navigateTo({ url });
+  }
+};
+
+const toggleLike = (projectId: number) => {
+  const project = challengeProjects.value.find((p) => p.id === projectId);
+  if (project) {
+    project.isLiked = !project.isLiked;
+  }
+};
+
+const submitChallengeCode = () => {
+  if (!challengeCode.value.trim()) {
+    return;
+  }
+
+  // 模拟验证逻辑，这里可以根据实际需求修改
+  // 假设有效的口令包含 "2024" 或 "challenge" 等关键词
+  const validCodes = ["2024", "challenge", "success", "great-wall", "sahara"];
+  const isValid = validCodes.some((code) =>
+    challengeCode.value.toLowerCase().includes(code.toLowerCase())
+  );
+
+  if (isValid) {
+    toastType.value = "success";
+    showToast.value = true;
+    challengeCode.value = ""; // 清空输入
+  } else {
+    toastType.value = "error";
+    showToast.value = true;
+  }
+
+  // 2秒后自动隐藏弹框
+  setTimeout(() => {
+    showToast.value = false;
+  }, 2000);
+};
+
+const handleFaqClick = (faqId: number) => {
+  console.log("点击FAQ:", faqId);
+  const selectedFaq = faqList.value.find((faq) => faq.id === faqId);
+  if (selectedFaq) {
+    console.log("选中的FAQ:", selectedFaq.question);
+    // 显示答案提示
+    uni.showModal({
+      title: selectedFaq.question,
+      content: selectedFaq.answer,
+      showCancel: false,
+      confirmText: "我知道了",
+    });
+  }
+};
 
 onMounted(() => {
-	// 页面加载时可以获取最新数据
-	console.log('首页加载完成')
-})
+  console.log("首页加载完成");
+  console.log("我的挑战数量:", myChallenges.value.length);
+  console.log("挑战项目数量:", challengeProjects.value.length);
+  console.log("FAQ数量:", faqList.value.length);
+});
 </script>
 
 <style lang="scss" scoped>
 .page {
-	background-color: #F2F3F5;
-	min-height: 100vh;
-	padding: 20rpx;
+  background-color: #1c1f26;
+  min-height: 100vh;
+  color: #ffffff;
 }
 
-.user-card {
-	position: relative;
-	height: 320rpx;
-	margin-bottom: 30rpx;
-	border-radius: 24rpx;
-	overflow: hidden;
-	background: linear-gradient(135deg, #165DFF 0%, #4A90E2 100%);
+/* 顶部搜索栏 */
+.search-header {
+  padding: 100rpx 30rpx 20rpx 30rpx;
 }
 
-.bg-image {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0.4;
+.search-bar {
+  width: 70%;
+  background: #2a2d36;
+  border-radius: 50rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  margin-right: 20rpx;
+  .item-input {
+    background: transparent;
+  }
 }
 
-.user-info {
-	position: relative;
-	padding: 30rpx;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+/* 挑战口令输入区域 */
+.challenge-code-section {
+  margin: 30rpx;
+  background: #ffd700;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  .section-title {
+    color: #333;
+    font-size: 32rpx;
+    font-weight: 600;
+    margin-bottom: 20rpx;
+    display: block;
+  }
 }
 
-.user-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
+.input-area {
+  display: flex;
+  height: 80rpx;
+  align-items: center;
+  overflow: hidden;
 }
 
-.user-avatar {
-	position: relative;
-	
-	image {
-		width: 80rpx;
-		height: 80rpx;
-		border-radius: 50%;
-		border: 4rpx solid rgba(255, 255, 255, 0.5);
-	}
+.code-input {
+  flex: 1;
+  color: #999;
+  padding: 25rpx 30rpx;
+  margin-right: 20rpx;
+  font-size: 28rpx;
+  border: none;
+  border-radius: 15rpx;
+  background: #fff;
 }
 
-.notification-btn {
-	position: absolute;
-	top: -10rpx;
-	right: -100rpx;
-	width: 60rpx;
-	height: 60rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 50%;
-	backdrop-filter: blur(10rpx);
-	
-	.icon {
-		font-size: 32rpx;
-		color: white;
-	}
-	
-	.notification-dot {
-		position: absolute;
-		top: 8rpx;
-		right: 8rpx;
-		width: 16rpx;
-		height: 16rpx;
-		background-color: #FF4757;
-		border-radius: 50%;
-	}
+.submit-btn {
+  width: 80rpx;
+  height: 80rpx;
+  background: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
 }
 
-.user-detail {
-	margin-top: 20rpx;
-	
-	.nickname {
-		color: white;
-		font-size: 32rpx;
-		font-weight: 600;
-		display: block;
-		margin-bottom: 8rpx;
-	}
-	
-	.level {
-		color: rgba(255, 255, 255, 0.8);
-		font-size: 24rpx;
-		display: block;
-	}
+.arrow {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
 }
 
-.today-sports {
-	background: rgba(255, 255, 255, 0.2);
-	backdrop-filter: blur(10rpx);
-	border-radius: 16rpx;
-	padding: 24rpx;
-	display: flex;
-	justify-content: space-between;
-	margin-top: 20rpx;
+/* 我的挑战 */
+.my-challenges {
+  margin: 48rpx 0;
+  padding: 0 30rpx;
 }
 
-.sports-item {
-	text-align: center;
-	
-	.label {
-		color: white;
-		font-size: 24rpx;
-		display: block;
-		margin-bottom: 8rpx;
-	}
-	
-	.value {
-		color: white;
-		font-size: 48rpx;
-		font-weight: bold;
-		display: block;
-		
-		.unit {
-			font-size: 24rpx;
-			font-weight: normal;
-			opacity: 0.8;
-		}
-	}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  .section-title {
+    color: #fff;
+    font-size: 34rpx;
+    font-weight: 500;
+  }
 }
 
-.quick-menu {
-	background: white;
-	border-radius: 24rpx;
-	padding: 30rpx;
-	margin-bottom: 30rpx;
-	box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.08);
+.more-icon {
+  width: 24rpx;
+  height: 48rpx;
 }
 
-.section-title {
-	font-size: 36rpx;
-	font-weight: 600;
-	color: #1D2129;
-	display: block;
-	margin-bottom: 30rpx;
+.challenge-scroll {
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
 }
 
-.menu-grid {
-	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	gap: 20rpx;
+.challenge-item {
+  display: inline-flex;
+  align-items: center;
+  width: 454rpx;
+  height: 152rpx;
+  padding: 24rpx 32rpx;
+  margin-right: 20rpx;
+  border-radius: 16rpx;
+  background: #ffffff;
 }
 
-.menu-item {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 20rpx;
-	border-radius: 16rpx;
-	transition: all 0.3s ease;
-	
-	&:active {
-		background-color: #F2F3F5;
-		transform: scale(0.95);
-	}
-}
-
-.menu-icon {
-	width: 80rpx;
-	height: 80rpx;
-	border-radius: 50%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-bottom: 16rpx;
-	
-	.icon {
-		font-size: 36rpx;
-	}
-	
-	&.primary {
-		background-color: rgba(22, 93, 255, 0.1);
-		.icon { color: #165DFF; }
-	}
-	
-	&.secondary {
-		background-color: rgba(255, 125, 0, 0.1);
-		.icon { color: #FF7D00; }
-	}
-	
-	&.accent {
-		background-color: rgba(0, 180, 42, 0.1);
-		.icon { color: #00B42A; }
-	}
-	
-	&.purple {
-		background-color: rgba(168, 85, 247, 0.1);
-		.icon { color: #A855F7; }
-	}
-}
-
-.menu-text {
-	font-size: 24rpx;
-	color: #1D2129;
-	text-align: center;
-}
-
-.active-challenges {
-	background: white;
-	border-radius: 24rpx;
-	padding: 30rpx;
-	box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.08);
-}
-
-.challenge-list {
-	display: flex;
-	flex-direction: column;
-	gap: 20rpx;
-}
-
-.challenge-card {
-	display: flex;
-	background: #F2F3F5;
-	border-radius: 16rpx;
-	overflow: hidden;
-	transition: all 0.3s ease;
-	
-	&:active {
-		transform: scale(0.98);
-	}
-}
-
-.challenge-image {
-	width: 96rpx;
-	height: 96rpx;
-	flex-shrink: 0;
+.challenge-avatar {
+  width: 104rpx;
+  height: 104rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+  flex-shrink: 0;
 }
 
 .challenge-info {
-	flex: 1;
-	padding: 24rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.challenge-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 16rpx;
-}
-
-.challenge-name {
-	font-size: 32rpx;
-	font-weight: 600;
-	color: #1D2129;
-}
-
-.challenge-progress {
-	font-size: 24rpx;
-	color: #86909C;
-}
-
-.progress-bar {
-	height: 8rpx;
-	background-color: #E5E6EB;
-	border-radius: 4rpx;
-	overflow: hidden;
-	margin-bottom: 16rpx;
-}
-
-.progress-fill {
-	height: 100%;
-	background: linear-gradient(90deg, #165DFF 0%, #4A90E2 100%);
-	border-radius: 4rpx;
-	transition: width 0.5s ease;
+.challenge-title {
+  font-size: 34rpx;
+  font-weight: 500;
+  margin-bottom: 10rpx;
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .challenge-stats {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+  width: 270rpx;
+  height: 48rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0rpx;
+  .distance-icon {
+    width: 32rpx;
+    height: 32rpx;
+  }
 }
 
-.stat-text {
-	font-size: 24rpx;
-	color: #86909C;
+.distance {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #7b412d;
+}
+.distance-unit {
+  font-size: 24rpx;
+  font-weight: normal;
+  color: #7b412d;
 }
 
-.no-challenges {
-	text-align: center;
-	padding: 80rpx 40rpx;
-	background: white;
-	border-radius: 24rpx;
-	box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.08);
+.progress {
+  color: #00778a;
+  font-size: 34rpx;
+  font-weight: 600;
 }
 
-.no-challenges-text {
-	font-size: 28rpx;
-	color: #86909C;
-	margin-bottom: 40rpx;
-	display: block;
+.progress-unit {
+  font-size: 24rpx;
+  color: #00778a;
+  font-weight: normal;
 }
 
-.start-challenge-btn {
-	background: linear-gradient(135deg, #165DFF 0%, #4A90E2 100%);
-	color: white;
-	border: none;
-	border-radius: 50rpx;
-	padding: 20rpx 60rpx;
-	font-size: 32rpx;
-	font-weight: 600;
-	box-shadow: 0 8rpx 20rpx rgba(22, 93, 255, 0.3);
-	transition: all 0.3s ease;
-	
-	&:active {
-		transform: translateY(2rpx);
-		box-shadow: 0 4rpx 10rpx rgba(22, 93, 255, 0.3);
-	}
+/* 挑战项目 */
+.challenge-projects {
+  margin: 30rpx;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.project-card {
+  background: #2a2d36;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.card-header {
+  position: relative;
+  height: 200rpx;
+}
+
+.project-image {
+  width: 100%;
+  height: 100%;
+}
+
+.like-btn {
+  position: absolute;
+  top: 20rpx;
+  left: 20rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+
+  &.liked {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.heart {
+  font-size: 32rpx;
+}
+
+.card-content {
+  padding: 25rpx;
+}
+
+.project-title {
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.project-desc {
+  color: #999;
+  font-size: 24rpx;
+  line-height: 1.4;
+  margin-bottom: 25rpx;
+  display: block;
+}
+
+.join-btn {
+  width: 100%;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 15rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.view-all-btn {
+  width: 100%;
+  background: #ffd700;
+  color: #333;
+  border: none;
+  border-radius: 15rpx;
+  padding: 25rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+/* 常见问题解答 */
+.faq-section {
+  margin: 30rpx;
+  margin-bottom: 100rpx;
+
+  .section-header {
+    padding: 0;
+    margin-bottom: 20rpx;
+  }
+}
+
+.faq-list {
+  background: #2a2d36;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.faq-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #333;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: translateX(10rpx);
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  color: #fff;
+  font-size: 28rpx;
+  flex: 1;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+
+  // &::before {
+  //   content: "?";
+  //   display: inline-block;
+  //   width: 32rpx;
+  //   height: 32rpx;
+  //   background: #165dff;
+  //   color: white;
+  //   text-align: center;
+  //   line-height: 32rpx;
+  //   border-radius: 50%;
+  //   font-size: 20rpx;
+  //   margin-right: 20rpx;
+  //   flex-shrink: 0;
+  // }
+}
+
+/* 弹框提示 */
+.toast-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.toast-container {
+  width: 272rpx;
+  height: 272rpx;
+  border-radius: 24rpx;
+  background: #4c4c4c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: toastShow 0.3s ease-out;
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 20rpx;
+}
+
+.toast-text {
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 500;
+  text-align: center;
+}
+
+@keyframes toastShow {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style>
