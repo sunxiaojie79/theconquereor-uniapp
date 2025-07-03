@@ -2,11 +2,11 @@
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "征途",
-				"navigationBarBackgroundColor": "#165DFF",
-				"navigationBarTextStyle": "white"
-			}
+			// "style": {
+			// 	"navigationBarTitleText": "征途",
+			// 	"navigationBarBackgroundColor": "#165DFF",
+			// 	"navigationBarTextStyle": "white"
+			// }
 		},
 		{
 			"path": "pages/challenge-square/index",
@@ -81,13 +81,13 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "征途",
-		"navigationBarBackgroundColor": "#165DFF",
-		"backgroundColor": "#F2F3F5"
+		"navigationBarTitleText": "1",
+		"navigationBarBackgroundColor": "#242A36",
+		"backgroundColor": "#242A36"
 	},
 	"tabBar": {
-		"color": "#999999",
-		"selectedColor": "#165DFF",
+		"color": "#242A36",
+		"selectedColor": "#242A36",
 		"backgroundColor": "#ffffff",
 		"borderStyle": "black",
 		"list": [
@@ -99,13 +99,13 @@
 			},
 			{
 				"pagePath": "pages/challenge-square/index",
-				"text": "挑战广场",
+				"text": "记录",
 				"iconPath": "static/icons/challenge.png",
 				"selectedIconPath": "static/icons/challenge-active.png"
 			},
 			{
 				"pagePath": "pages/my-sports/index",
-				"text": "我的运动",
+				"text": "消息",
 				"iconPath": "static/icons/sports.png",
 				"selectedIconPath": "static/icons/sports-active.png"
 			},
