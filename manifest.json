@@ -50,16 +50,16 @@
     "quickapp" : {},
     /* 小程序特有相关 */
     "mp-weixin" : {
-        "appid" : "",
+        "appid" : "wx953f7824c667c3b6",
         "setting" : {
             "urlCheck" : false
         },
         "usingComponents" : true,
         "plugins" : {
-            "amap-wx" : {
-                "version" : "2.0.0",
-                "provider" : "wx06af10f87ee91d11"
-            }
+            // "amap-wx" : {
+            //     "version" : "2.0.0",
+            //     "provider" : "wx953f7824c667c3b6"
+            // }
         }
     },
     "mp-alipay" : {
