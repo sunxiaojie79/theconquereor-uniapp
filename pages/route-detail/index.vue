@@ -59,7 +59,7 @@
     <!-- 路线预览地图 -->
     <view class="route-map">
       <text class="section-title">路线预览</text>
-      <view class="map-container">
+      <view class="map-container" @click="goToMapDetail">
         <image :src="'/static/maps/default-map.jpg'" mode="aspectFill" class="map-image"></image>
         <view class="map-progress" v-if="userProgress > 0">
           <view class="progress-marker" :style="{left: userProgress + '%'}">
@@ -68,6 +68,10 @@
               <text class="marker-text">{{ userProgress }}%</text>
             </view>
           </view>
+        </view>
+        <view class="map-overlay">
+          <text class="overlay-text">点击查看完整地图</text>
+          <text class="overlay-icon">🗺️</text>
         </view>
       </view>
     </view>
@@ -292,6 +296,12 @@ const joinChallenge = () => {
   }
 }
 
+const goToMapDetail = () => {
+  uni.navigateTo({
+    url: `/pages/map-detail/index?routeId=${routeId.value}`
+  })
+}
+
 // 页面加载
 onLoad((options: any) => {
   if (options.id) {
@@ -463,11 +473,47 @@ onMounted(() => {
   height: 240rpx;
   border-radius: 16rpx;
   overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .map-image {
   width: 100%;
   height: 100%;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  .map-container:active & {
+    opacity: 1;
+  }
+}
+
+.overlay-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.overlay-icon {
+  font-size: 48rpx;
 }
 
 .map-progress {

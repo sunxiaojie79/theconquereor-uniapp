@@ -71,6 +71,12 @@
 				"navigationBarBackgroundColor": "#165DFF",
 				"navigationBarTextStyle": "white"
 			}
+		},
+		{
+			"path": "pages/map-detail/index",
+			"style": {
+				"navigationBarTitleText": "路线地图"
+			}
 		}
 	],
 	"globalStyle": {
