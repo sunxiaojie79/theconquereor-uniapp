@@ -134,6 +134,7 @@
           class="more-icon"
           src="/static/arrow-right.png"
           mode="aspectFill"
+          @click="navigateTo('/pages/faq-list/index')"
         ></image>
       </view>
       <view class="faq-list">
@@ -645,6 +646,12 @@ onMounted(() => {
   .section-header {
     padding: 0;
     margin-bottom: 20rpx;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+
+    &:active {
+      opacity: 0.7;
+    }
   }
 }
 
