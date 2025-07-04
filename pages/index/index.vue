@@ -86,41 +86,14 @@
         ></image>
       </view>
       <view class="projects-grid">
-        <view
+        <ChallengeCard
           v-for="project in challengeProjects"
           :key="project.id"
-          class="project-card"
-          @click="navigateTo(`/pages/route-detail/index?id=${project.id}`)"
-        >
-          <view class="card-header">
-            <image
-              class="project-image"
-              :src="project.image"
-              mode="aspectFill"
-            ></image>
-            <view
-              class="like-btn"
-              :class="{ liked: project.isLiked }"
-              @click.stop="toggleLike(project.id)"
-            >
-              <text class="heart">{{ project.isLiked ? "❤️" : "🤍" }}</text>
-            </view>
-          </view>
-          <view class="card-content">
-            <text class="project-title">{{ project.title }}</text>
-            <text class="project-desc">{{ project.description }}</text>
-            <button
-              class="join-btn"
-              @click.stop="
-                navigateTo(
-                  `/pages/challenge-square/index?projectId=${project.id}`
-                )
-              "
-            >
-              加入挑战
-            </button>
-          </view>
-        </view>
+          :project="project"
+          @like="handleLikeProject"
+          @join="handleJoinProject"
+          @click="handleCardClick"
+        />
       </view>
 
       <button class="view-all-btn">查看全部挑战项目</button>
@@ -177,6 +150,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import { useUserStore, useChallengeStore } from "@/stores";
+import ChallengeCard from "@/components/challenge-card/index.vue";
 
 const userStore = useUserStore();
 const challengeStore = useChallengeStore();
@@ -316,11 +290,19 @@ const navigateTo = (url: string) => {
   }
 };
 
-const toggleLike = (projectId: number) => {
+const handleLikeProject = (projectId: number) => {
   const project = challengeProjects.value.find((p) => p.id === projectId);
   if (project) {
     project.isLiked = !project.isLiked;
   }
+};
+
+const handleJoinProject = (projectId: number) => {
+  navigateTo(`/pages/challenge-square/index?projectId=${projectId}`);
+};
+
+const handleCardClick = (projectId: number) => {
+  navigateTo(`/pages/route-detail/index?id=${projectId}`);
 };
 
 const submitChallengeCode = () => {
@@ -395,9 +377,12 @@ onMounted(() => {
 
 /* 挑战口令输入区域 */
 .challenge-code-section {
+  height: 192rpx;
+  width: 686rpx;
   margin: 30rpx;
-  background: #ffd700;
-  border-radius: 20rpx;
+  box-sizing: border-box;
+  background: #FADB47;
+  border-radius: 16rpx;
   padding: 30rpx;
   .section-title {
     color: #333;
@@ -552,84 +537,17 @@ onMounted(() => {
   margin-bottom: 30rpx;
 }
 
-.project-card {
-  background: #2a2d36;
-  border-radius: 20rpx;
-  overflow: hidden;
-}
-
-.card-header {
-  position: relative;
-  height: 200rpx;
-}
-
-.project-image {
-  width: 100%;
-  height: 100%;
-}
-
-.like-btn {
-  position: absolute;
-  top: 20rpx;
-  left: 20rpx;
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-
-  &.liked {
-    background: rgba(255, 255, 255, 0.9);
-  }
-}
-
-.heart {
-  font-size: 32rpx;
-}
-
-.card-content {
-  padding: 25rpx;
-}
-
-.project-title {
-  color: #fff;
-  font-size: 32rpx;
-  font-weight: 600;
-  margin-bottom: 10rpx;
-  display: block;
-}
-
-.project-desc {
-  color: #999;
-  font-size: 24rpx;
-  line-height: 1.4;
-  margin-bottom: 25rpx;
-  display: block;
-}
-
-.join-btn {
-  width: 100%;
-  background: #333;
-  color: #fff;
-  border: none;
-  border-radius: 15rpx;
-  padding: 20rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-}
+/* 挑战卡片样式已移动到组件中 */
 
 .view-all-btn {
-  width: 100%;
-  background: #ffd700;
-  color: #333;
+  width: 686rpx;
+  height: 80rpx;
+  background: #fadb47;
+  color: #242a36;
   border: none;
-  border-radius: 15rpx;
-  padding: 25rpx;
-  font-size: 32rpx;
-  font-weight: 600;
+  border-radius: 8rpx;
+  font-size: 34rpx;
+  font-weight: 500;
 }
 
 /* 常见问题解答 */
