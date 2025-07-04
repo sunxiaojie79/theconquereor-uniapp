@@ -54,14 +54,21 @@
     <!-- 排序选项弹框 -->
     <view v-if="showSortOptions" class="sort-modal-overlay" @click="showSortOptions = false">
       <view class="sort-modal" @click.stop>
-        <view 
-          v-for="option in sortOptions"
-          :key="option.value"
-          class="sort-option"
-          :class="{ selected: currentSort === option.label }"
-          @click="selectSort(option)"
-        >
-          <text class="sort-option-text">{{ option.label }}</text>
+        <view class="sort-options-container">
+          <view 
+            v-for="option in sortOptions"
+            :key="option.value"
+            class="sort-option"
+            :class="{ selected: currentSort === option.label }"
+            @click="selectSort(option)"
+          >
+            <text class="sort-option-text">{{ option.label }}</text>
+          </view>
+        </view>
+        <view class="sort-cancel-container">
+          <view class="sort-cancel" @click="showSortOptions = false">
+            <text class="sort-cancel-text">取消</text>
+          </view>
         </view>
       </view>
     </view>
@@ -110,8 +117,8 @@ const currentSort = ref('最新');
 const sortOptions = ref([
   { label: '最新', value: 'newest' },
   { label: '最热', value: 'hottest' },
-  { label: '难度从低到高', value: 'difficulty_asc' },
-  { label: '难度从高到低', value: 'difficulty_desc' }
+  { label: '线路短到长', value: 'distance_asc' },
+  { label: '线路长到短', value: 'distance_desc' }
 ]);
 
 // 筛选相关
@@ -411,39 +418,65 @@ onMounted(() => {
   background: rgba(0, 0, 0, 0.5);
   z-index: 2000;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-top: 200rpx;
-  padding-left: 30rpx;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 0;
 }
 
 .sort-modal {
-  background: #2A2D36;
-  border-radius: 12rpx;
-  min-width: 200rpx;
+  width: 100%;
+  background: #F4F5F9;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  border-radius: 24rpx 24rpx 0rpx 0rpx;
+  animation: slideUp 0.3s ease-out;
+}
+
+.sort-options-container {
+  background: #FFF;
+  border-radius: 24rpx 24rpx 0rpx 0rpx;
   overflow: hidden;
 }
 
 .sort-option {
-  padding: 30rpx;
-  border-bottom: 1rpx solid #333;
+  padding: 40rpx 30rpx;
+  border-bottom: 1rpx solid #E5E5E5;
+  text-align: center;
   
   &:last-child {
     border-bottom: none;
   }
   
   &.selected {
-    background: #FFD700;
+    background: #FFF;
     
     .sort-option-text {
-      color: #333;
+      color: #000;
+      font-weight: 600;
     }
   }
 }
 
 .sort-option-text {
-  font-size: 28rpx;
-  color: #FFF;
+  font-size: 32rpx;
+  color: #000;
+}
+
+.sort-cancel-container {
+  background: #FFF;
+  overflow: hidden;
+}
+
+.sort-cancel {
+  padding: 40rpx 30rpx;
+  text-align: center;
+}
+
+.sort-cancel-text {
+  font-size: 32rpx;
+  color: #000;
+  font-weight: 500;
 }
 
 /* 筛选弹框 */
@@ -547,5 +580,17 @@ onMounted(() => {
 .filter-apply {
   background: #FFD700;
   color: #333;
+}
+
+/* 动画效果 */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 </style> 
