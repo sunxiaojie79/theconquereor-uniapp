@@ -80,8 +80,14 @@
 			"path": "pages/faq-list/index",
 			"style": {
 				"navigationBarTitleText": "常见问题解答",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
+				"navigationBarBackgroundColor": "#242A36"
+			}
+		},
+		{
+			"path": "pages/faq-detail/index",
+			"style": {
+				"navigationBarTitleText": "常见问题",
+				"navigationBarBackgroundColor": "#242A36"
 			}
 		}
 	],

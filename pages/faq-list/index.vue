@@ -111,15 +111,11 @@ const goBack = () => {
 };
 
 const handleFaqClick = (faqId: number) => {
-  const selectedFaq = faqList.value.find((faq) => faq.id === faqId);
-  if (selectedFaq) {
-    uni.showModal({
-      title: selectedFaq.question,
-      content: selectedFaq.answer,
-      showCancel: false,
-      confirmText: "我知道了",
-    });
-  }
+  console.log("点击FAQ:", faqId);
+  // 跳转到问题详情页面
+  uni.navigateTo({
+    url: `/pages/faq-detail/index?id=${faqId}`
+  });
 };
 </script>
 

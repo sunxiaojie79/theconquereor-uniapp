@@ -147,7 +147,7 @@
           <text class="faq-question">{{ faq.question }}</text>
           <image
             class="more-icon"
-            src="/static/arrow-right.png"
+            src="/static/arrow-right-black.png"
             mode="aspectFill"
           ></image>
         </view>
@@ -352,17 +352,11 @@ const submitChallengeCode = () => {
 
 const handleFaqClick = (faqId: number) => {
   console.log("点击FAQ:", faqId);
-  const selectedFaq = faqList.value.find((faq) => faq.id === faqId);
-  if (selectedFaq) {
-    console.log("选中的FAQ:", selectedFaq.question);
-    // 显示答案提示
-    uni.showModal({
-      title: selectedFaq.question,
-      content: selectedFaq.answer,
-      showCancel: false,
-      confirmText: "我知道了",
-    });
-  }
+  console.log("点击FAQ:", faqId);
+  // 跳转到问题详情页面
+  uni.navigateTo({
+    url: `/pages/faq-detail/index?id=${faqId}`,
+  });
 };
 
 onMounted(() => {
@@ -657,7 +651,6 @@ onMounted(() => {
 
 .faq-list {
   background: #2a2d36;
-  border-radius: 20rpx;
   overflow: hidden;
 }
 
@@ -669,14 +662,15 @@ onMounted(() => {
   border-bottom: 1rpx solid #333;
   transition: all 0.2s ease;
   cursor: pointer;
-
+  background-color: #f4f5f9;
+  margin-bottom: 16rpx;
+  border-radius: 8rpx;
   &:active {
-    background-color: rgba(255, 255, 255, 0.05);
-    transform: translateX(10rpx);
+    background-color: #f5f5f5;
   }
 
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.02);
+  &:last-child {
+    border-bottom: none;
   }
 }
 
@@ -685,7 +679,7 @@ onMounted(() => {
 }
 
 .faq-question {
-  color: #fff;
+  color: rgba(0, 0, 0, 0.85);
   font-size: 28rpx;
   flex: 1;
   line-height: 1.4;
