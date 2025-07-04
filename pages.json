@@ -89,6 +89,13 @@
 				"navigationBarTitleText": "常见问题",
 				"navigationBarBackgroundColor": "#242A36"
 			}
+		},
+		{
+			"path": "pages/challenge-list/index",
+			"style": {
+				"navigationBarTitleText": "全部挑战",
+				"navigationBarBackgroundColor": "#242A36"
+			}
 		}
 	],
 	"globalStyle": {

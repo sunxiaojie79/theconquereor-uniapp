@@ -144,6 +144,7 @@ const handleCardClick = () => {
   font-size: 28rpx;
   line-height: 1.4;
   margin-bottom: 25rpx;
+  height: 80rpx;
   display: block;
   text-align: center;
 }

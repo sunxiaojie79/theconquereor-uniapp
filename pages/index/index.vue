@@ -96,7 +96,7 @@
         />
       </view>
 
-      <button class="view-all-btn">查看全部挑战项目</button>
+      <button class="view-all-btn" @click="navigateTo('/pages/challenge-list/index')">查看全部挑战项目</button>
     </view>
 
     <!-- 常见问题解答 -->
