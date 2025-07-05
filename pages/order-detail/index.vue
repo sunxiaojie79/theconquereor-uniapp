@@ -51,7 +51,7 @@
 import { ref, onMounted } from 'vue';
 
 // 页面状态
-const hasAddress = ref(false);
+const hasAddress = ref(true);
 const productInfo = ref({
   name: '产品名称产品名称产品名称',
   image: '/static/challenges/great-wall.jpg',
@@ -63,7 +63,7 @@ const productInfo = ref({
 const handleCreateAddress = () => {
   // 跳转到地址列表页面
   uni.navigateTo({
-    url: '/pages/address-list/index'
+    url: '/pages/address-edit/index'
   });
 };
 
