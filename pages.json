@@ -53,11 +53,10 @@
 			}
 		},
 		{
-			"path": "pages/reward-store/index",
+			"path": "pages/record/index",
 			"style": {
-				"navigationBarTitleText": "奖励商城",
-				"navigationBarBackgroundColor": "#165DFF",
-				"navigationBarTextStyle": "white"
+				"navigationBarTitleText": "CONQUEROR",
+				"navigationBarBackgroundColor": "#242A36"
 			}
 		},
 		{
@@ -145,10 +144,10 @@
 				"selectedIconPath": "static/icons/home-active.png"
 			},
 			{
-				"pagePath": "pages/reward-store/index",
+				"pagePath": "pages/record/index",
 				"text": "记录",
-				"iconPath": "static/icons/challenge.png",
-				"selectedIconPath": "static/icons/challenge-active.png"
+				"iconPath": "static/icons/record.png",
+				"selectedIconPath": "static/icons/record-active.png"
 			},
 			{
 				"pagePath": "pages/my-sports/index",

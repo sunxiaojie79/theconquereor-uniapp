@@ -34,7 +34,7 @@
     <view class="medals-section">
       <view class="section-header">
         <text class="section-title">成就勋章</text>
-        <text class="view-all" @click="navigateTo('/pages/reward-store/index')">查看全部</text>
+        <text class="view-all" @click="navigateTo('/pages/record/index')">查看全部</text>
       </view>
       <view class="medals-grid">
         <view 
