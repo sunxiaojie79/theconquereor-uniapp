@@ -142,7 +142,7 @@ const joinChallenge = () => {
 
   // 延迟跳转到我的运动页面
   setTimeout(() => {
-    uni.switchTab({ url: "/pages/my-sports/index" });
+    uni.switchTab({ url: "/pages/message/index" });
   }, 2000);
 };
 

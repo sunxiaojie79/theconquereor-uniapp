@@ -173,7 +173,7 @@ const navigateTo = (url: string) => {
   const tabBarPages = [
     '/pages/index/index',
     '/pages/challenge-detail/index',
-    '/pages/my-sports/index',
+    '/pages/message/index',
     '/pages/profile/index'
   ]
   

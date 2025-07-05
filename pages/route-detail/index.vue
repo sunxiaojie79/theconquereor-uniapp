@@ -123,7 +123,7 @@
       <button 
         v-else 
         class="continue-btn" 
-        @click="navigateTo('/pages/my-sports/index')"
+        @click="navigateTo('/pages/message/index')"
       >
         继续挑战
       </button>
@@ -264,7 +264,7 @@ const navigateTo = (url: string) => {
   const tabBarPages = [
     '/pages/index/index',
     '/pages/challenge-detail/index',
-    '/pages/my-sports/index',
+    '/pages/message/index',
     '/pages/profile/index'
   ]
   
@@ -286,7 +286,7 @@ const joinChallenge = () => {
     
     // 延迟跳转到运动页面
     setTimeout(() => {
-      navigateTo('/pages/my-sports/index')
+      navigateTo('/pages/message/index')
     }, 1500)
   } else {
     uni.showToast({

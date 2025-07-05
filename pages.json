@@ -13,10 +13,10 @@
 			}
 		},
 		{
-			"path": "pages/my-sports/index",
+			"path": "pages/message/index",
 			"style": {
-				"navigationBarTitleText": "我的运动",
-				"navigationBarBackgroundColor": "#165DFF",
+				"navigationBarTitleText": "CONQUEROR",
+				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
 		},
@@ -158,10 +158,10 @@
 				"selectedIconPath": "static/icons/record-active.png"
 			},
 			{
-				"pagePath": "pages/my-sports/index",
+				"pagePath": "pages/message/index",
 				"text": "消息",
-				"iconPath": "static/icons/sports.png",
-				"selectedIconPath": "static/icons/sports-active.png"
+				"iconPath": "static/icons/message.png",
+				"selectedIconPath": "static/icons/message-active.png"
 			},
 			{
 				"pagePath": "pages/profile/index",
