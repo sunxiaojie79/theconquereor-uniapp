@@ -7,11 +7,9 @@
 			}
 		},
 		{
-			"path": "pages/challenge-square/index",
+			"path": "pages/challenge-detail/index",
 			"style": {
-				"navigationBarTitleText": "挑战广场",
-				"navigationBarBackgroundColor": "#165DFF",
-				"navigationBarTextStyle": "white"
+				"navigationStyle": "custom"
 			}
 		},
 		{
@@ -117,7 +115,7 @@
 				"selectedIconPath": "static/icons/home-active.png"
 			},
 			{
-				"pagePath": "pages/challenge-square/index",
+				"pagePath": "pages/reward-store/index",
 				"text": "记录",
 				"iconPath": "static/icons/challenge.png",
 				"selectedIconPath": "static/icons/challenge-active.png"

@@ -483,7 +483,7 @@ const handleLikeChallenge = (challengeId: number) => {
 
 const handleJoinChallenge = (challengeId: number) => {
   uni.navigateTo({
-    url: `/pages/challenge-square/index?projectId=${challengeId}`,
+    url: `/pages/challenge-detail/index?projectId=${challengeId}`,
   });
 };
 

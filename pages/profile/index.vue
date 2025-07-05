@@ -172,7 +172,7 @@ const navigateTo = (url: string) => {
   // 判断是否为tabBar页面
   const tabBarPages = [
     '/pages/index/index',
-    '/pages/challenge-square/index',
+    '/pages/challenge-detail/index',
     '/pages/my-sports/index',
     '/pages/profile/index'
   ]

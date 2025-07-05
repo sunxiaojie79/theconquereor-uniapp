@@ -243,7 +243,7 @@ const goHome = () => {
 
 const startNewChallenge = () => {
   uni.switchTab({
-    url: '/pages/challenge-square/index'
+    url: '/pages/challenge-detail/index'
   })
 }
 

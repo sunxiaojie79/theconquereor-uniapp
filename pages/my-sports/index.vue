@@ -26,7 +26,7 @@
     <view class="challenges-section">
       <view class="section-header">
         <text class="section-title">挑战进度</text>
-        <text class="view-all" @click="navigateTo('/pages/challenge-square/index')">查看全部</text>
+        <text class="view-all" @click="navigateTo('/pages/challenge-detail/index')">查看全部</text>
       </view>
       <view class="challenge-progress-list">
         <view 
@@ -199,7 +199,7 @@ const navigateTo = (url: string) => {
   // 判断是否为tabBar页面
   const tabBarPages = [
     '/pages/index/index',
-    '/pages/challenge-square/index',
+    '/pages/challenge-detail/index',
     '/pages/my-sports/index',
     '/pages/profile/index'
   ]

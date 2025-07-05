@@ -278,7 +278,7 @@ const activeChallenges = computed(() => challengeStore.activeChallenges);
 const navigateTo = (url: string) => {
   const tabBarPages = [
     "/pages/index/index",
-    "/pages/challenge-square/index",
+    "/pages/challenge-detail/index",
     "/pages/my-sports/index",
     "/pages/profile/index",
   ];
@@ -298,7 +298,7 @@ const handleLikeProject = (projectId: number) => {
 };
 
 const handleJoinProject = (projectId: number) => {
-  navigateTo(`/pages/challenge-square/index?projectId=${projectId}`);
+  navigateTo(`/pages/challenge-detail/index?projectId=${projectId}`);
 };
 
 const handleCardClick = (projectId: number) => {
