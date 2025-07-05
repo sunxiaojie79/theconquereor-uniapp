@@ -7,6 +7,12 @@
         :src="challengeDetail.image"
         mode="aspectFill"
       ></image>
+      <view class="navbar-content">
+        <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
+          <view class="navbar-left" @click="goBack">
+            <image class="back-icon" src="/static/arrow-left.png" mode="aspectFill"></image>
+          </view>
+      </view>
       <view
         class="like-btn"
         :class="{ liked: challengeDetail.isLiked }"
@@ -62,6 +68,8 @@
         </view>
       </view>
     </view>
+    <!-- 底部安全区域 -->
+    <view class="safe-area-bottom" :style="{ height: safeAreaBottom + 'px' }"></view>
   </view>
 </template>
 
@@ -70,6 +78,8 @@ import { ref, onMounted } from "vue";
 
 // 页面参数
 const challengeId = ref("");
+const statusBarHeight = ref(44)
+const safeAreaBottom = ref(34)
 
 // 挑战详情数据
 const challengeDetail = ref({
@@ -166,9 +176,15 @@ const handleBuyProduct = (productId: number) => {
     url: `/pages/order-detail/index?productId=${productId}`,
   });
 };
-
+// 获取系统信息
+const getSystemInfo = () => {
+  const systemInfo = uni.getSystemInfoSync()
+  statusBarHeight.value = systemInfo.statusBarHeight || 44
+  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34
+}
 // 获取页面参数
 onMounted(() => {
+  getSystemInfo()
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1] as any;
 
@@ -204,7 +220,29 @@ const loadChallengeDetail = () => {
   width: 750rpx;
   overflow: hidden;
 }
+.navbar-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
 
+.status-bar {
+  width: 100%;
+}
+
+
+.navbar-left {
+  margin-left: 32rpx;
+  margin-top: 20rpx;
+}
+
+.back-icon {
+  height: 48rpx;
+  width: 24rpx;
+}
 .hero-image {
   width: 100%;
   height: 100%;
@@ -260,7 +298,6 @@ const loadChallengeDetail = () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24rpx;
-  margin-bottom: 40rpx;
 }
 
 .product-card {
@@ -314,5 +351,9 @@ const loadChallengeDetail = () => {
   font-size: 34rpx;
   font-weight: 500;
   color: #242a36;
+}
+/* 底部安全区域 */
+.safe-area-bottom {
+  width: 100%;
 }
 </style>

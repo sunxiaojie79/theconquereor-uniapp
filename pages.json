@@ -125,6 +125,12 @@
 				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
+		},
+		{
+			"path": "pages/content-detail/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
 	"easycom": {

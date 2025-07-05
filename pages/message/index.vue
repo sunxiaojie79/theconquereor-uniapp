@@ -8,7 +8,6 @@
           :key="item.id"
           :index="index"
         >
-          <!-- 普通消息 -->
           <view class="message-item" @click="readMessage(item)">
             <view class="message-content">
               <view class="message-left">
@@ -70,7 +69,7 @@ const initMessageList = () => {
       id: 2,
       type: "view",
       avatar: "/static/avatars/friend1.png",
-      content: "这是一段消息内容文案内容文案内容...",
+      content: "这是一段风景消息内容文案内容文案内容...",
       time: "2025.06.11 12:02",
       isRead: false,
     },
@@ -202,6 +201,14 @@ const confirmDelete = () => {
 
 // 读取消息
 const readMessage = (item: any) => {
+  // 如果是view类型，跳转到内容详情页面
+  if (item.type === 'view') {
+    uni.navigateTo({
+      url: '/pages/content-detail/index'
+    });
+    return;
+  }
+  
   if (!item.isRead) {
     item.isRead = true;
     uni.showToast({
