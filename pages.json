@@ -94,6 +94,14 @@
 				"navigationBarTitleText": "全部挑战",
 				"navigationBarBackgroundColor": "#242A36"
 			}
+		},
+		{
+			"path": "pages/order-detail/index",
+			"style": {
+				"navigationBarTitleText": "交易详情",
+				"navigationBarBackgroundColor": "#242A36",
+				"navigationBarTextStyle": "white"
+			}
 		}
 	],
 	"globalStyle": {

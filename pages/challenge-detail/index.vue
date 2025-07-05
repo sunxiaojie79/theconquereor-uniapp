@@ -162,11 +162,8 @@ const handleProductClick = (productId: number) => {
 };
 
 const handleBuyProduct = (productId: number) => {
-  console.log("购买商品:", productId);
-  uni.showToast({
-    title: "购买成功！",
-    icon: "success",
-    duration: 2000,
+  uni.navigateTo({
+    url: `/pages/order-detail/index?productId=${productId}`,
   });
 };
 
