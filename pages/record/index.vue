@@ -246,9 +246,8 @@ const switchTab = (tab: string) => {
 }
 
 const addSportsData = () => {
-  uni.showToast({
-    title: '功能开发中',
-    icon: 'none'
+  uni.navigateTo({
+    url: '/pages/add-sports-data/index'
   })
 }
 

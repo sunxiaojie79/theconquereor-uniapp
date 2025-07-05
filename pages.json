@@ -111,6 +111,14 @@
 			}
 		},
 		{
+			"path": "pages/add-sports-data/index",
+			"style": {
+				"navigationBarTitleText": "添加运动数据",
+				"navigationBarBackgroundColor": "#242A36",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
 			"path": "pages/address-list/index",
 			"style": {
 				"navigationBarTitleText": "收货地址",
