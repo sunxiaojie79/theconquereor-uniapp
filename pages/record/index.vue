@@ -114,6 +114,17 @@
       @confirm="confirmDelete"
       @cancel="showDeleteModal = false"
     />
+
+    <!-- 添加新授权弹窗 -->
+    <ConfirmDialog
+      v-model:visible="showAddAuthModal"
+      title="授权绑定微信运动"
+      message=""
+      confirm-text="确定"
+      cancel-text="取消"
+      @confirm="confirmAddAuth"
+      @cancel="showAddAuthModal = false"
+    />
   </view>
 </template>
 
@@ -126,6 +137,7 @@ const activeTab = ref('add')
 const sportsDataList = ref([])
 const showDeleteModal = ref(false)
 const deleteIndex = ref(-1)
+const showAddAuthModal = ref(false)
 
 // 初始化运动数据
 const initSportsData = () => {
@@ -252,10 +264,7 @@ const addSportsData = () => {
 }
 
 const addNewAuth = () => {
-  uni.showToast({
-    title: '功能开发中',
-    icon: 'none'
-  })
+  showAddAuthModal.value = true
 }
 
 // 删除运动数据
@@ -277,6 +286,13 @@ const confirmDelete = () => {
   
   showDeleteModal.value = false
   deleteIndex.value = -1
+}
+
+const confirmAddAuth = () => {
+  uni.showToast({
+    title: '授权成功',
+    icon: 'success'
+  })
 }
 
 onMounted(() => {
