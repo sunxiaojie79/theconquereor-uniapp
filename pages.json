@@ -110,8 +110,22 @@
 				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
+		},
+		{
+			"path": "pages/address-list/index",
+			"style": {
+				"navigationBarTitleText": "收货地址",
+				"navigationBarBackgroundColor": "#242A36",
+				"navigationBarTextStyle": "white"
+			}
 		}
 	],
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+		}
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "1",

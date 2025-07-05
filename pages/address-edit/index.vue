@@ -57,7 +57,7 @@
         <input
           class="input"
           v-model="formData.address"
-          placeholder="默认一个挑战"
+          placeholder="请输入详细地址"
           placeholder-style="color: #C9CDD4;"
         />
       </view>
@@ -176,19 +176,19 @@ onMounted(() => {
     addressId.value = currentPage.options.id;
     isEdit.value = true;
     // 这里可以根据 addressId 加载现有地址数据
-    loadAddressData();
+    loadAddressData(currentPage.options);
   }
 });
 
-const loadAddressData = () => {
-  // 模拟加载现有地址数据
-  if (isEdit.value) {
+const loadAddressData = (options: any) => {
+  // 从URL参数加载地址数据
+  if (isEdit.value && options) {
     formData.value = {
-      recipient: '张三',
-      phone: '13612345678',
-      region: ['广东省', '广州市', '黄埔区'],
-      address: '这是一个算详细地址详情',
-      isDefault: true
+      recipient: options.name || '',
+      phone: options.phone || '',
+      region: options.region ? options.region.split(' ') : [],
+      address: options.detail || '',
+      isDefault: options.isDefault === 'true'
     };
   }
 };

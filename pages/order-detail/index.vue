@@ -61,16 +61,16 @@ const productInfo = ref({
 
 // 方法
 const handleCreateAddress = () => {
-  // 跳转到地址创建页面
+  // 跳转到地址列表页面
   uni.navigateTo({
-    url: '/pages/address-edit/index'
+    url: '/pages/address-list/index'
   });
 };
 
 const handleEditAddress = () => {
-  // 跳转到地址编辑页面
+  // 跳转到地址列表页面
   uni.navigateTo({
-    url: '/pages/address-edit/index?id=1'
+    url: '/pages/address-list/index'
   });
 };
 
