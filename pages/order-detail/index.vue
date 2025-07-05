@@ -61,20 +61,16 @@ const productInfo = ref({
 
 // 方法
 const handleCreateAddress = () => {
-  // 这里可以跳转到创建地址页面，或者直接设置地址
-  hasAddress.value = true;
-  uni.showToast({
-    title: '地址创建成功',
-    icon: 'success',
-    duration: 1500
+  // 跳转到地址创建页面
+  uni.navigateTo({
+    url: '/pages/address-edit/index'
   });
 };
 
 const handleEditAddress = () => {
-  uni.showToast({
-    title: '编辑地址',
-    icon: 'none',
-    duration: 1500
+  // 跳转到地址编辑页面
+  uni.navigateTo({
+    url: '/pages/address-edit/index?id=1'
   });
 };
 
@@ -100,14 +96,7 @@ const handlePayment = () => {
   }, 2000);
 };
 
-const toggleAddressState = () => {
-  hasAddress.value = !hasAddress.value;
-  uni.showToast({
-    title: hasAddress.value ? '切换到有地址状态' : '切换到无地址状态',
-    icon: 'none',
-    duration: 1500
-  });
-};
+
 
 // 获取页面参数
 onMounted(() => {
@@ -121,8 +110,6 @@ onMounted(() => {
     // 这里可以根据 productId 加载对应的商品信息
   }
   
-  // 模拟：50% 概率显示有地址状态
-  // hasAddress.value = Math.random() > 0.5;
 });
 </script>
 
@@ -274,11 +261,7 @@ onMounted(() => {
   text-align: right;
 }
 
-.helper-text {
-  font-size: 32rpx;
-  color: #ffffff;
-  font-weight: 600;
-}
+
 
 /* 底部支付按钮 */
 .pay-section {

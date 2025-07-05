@@ -102,6 +102,14 @@
 				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
+		},
+		{
+			"path": "pages/address-edit/index",
+			"style": {
+				"navigationBarTitleText": "编辑地址",
+				"navigationBarBackgroundColor": "#242A36",
+				"navigationBarTextStyle": "white"
+			}
 		}
 	],
 	"globalStyle": {
