@@ -58,20 +58,187 @@
 
     <!-- 运动数据页面 -->
     <view v-if="activeTab === 'data'" class="sports-data-content">
-      <view class="data-empty">
-        <image class="empty-icon" src="/static/icons/empty.png" mode="aspectFill"></image>
-        <text class="empty-text">暂无运动数据</text>
-        <text class="empty-desc">开始记录您的运动数据吧</text>
+      <view class="sports-data-list">
+        <uni-swipe-action>
+          <uni-swipe-action-item
+            v-for="(item, index) in sportsDataList"
+            :key="item.id"
+            :index="index"
+          >
+            <view class="sports-data-item">
+              <view class="item-content">
+                <view class="item-left">
+                  <view class="sport-icon">
+                    <image class="icon-image" src="/static/sports/running.png" mode="aspectFill"></image>
+                  </view>
+                </view>
+                <view class="item-center">
+                  <view class="distance-info">
+                    <text class="distance-value">{{ item.distance }}</text>
+                    <text class="distance-unit">km</text>
+                  </view>
+                  <view class="source-info">
+                    <image v-if="item.source === 'wechat'" class="source-icon" src="/static/wechat2.png" mode="aspectFill"></image>
+                    <text class="source-text">{{ item.sourceText }}</text>
+                  </view>
+                </view>
+                <view class="item-right">
+                  <text class="date-text">{{ item.date }}</text>
+                </view>
+              </view>
+            </view>
+            <template v-slot:right>
+              <view class="delete-btn-container">
+                <view class="delete-btn">
+                  <image
+                    class="delete-icon"
+                    src="/static/delete.png"
+                    mode="aspectFill"
+                    @click.stop="deleteSportsData(index)"
+                  ></image>
+                </view>
+              </view>
+            </template>
+          </uni-swipe-action-item>
+        </uni-swipe-action>
       </view>
     </view>
+
+    <!-- 删除确认弹窗 -->
+    <ConfirmDialog
+      v-model:visible="showDeleteModal"
+      title="删除运动数据"
+      message="确定要删除这条运动数据吗？删除后无法恢复。"
+      confirm-text="删除"
+      cancel-text="取消"
+      @confirm="confirmDelete"
+      @cancel="showDeleteModal = false"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
 // 响应式数据
 const activeTab = ref('add')
+const sportsDataList = ref([])
+const showDeleteModal = ref(false)
+const deleteIndex = ref(-1)
+
+// 初始化运动数据
+const initSportsData = () => {
+  const mockData = [
+    {
+      id: 1,
+      distance: '78.121',
+      source: 'manual',
+      sourceText: '手动录入',
+      date: '2025.06.11'
+    },
+    {
+      id: 2,
+      distance: '78.121',
+      source: 'manual',
+      sourceText: '手动录入',
+      date: '2025.06.11'
+    },
+    {
+      id: 3,
+      distance: '78.121',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.11'
+    },
+    {
+      id: 4,
+      distance: '78.121',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.11'
+    },
+    {
+      id: 5,
+      distance: '78.121',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.11'
+    },
+    {
+      id: 6,
+      distance: '78.121',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.11'
+    },
+    {
+      id: 7,
+      distance: '78.121',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.11'
+    },
+    {
+      id: 8,
+      distance: '45.256',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.10'
+    },
+    {
+      id: 9,
+      distance: '32.789',
+      source: 'manual',
+      sourceText: '手动录入',
+      date: '2025.06.10'
+    },
+    {
+      id: 10,
+      distance: '67.543',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.09'
+    },
+    {
+      id: 11,
+      distance: '89.012',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.09'
+    },
+    {
+      id: 12,
+      distance: '23.456',
+      source: 'manual',
+      sourceText: '手动录入',
+      date: '2025.06.08'
+    },
+    {
+      id: 13,
+      distance: '56.789',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.08'
+    },
+    {
+      id: 14,
+      distance: '41.234',
+      source: 'wechat',
+      sourceText: '来自微信运动',
+      date: '2025.06.07'
+    },
+    {
+      id: 15,
+      distance: '72.901',
+      source: 'manual',
+      sourceText: '手动录入',
+      date: '2025.06.07'
+    }
+  ]
+  
+  sportsDataList.value = mockData
+}
 
 // 方法
 const switchTab = (tab: string) => {
@@ -92,8 +259,30 @@ const addNewAuth = () => {
   })
 }
 
+// 删除运动数据
+const deleteSportsData = (index: number) => {
+  deleteIndex.value = index
+  showDeleteModal.value = true
+}
+
+// 确认删除
+const confirmDelete = () => {
+  if (deleteIndex.value !== -1) {
+    sportsDataList.value.splice(deleteIndex.value, 1)
+    
+    uni.showToast({
+      title: '删除成功',
+      icon: 'success'
+    })
+  }
+  
+  showDeleteModal.value = false
+  deleteIndex.value = -1
+}
+
 onMounted(() => {
   console.log('记录页面加载完成')
+  initSportsData()
 })
 </script>
 
@@ -259,7 +448,120 @@ background: #313743;
 
 /* 运动数据页面内容 */
 .sports-data-content {
-  padding: 100rpx 30rpx;
+  padding: 48rpx 32rpx;
+}
+
+.sports-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.sports-data-item {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+}
+
+.item-left {
+  margin-right: 24rpx;
+}
+
+.sport-icon {
+  width: 88rpx;
+  height: 88rpx;
+  background-color: #fadb47;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-image {
+  width: 64rpx;
+  height: 64rpx;
+}
+
+.item-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.distance-info {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.distance-value {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #7B412D;;
+}
+
+.distance-unit {
+  font-size: 24rpx;
+  color: #7B412D;;
+}
+
+.source-info {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.source-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.source-text {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.item-right {
+  
+}
+
+.date-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+/* 删除按钮样式 */
+.delete-btn-container {
+  width: 100rpx;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F02525;
+  color: #fff;
+  border-radius: 50%;
+  border: 1rpx solid rgba(0, 0, 0, 0.09);
+}
+
+.delete-icon {
+  width: 32rpx;
+  height: 32rpx;
 }
 
 .data-empty {
@@ -268,6 +570,7 @@ background: #313743;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 100rpx 0;
 }
 
 .empty-icon {
