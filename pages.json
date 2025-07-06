@@ -45,10 +45,10 @@
 			}
 		},
 		{
-			"path": "pages/team-challenge/index",
+			"path": "pages/order-list/index",
 			"style": {
-				"navigationBarTitleText": "组队挑战",
-				"navigationBarBackgroundColor": "#165DFF",
+				"navigationBarTitleText": "商品订单",
+				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
 		},

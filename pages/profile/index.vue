@@ -311,7 +311,7 @@ const handleAuthAction = () => {
 
 const handleOrder = () => {
   uni.navigateTo({
-    url: "/pages/reward-store/index",
+    url: "/pages/order-list/index",
   });
 };
 
