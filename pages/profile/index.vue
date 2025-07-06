@@ -209,9 +209,8 @@ const switchTab = (tab: string) => {
 
 // 导航方法
 const navigateToSettings = () => {
-  uni.showToast({
-    title: "设置功能开发中",
-    icon: "none",
+  uni.navigateTo({
+    url: "/pages/settings/index",
   });
 };
 

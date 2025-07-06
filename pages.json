@@ -60,11 +60,10 @@
 			}
 		},
 		{
-			"path": "pages/challenge-success/index",
+			"path": "pages/settings/index",
 			"style": {
-				"navigationBarTitleText": "挑战成功",
-				"navigationBarBackgroundColor": "#165DFF",
-				"navigationBarTextStyle": "white"
+				"navigationBarTitleText": "设置",
+				"navigationBarBackgroundColor": "#242A36"
 			}
 		},
 		{
