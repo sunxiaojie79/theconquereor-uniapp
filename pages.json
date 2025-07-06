@@ -127,7 +127,13 @@
 			}
 		},
 		{
-			"path": "pages/content-detail/index",
+			"path": "pages/message-detail-view/index",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/message-detail-postcard/index",
 			"style": {
 				"navigationStyle": "custom"
 			}

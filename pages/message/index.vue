@@ -204,7 +204,14 @@ const readMessage = (item: any) => {
   // 如果是view类型，跳转到内容详情页面
   if (item.type === 'view') {
     uni.navigateTo({
-      url: '/pages/content-detail/index'
+      url: '/pages/message-detail-view/index'
+    });
+    return;
+  }
+  // 如果是postCard类型，跳转到内容详情页面
+  if (item.type === 'postCard') {
+    uni.navigateTo({
+      url: '/pages/message-detail-postcard/index'
     });
     return;
   }
