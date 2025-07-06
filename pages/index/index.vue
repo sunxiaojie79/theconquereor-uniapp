@@ -92,7 +92,6 @@
           :project="project"
           @like="handleLikeProject"
           @join="handleJoinProject"
-          @click="handleCardClick"
         />
       </view>
 
@@ -301,9 +300,6 @@ const handleJoinProject = (projectId: number) => {
   navigateTo(`/pages/challenge-detail/index?projectId=${projectId}`);
 };
 
-const handleCardClick = (projectId: number) => {
-  navigateTo(`/pages/route-detail/index?id=${projectId}`);
-};
 
 const submitChallengeCode = () => {
   if (!challengeCode.value.trim()) {

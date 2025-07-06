@@ -1,7 +1,6 @@
 <template>
   <view 
     class="project-card"
-    @click="handleCardClick"
   >
     <view class="card-header">
       <image
@@ -57,7 +56,6 @@ interface Props {
 interface Emits {
   (e: 'like', projectId: number): void
   (e: 'join', projectId: number): void
-  (e: 'click', projectId: number): void
 }
 
 const props = defineProps<Props>()
@@ -69,10 +67,6 @@ const handleLikeClick = () => {
 
 const handleJoinClick = () => {
   emit('join', props.project.id)
-}
-
-const handleCardClick = () => {
-  emit('click', props.project.id)
 }
 </script>
 

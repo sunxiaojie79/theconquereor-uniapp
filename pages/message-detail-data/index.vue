@@ -50,11 +50,25 @@
         </view>
       </view>
     </view>
+    <!-- 删除确认弹框 -->
+    <ConfirmDialog
+      v-model:visible="showDeleteModal"
+      title="删除消息"
+      message="确定要删除这条消息吗？删除后无法恢复。"
+      confirm-text="删除"
+      cancel-text="取消"
+      @confirm="confirmDelete"
+      @cancel="showDeleteModal = false"
+    />
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
+
+const showDeleteModal = ref(false);
+const deleteIndex = ref(-1);
 
 // 响应式数据
 const dataList = ref<any[]>([]);
@@ -121,19 +135,20 @@ const initDataList = () => {
 
 // 删除数据
 const deleteData = (index: number) => {
-  uni.showModal({
-    title: "删除确认",
-    content: "确定要删除这条运动数据吗？",
-    success: (res) => {
-      if (res.confirm) {
-        dataList.value.splice(index, 1);
-        uni.showToast({
-          title: "删除成功",
-          icon: "success",
-        });
-      }
-    },
-  });
+  deleteIndex.value = index;
+  showDeleteModal.value = true;
+};
+
+const confirmDelete = () => {
+  if (deleteIndex.value !== -1) {
+    dataList.value.splice(deleteIndex.value, 1);
+    uni.showToast({
+      title: "删除成功",
+      icon: "success",
+    });
+  }
+  showDeleteModal.value = false;
+  deleteIndex.value = -1;
 };
 
 onMounted(() => {
