@@ -23,8 +23,8 @@
 		{
 			"path": "pages/profile/index",
 			"style": {
-				"navigationBarTitleText": "个人中心",
-				"navigationBarBackgroundColor": "#165DFF",
+				"navigationBarTitleText": "CONQUEROR",
+				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
 		},
