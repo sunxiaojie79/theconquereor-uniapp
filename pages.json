@@ -137,6 +137,14 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/message-detail-data/index",
+			"style": {
+				"navigationBarTitleText": "运动数据",
+				"navigationBarBackgroundColor": "#242A36",
+				"navigationBarTextStyle": "white"
+			}
 		}
 	],
 	"easycom": {

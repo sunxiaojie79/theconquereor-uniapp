@@ -206,16 +206,16 @@ const readMessage = (item: any) => {
     uni.navigateTo({
       url: '/pages/message-detail-view/index'
     });
-    return;
-  }
-  // 如果是postCard类型，跳转到内容详情页面
-  if (item.type === 'postCard') {
+  } else if (item.type === 'postCard') {
     uni.navigateTo({
       url: '/pages/message-detail-postcard/index'
     });
-    return;
+  } else if (item.type === 'data') {
+    uni.navigateTo({
+      url: '/pages/message-detail-data/index'
+    });
   }
-  
+
   if (!item.isRead) {
     item.isRead = true;
     uni.showToast({
