@@ -37,10 +37,10 @@
 			}
 		},
 		{
-			"path": "pages/social-ranking/index",
+			"path": "pages/join-challenge/index",
 			"style": {
-				"navigationBarTitleText": "好友排名",
-				"navigationBarBackgroundColor": "#165DFF",
+				"navigationBarTitleText": "加入挑战",
+				"navigationBarBackgroundColor": "#242A36",
 				"navigationBarTextStyle": "white"
 			}
 		},

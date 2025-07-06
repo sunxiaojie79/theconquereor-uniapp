@@ -316,9 +316,8 @@ const handleOrder = () => {
 };
 
 const handleJoin = () => {
-  uni.showToast({
-    title: "加入功能开发中",
-    icon: "none",
+  uni.navigateTo({
+    url: "/pages/join-challenge/index",
   });
 };
 
