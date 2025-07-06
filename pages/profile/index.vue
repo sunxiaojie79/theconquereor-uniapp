@@ -164,11 +164,11 @@
                 </view>
               </view>
               <view class="sports-progress">
-                <view class="progress-info" style="background: #FADB47;">
+                <view class="progress-info" style="background: #fadb47">
                   <text class="progress-label">本月</text>
                   <text class="progress-value">{{ item.monthDistance }}</text>
                 </view>
-                <view class="progress-info" style="background: #AAAAAA;">
+                <view class="progress-info" style="background: #aaaaaa">
                   <text class="progress-label">本年</text>
                   <text class="progress-value">{{ item.yearDistance }}</text>
                 </view>
@@ -186,6 +186,35 @@
       </view>
     </view>
   </view>
+
+  <!-- 授权弹框 -->
+  <view class="auth-modal" v-if="showAuthModal" @click="closeAuthModal">
+    <view class="auth-content" @click.stop>
+      <view class="auth-header">
+        <text class="auth-title">授权</text>
+      </view>
+      <view class="auth-body">
+        <view class="auth-body-left">
+          <image
+            class="wechat-icon"
+            src="/static/wechat.png"
+            mode="aspectFill"
+          ></image>
+          <text class="auth-status">微信运动</text>
+        </view>
+        <text class="auth-status-text" :style="{ color: isAuthorized ? '#07C160' : '#242A36' }">{{
+          isAuthorized ? "已授权" : "未授权"
+        }}</text>
+      </view>
+      <view class="auth-footer">
+        <view class="auth-btn" @click="handleAuthAction">
+          <text class="auth-btn-text">{{
+            isAuthorized ? "取消授权" : "授权"
+          }}</text>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script setup lang="ts">
@@ -198,6 +227,8 @@ const userStore = useUserStore();
 const currentTab = ref("challenge");
 const challengeList = ref([]);
 const sportsList = ref([]);
+const showAuthModal = ref(false);
+const isAuthorized = ref(false); // 授权状态，这里可以从用户数据中获取
 
 // 计算属性
 const userInfo = computed(() => userStore.userInfo);
@@ -234,10 +265,48 @@ const planNextChallenge = () => {
 
 // 操作按钮事件
 const handleAuth = () => {
-  uni.showToast({
-    title: "授权功能开发中",
-    icon: "none",
-  });
+  // 这里可以从用户数据或本地存储中获取授权状态
+  // 示例：从用户store中获取授权状态
+  // isAuthorized.value = userStore.isWeChatSportAuthorized;
+
+  showAuthModal.value = true;
+};
+
+const closeAuthModal = () => {
+  showAuthModal.value = false;
+};
+
+const handleAuthAction = () => {
+  if (isAuthorized.value) {
+    // 取消授权
+    uni.showModal({
+      title: "取消授权",
+      content: "确定要取消微信运动授权吗？",
+      success: (res) => {
+        if (res.confirm) {
+          isAuthorized.value = false;
+          // 这里可以调用API取消授权
+          // userStore.cancelWeChatSportAuth();
+          uni.showToast({
+            title: "已取消授权",
+            icon: "success",
+          });
+          closeAuthModal();
+        }
+      },
+    });
+  } else {
+    // 授权
+    // 这里可以调用微信运动授权API
+    // 模拟授权成功
+    isAuthorized.value = true;
+    // userStore.authorizeWeChatSport();
+    uni.showToast({
+      title: "授权成功",
+      icon: "success",
+    });
+    closeAuthModal();
+  }
 };
 
 const handleOrder = () => {
@@ -395,7 +464,15 @@ const initSportsList = () => {
 onMounted(() => {
   initChallengeList();
   initSportsList();
-  console.log("我的页面加载完成");
+
+  // 模拟从用户数据中获取授权状态
+  // 这里可以从userStore或本地存储中获取
+  // isAuthorized.value = userStore.isWeChatSportAuthorized;
+
+  // 为了测试目的，随机设置授权状态
+  isAuthorized.value = Math.random() > 0.5;
+
+  console.log("我的页面加载完成", { isAuthorized: isAuthorized.value });
 });
 </script>
 
@@ -860,5 +937,103 @@ onMounted(() => {
   font-size: 34rpx;
   color: #242a36;
   font-weight: 500;
+}
+
+/* 授权弹框样式 */
+.auth-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.auth-content {
+  width: 100%;
+  padding: 48rpx 32rpx;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 24rpx 24rpx 0 0;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.auth-header {
+  text-align: left;
+  margin-bottom: 24rpx;
+}
+
+.auth-title {
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #242a36;
+}
+
+.auth-body {
+  width: 686rpx;
+  height: 112rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  box-sizing: border-box;
+  border-radius: 8rpx;
+  background: #f4f5f9;
+}
+
+.auth-body-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wechat-icon {
+  width: 64rpx;
+  height: 64rpx;
+  margin-right: 16rpx;
+}
+
+.auth-status {
+  font-size: 34rpx;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.auth-status-text {
+  font-size: 34rpx;
+  color: #242A36;
+}
+
+.auth-footer {
+  margin-top: 80rpx;
+}
+
+.auth-btn {
+  width: 100%;
+  height: 88rpx;
+  background: #fadb47;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-btn-text {
+  font-size: 32rpx;
+  color: #242a36;
+  font-weight: 600;
 }
 </style>
