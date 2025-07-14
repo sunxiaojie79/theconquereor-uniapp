@@ -281,6 +281,20 @@ const tempNickname = ref("");
 // 计算属性
 const userInfo = computed(() => userStore.userInfo);
 
+// 获取用户信息
+const getUserInfo = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/info",
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    // data: {
+    //   userId: uni.getStorageSync("userInfo").id,
+    // },
+  });
+  console.log("🚀 ~ getUserInfo ~ res:", res);
+};
 // 头像选择处理
 const onChooseAvatar = (e: any) => {
   const { avatarUrl } = e.detail;
@@ -554,7 +568,7 @@ const initSportsList = () => {
 onMounted(() => {
   initChallengeList();
   initSportsList();
-
+  getUserInfo();
   // 初始化昵称
   tempNickname.value = userStore.userInfo.nickname;
 
