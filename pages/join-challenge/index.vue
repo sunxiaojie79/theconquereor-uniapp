@@ -32,8 +32,8 @@
               mode="aspectFill"
             ></image>
             <view class="challenge-info-right">
-              <text class="challenge-name">{{ item.name }}</text>
-              <text class="bind-date">绑定日期：{{ item.bindDate }}</text>
+              <text class="challenge-name">{{ item.challengeTitle }}</text>
+              <text class="bind-date">绑定日期：{{ item.createTime }}</text>
             </view>
           </view>
 
@@ -118,7 +118,7 @@ const copyCode = (code: string) => {
 };
 
 // 初始化数据
-const initChallengeCodeList = () => {
+const initChallengeCodeList = async () => {
   const mockData = [];
   const challengeNames = [
     "挑战名称",
@@ -160,8 +160,20 @@ const initChallengeCodeList = () => {
       code: "DGDFGDFHFGDSFDGHFDG",
     });
   }
-
-  challengeCodeList.value = mockData;
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      userId: uni.getStorageSync("userInfo").id,
+    },
+  });
+  console.log("🚀 ~ initChallengeCodeList ~ res:", res);
+  if (res.data.code === 200) {
+    challengeCodeList.value = res.data.data;
+  }
 };
 
 onMounted(() => {
