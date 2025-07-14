@@ -308,6 +308,21 @@ const cancelCollection = async (id) => {
   });
   return res.data;
 };
+// 获取我的收货地址
+const getMyAddress = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/address",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      id: "1944668554736496642",
+    },
+  });
+  console.log("🚀 ~ getMyAddress ~ res:", res);
+  return res.data;
+};
 // 方法
 const navigateTo = (url: string) => {
   const tabBarPages = [
@@ -415,6 +430,7 @@ const loginWX = async () => {
               uni.setStorageSync("token", res.data.data.token);
               getChallengeList();
               getMyChallenges(1, false); // 首次加载第1页数据
+              getMyAddress();
             }
           });
       } else {
