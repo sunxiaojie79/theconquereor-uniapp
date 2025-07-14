@@ -1,11 +1,9 @@
 <template>
-  <view 
-    class="project-card"
-  >
+  <view class="project-card">
     <view class="card-header">
       <image
         class="project-image"
-        :src="project.image"
+        :src="project.productCover"
         mode="aspectFill"
       ></image>
       <view
@@ -28,46 +26,42 @@
       </view>
     </view>
     <view class="card-content">
-      <text class="project-title">{{ project.title }}</text>
-      <text class="project-desc">{{ project.description }}</text>
-      <button
-        class="join-btn"
-        @click.stop="handleJoinClick"
-      >
-        加入挑战
-      </button>
+      <text class="project-title">{{ project.challengeTitle }}</text>
+      <text class="project-desc">{{ project.subtitle }}</text>
+      <button class="join-btn" @click.stop="handleJoinClick">加入挑战</button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-interface Project {
-  id: number
-  title: string
-  description: string
-  image: string
-  isLiked: boolean
+export interface Project {
+  id: number;
+  challengeTitle: string;
+  subtitle: string;
+  productDescription: string;
+  productCover: string;
+  isLiked: boolean;
 }
 
 interface Props {
-  project: Project
+  project: Project;
 }
 
 interface Emits {
-  (e: 'like', projectId: number): void
-  (e: 'join', projectId: number): void
+  (e: "like", projectId: number): void;
+  (e: "join", projectId: number): void;
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<Emits>()
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
 const handleLikeClick = () => {
-  emit('like', props.project.id)
-}
+  emit("like", props.project.id);
+};
 
 const handleJoinClick = () => {
-  emit('join', props.project.id)
-}
+  emit("join", props.project.id);
+};
 </script>
 
 <style lang="scss" scoped>
@@ -161,4 +155,4 @@ const handleJoinClick = () => {
   border: none;
   border-radius: 8rpx;
 }
-</style> 
+</style>

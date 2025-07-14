@@ -41,6 +41,7 @@
         class="challenge-scroll"
         scroll-x="true"
         show-scrollbar="false"
+        @scroll="handleScroll"
       >
         <view
           v-for="challenge in myChallenges"
@@ -54,7 +55,7 @@
             mode="aspectFill"
           ></image>
           <view class="challenge-info">
-            <text class="challenge-title">{{ challenge.title }}</text>
+            <text class="challenge-title">{{ challenge.challengeTitle }}</text>
             <view class="challenge-stats">
               <image
                 class="distance-icon"
@@ -95,7 +96,12 @@
         />
       </view>
 
-      <button class="view-all-btn" @click="navigateTo('/pages/challenge-list/index')">查看全部挑战项目</button>
+      <button
+        class="view-all-btn"
+        @click="navigateTo('/pages/challenge-list/index')"
+      >
+        查看全部挑战项目
+      </button>
     </view>
 
     <!-- 常见问题解答 -->
@@ -147,12 +153,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useUserStore, useChallengeStore } from "@/stores";
+import { onMounted, ref } from "vue";
+import { useUserStore } from "@/stores";
 import ChallengeCard from "@/components/challenge-card/index.vue";
+import { Project } from "@/components/challenge-card/index.vue";
 
 const userStore = useUserStore();
-const challengeStore = useChallengeStore();
 
 // 挑战口令相关
 const challengeCode = ref("");
@@ -160,7 +166,7 @@ const showToast = ref(false);
 const toastType = ref("success"); // success | error
 
 // mock数据
-const myChallenges = ref([
+const myChallenges = ref<any[]>([
   {
     id: 1,
     title: "万里长城徒步挑战",
@@ -205,36 +211,7 @@ const myChallenges = ref([
   },
 ]);
 
-const challengeProjects = ref([
-  {
-    id: 1,
-    title: "万里长城征途",
-    description: "踏上古老长城，感受千年历史的厚重",
-    image: "/static/challenges/great-wall.jpg",
-    isLiked: false,
-  },
-  {
-    id: 2,
-    title: "撒哈拉沙漠探索",
-    description: "穿越金色沙海，挑战极限耐力",
-    image: "/static/challenges/sahara.jpg",
-    isLiked: true,
-  },
-  {
-    id: 3,
-    title: "亚马逊雨林冒险",
-    description: "深入神秘雨林，探寻自然奥秘",
-    image: "/static/challenges/amazon.jpg",
-    isLiked: false,
-  },
-  {
-    id: 4,
-    title: "丝绸之路重走",
-    description: "重走古丝路，体验商旅文化",
-    image: "/static/challenges/silk-road.jpg",
-    isLiked: false,
-  },
-]);
+const challengeProjects = ref<Project[]>([]);
 
 const faqList = ref([
   {
@@ -269,10 +246,47 @@ const faqList = ref([
   },
 ]);
 
-// 计算属性
-const userInfo = computed(() => userStore.userInfo);
-const activeChallenges = computed(() => challengeStore.activeChallenges);
-
+// 接口
+const getMyChallenges = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+    },
+  });
+  console.log("🚀 ~ getMyChallenges ~ res:", res);
+  if (res.data.code === 200) {
+    myChallenges.value = res.data.rows;
+  }
+  return res.data;
+};
+const getChallengeList = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+    },
+  });
+  console.log("🚀 ~ getChallengeList ~ res:", res);
+  if (res.data.code === 200) {
+    challengeProjects.value = res.data.rows;
+  }
+  return res.data;
+};
 // 方法
 const navigateTo = (url: string) => {
   const tabBarPages = [
@@ -289,6 +303,9 @@ const navigateTo = (url: string) => {
   }
 };
 
+const handleScroll = (e: any) => {
+  console.log("🚀 ~ handleScroll ~ e:", e);
+};
 const handleLikeProject = (projectId: number) => {
   const project = challengeProjects.value.find((p) => p.id === projectId);
   if (project) {
@@ -299,7 +316,6 @@ const handleLikeProject = (projectId: number) => {
 const handleJoinProject = (projectId: number) => {
   navigateTo(`/pages/challenge-detail/index?projectId=${projectId}`);
 };
-
 
 const submitChallengeCode = () => {
   if (!challengeCode.value.trim()) {
@@ -337,11 +353,40 @@ const handleFaqClick = (faqId: number) => {
   });
 };
 
-onMounted(() => {
+const loginWX = async () => {
+  uni.login({
+    success(res) {
+      if (res.code) {
+        //发起网络请求
+        uni
+          .request({
+            url: "http://113.45.219.231:8005/prod-api/wx/user/login",
+            data: {
+              code: res.code,
+            },
+          })
+          .then((res: any) => {
+            console.log("🚀 ~ handleLogin ~ res:", res);
+            if (res.data.code === 200) {
+              userStore.updateUserInfo(res.data.data.userInfo);
+              userStore.updateToken(res.data.data.token);
+              uni.setStorageSync("token", res.data.data.token);
+              getChallengeList();
+              getMyChallenges();
+            }
+          });
+      } else {
+        console.log("登录失败！" + res.errMsg);
+      }
+    },
+  });
+};
+onMounted(async () => {
   console.log("首页加载完成");
   console.log("我的挑战数量:", myChallenges.value.length);
   console.log("挑战项目数量:", challengeProjects.value.length);
   console.log("FAQ数量:", faqList.value.length);
+  await loginWX();
 });
 </script>
 
@@ -377,7 +422,7 @@ onMounted(() => {
   width: 686rpx;
   margin: 30rpx;
   box-sizing: border-box;
-  background: #FADB47;
+  background: #fadb47;
   border-radius: 16rpx;
   padding: 30rpx;
   .section-title {
@@ -461,6 +506,7 @@ onMounted(() => {
   margin-right: 20rpx;
   border-radius: 16rpx;
   background: #ffffff;
+  box-sizing: border-box;
 }
 
 .challenge-avatar {
@@ -489,12 +535,13 @@ onMounted(() => {
   width: 270rpx;
   height: 48rpx;
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   align-items: center;
   padding: 0rpx;
   .distance-icon {
     width: 32rpx;
     height: 32rpx;
+    margin-right: 16rpx;
   }
 }
 
@@ -507,6 +554,7 @@ onMounted(() => {
   font-size: 24rpx;
   font-weight: normal;
   color: #7b412d;
+  margin-right: 16rpx;
 }
 
 .progress {

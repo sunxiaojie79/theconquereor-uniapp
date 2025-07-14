@@ -3,12 +3,21 @@
     <!-- 用户信息区域 -->
     <view class="user-section">
       <view class="user-info">
-        <image
-          class="user-avatar"
-          :src="userInfo.avatar"
-          mode="aspectFill"
-        ></image>
-        <text class="user-name">{{ userInfo.nickname }}</text>
+        <button
+          class="avatar-button"
+          open-type="chooseAvatar"
+          @chooseavatar="onChooseAvatar"
+        >
+          <image
+            class="user-avatar"
+            :src="userInfo.avatar"
+            mode="aspectFill"
+          ></image>
+        </button>
+        <text class="user-name" @click="showNicknameModal">{{
+          userInfo.nickname
+        }}</text>
+        <!-- <input type="nickname" class="user-name" placeholder="微信用户" /> -->
       </view>
       <image
         class="settings-icon"
@@ -187,6 +196,39 @@
     </view>
   </view>
 
+  <!-- 昵称编辑弹框 -->
+  <view
+    class="nickname-modal"
+    v-if="showNicknameEdit"
+    @click="closeNicknameModal"
+  >
+    <view class="nickname-content" @click.stop>
+      <view class="nickname-header">
+        <text class="nickname-title">编辑昵称</text>
+      </view>
+      <view class="nickname-body">
+        <input
+          type="nickname"
+          class="nickname-input"
+          placeholder="请输入昵称"
+          v-model="tempNickname"
+          @blur="onNicknameBlur"
+          maxlength="20"
+        />
+      </view>
+      <view class="nickname-footer">
+        <view class="nickname-btn-group">
+          <view class="nickname-btn cancel" @click="closeNicknameModal">
+            <text class="nickname-btn-text">取消</text>
+          </view>
+          <view class="nickname-btn confirm" @click="confirmNickname">
+            <text class="nickname-btn-text">确认</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 授权弹框 -->
   <view class="auth-modal" v-if="showAuthModal" @click="closeAuthModal">
     <view class="auth-content" @click.stop>
@@ -202,9 +244,11 @@
           ></image>
           <text class="auth-status">微信运动</text>
         </view>
-        <text class="auth-status-text" :style="{ color: isAuthorized ? '#07C160' : '#242A36' }">{{
-          isAuthorized ? "已授权" : "未授权"
-        }}</text>
+        <text
+          class="auth-status-text"
+          :style="{ color: isAuthorized ? '#07C160' : '#242A36' }"
+          >{{ isAuthorized ? "已授权" : "未授权" }}</text
+        >
       </view>
       <view class="auth-footer">
         <view class="auth-btn" @click="handleAuthAction">
@@ -230,8 +274,25 @@ const sportsList = ref([]);
 const showAuthModal = ref(false);
 const isAuthorized = ref(false); // 授权状态，这里可以从用户数据中获取
 
+// 昵称编辑相关
+const showNicknameEdit = ref(false);
+const tempNickname = ref("");
+
 // 计算属性
 const userInfo = computed(() => userStore.userInfo);
+
+// 头像选择处理
+const onChooseAvatar = (e: any) => {
+  const { avatarUrl } = e.detail;
+  if (avatarUrl) {
+    // 更新用户头像
+    userStore.updateUserInfo({ avatar: avatarUrl });
+    uni.showToast({
+      title: "头像更新成功",
+      icon: "success",
+    });
+  }
+};
 
 // Tab切换
 const switchTab = (tab: string) => {
@@ -261,6 +322,36 @@ const planNextChallenge = () => {
   uni.navigateTo({
     url: "/pages/challenge-square/index",
   });
+};
+
+// 昵称编辑相关方法
+const showNicknameModal = () => {
+  tempNickname.value = userInfo.value.nickname;
+  showNicknameEdit.value = true;
+};
+
+const closeNicknameModal = () => {
+  showNicknameEdit.value = false;
+};
+
+const onNicknameBlur = () => {
+  // 可以在这里添加昵称验证逻辑
+};
+
+const confirmNickname = () => {
+  if (tempNickname.value.trim() === "") {
+    uni.showToast({
+      title: "昵称不能为空",
+      icon: "none",
+    });
+    return;
+  }
+  userStore.updateUserInfo({ nickname: tempNickname.value.trim() });
+  uni.showToast({
+    title: "昵称修改成功",
+    icon: "success",
+  });
+  closeNicknameModal();
 };
 
 // 操作按钮事件
@@ -464,6 +555,9 @@ onMounted(() => {
   initChallengeList();
   initSportsList();
 
+  // 初始化昵称
+  tempNickname.value = userStore.userInfo.nickname;
+
   // 模拟从用户数据中获取授权状态
   // 这里可以从userStore或本地存储中获取
   // isAuthorized.value = userStore.isWeChatSportAuthorized;
@@ -498,19 +592,21 @@ onMounted(() => {
   align-items: center;
 }
 
+.avatar-button {
+  background: transparent;
+  height: 80rpx;
+}
+
 .user-avatar {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  margin-right: 32rpx;
-  border-radius: 51px;
-  box-sizing: border-box;
-  border: 2rpx solid #cdd5d7;
 }
 
 .user-name {
   font-size: 34rpx;
   font-weight: 500;
+  color: #fff;
 }
 
 .settings-icon {
@@ -1013,7 +1109,7 @@ onMounted(() => {
 
 .auth-status-text {
   font-size: 34rpx;
-  color: #242A36;
+  color: #242a36;
 }
 
 .auth-footer {
@@ -1034,5 +1130,92 @@ onMounted(() => {
   font-size: 32rpx;
   color: #242a36;
   font-weight: 600;
+}
+
+/* 昵称编辑弹框样式 */
+.nickname-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.nickname-content {
+  width: 100%;
+  padding: 48rpx 32rpx;
+  box-sizing: border-box;
+  background: white;
+  border-radius: 24rpx 24rpx 0 0;
+  animation: slideUp 0.3s ease-out;
+}
+
+.nickname-header {
+  text-align: left;
+  margin-bottom: 24rpx;
+}
+
+.nickname-title {
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #242a36;
+}
+
+.nickname-body {
+  width: 686rpx;
+  height: 112rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 32rpx;
+  box-sizing: border-box;
+  border-radius: 8rpx;
+  background: #f4f5f9;
+}
+
+.nickname-input {
+  width: 100%;
+  height: 100%;
+  font-size: 34rpx;
+  color: #242a36;
+  padding: 0 16rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #cdd5d7;
+  border-radius: 8rpx;
+}
+
+.nickname-footer {
+  margin-top: 80rpx;
+}
+
+.nickname-btn-group {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.nickname-btn {
+  width: 336rpx;
+  height: 88rpx;
+  background: #fadb47;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nickname-btn-text {
+  font-size: 32rpx;
+  color: #242a36;
+  font-weight: 600;
+}
+
+.nickname-btn.cancel {
+  background: #aaaaaa;
 }
 </style>
