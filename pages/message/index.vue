@@ -63,7 +63,7 @@ const showDeleteModal = ref(false);
 const deleteIndex = ref(-1);
 
 // 初始化消息列表数据
-const initMessageList = () => {
+const initMessageList = async () => {
   messageList.value = [
     {
       id: 2,
@@ -178,6 +178,18 @@ const initMessageList = () => {
       isRead: true,
     },
   ];
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/notice/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      userId: uni.getStorageSync("userInfo").id,
+    },
+  });
+  console.log("🚀 ~ initMessageList ~ res:", res);
+  // messageList.value = res.data.rows;
 };
 
 // 删除消息
@@ -202,17 +214,17 @@ const confirmDelete = () => {
 // 读取消息
 const readMessage = (item: any) => {
   // 如果是view类型，跳转到内容详情页面
-  if (item.type === 'view') {
+  if (item.type === "view") {
     uni.navigateTo({
-      url: '/pages/message-detail-view/index'
+      url: "/pages/message-detail-view/index",
     });
-  } else if (item.type === 'postCard') {
+  } else if (item.type === "postCard") {
     uni.navigateTo({
-      url: '/pages/message-detail-postcard/index'
+      url: "/pages/message-detail-postcard/index",
     });
-  } else if (item.type === 'data') {
+  } else if (item.type === "data") {
     uni.navigateTo({
-      url: '/pages/message-detail-data/index'
+      url: "/pages/message-detail-data/index",
     });
   }
 
