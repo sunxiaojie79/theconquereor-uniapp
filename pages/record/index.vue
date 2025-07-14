@@ -25,14 +25,22 @@
       <!-- 添加运动数据卡片 -->
       <view class="add-data-card" @click="addSportsData">
         <view class="card-left">
-          <image class="card-icon" src="/static/distance-active.png" mode="aspectFill"></image>
+          <image
+            class="card-icon"
+            src="/static/distance-active.png"
+            mode="aspectFill"
+          ></image>
         </view>
         <view class="card-content">
           <text class="card-title">添加运动数据</text>
           <text class="card-desc">添加距离、步数或转换活动类型</text>
         </view>
         <view class="card-right">
-          <image class="arrow-icon" src="/static/arrow-right-black.png" mode="aspectFill"></image>
+          <image
+            class="arrow-icon"
+            src="/static/arrow-right-black.png"
+            mode="aspectFill"
+          ></image>
         </view>
       </view>
 
@@ -41,18 +49,21 @@
         <text class="section-title">已授权的运动APP</text>
         <view class="app-item-container">
           <view class="app-list">
-          <view class="app-item">
-            <image class="app-icon" src="/static/wechat.png" mode="aspectFill"></image>
-            <text class="app-name">微信计步器</text>
+            <view class="app-item">
+              <image
+                class="app-icon"
+                src="/static/wechat.png"
+                mode="aspectFill"
+              ></image>
+              <text class="app-name">微信计步器</text>
+            </view>
           </view>
-        </view>
 
-        <!-- 添加新授权按钮 -->
-        <button class="add-auth-btn" @click="addNewAuth">
-          <text class="add-auth-text">添加新授权</text>
-        </button>
+          <!-- 添加新授权按钮 -->
+          <button class="add-auth-btn" @click="addNewAuth">
+            <text class="add-auth-text">添加新授权</text>
+          </button>
         </view>
-        
       </view>
     </view>
 
@@ -69,7 +80,11 @@
               <view class="item-content">
                 <view class="item-left">
                   <view class="sport-icon">
-                    <image class="icon-image" src="/static/sports/running.png" mode="aspectFill"></image>
+                    <image
+                      class="icon-image"
+                      src="/static/sports/running.png"
+                      mode="aspectFill"
+                    ></image>
                   </view>
                 </view>
                 <view class="item-center">
@@ -78,7 +93,12 @@
                     <text class="distance-unit">km</text>
                   </view>
                   <view class="source-info">
-                    <image v-if="item.source === 'wechat'" class="source-icon" src="/static/wechat2.png" mode="aspectFill"></image>
+                    <image
+                      v-if="item.source === 'wechat'"
+                      class="source-icon"
+                      src="/static/wechat2.png"
+                      mode="aspectFill"
+                    ></image>
                     <text class="source-text">{{ item.sourceText }}</text>
                   </view>
                 </view>
@@ -129,181 +149,191 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import { ref, onMounted } from "vue";
+import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 // 响应式数据
-const activeTab = ref('add')
-const sportsDataList = ref([])
-const showDeleteModal = ref(false)
-const deleteIndex = ref(-1)
-const showAddAuthModal = ref(false)
+const activeTab = ref("add");
+const sportsDataList = ref([]);
+const showDeleteModal = ref(false);
+const deleteIndex = ref(-1);
+const showAddAuthModal = ref(false);
 
 // 初始化运动数据
-const initSportsData = () => {
+const getSportList = async () => {
   const mockData = [
     {
       id: 1,
-      distance: '78.121',
-      source: 'manual',
-      sourceText: '手动录入',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "manual",
+      sourceText: "手动录入",
+      date: "2025.06.11",
     },
     {
       id: 2,
-      distance: '78.121',
-      source: 'manual',
-      sourceText: '手动录入',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "manual",
+      sourceText: "手动录入",
+      date: "2025.06.11",
     },
     {
       id: 3,
-      distance: '78.121',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.11",
     },
     {
       id: 4,
-      distance: '78.121',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.11",
     },
     {
       id: 5,
-      distance: '78.121',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.11",
     },
     {
       id: 6,
-      distance: '78.121',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.11",
     },
     {
       id: 7,
-      distance: '78.121',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.11'
+      distance: "78.121",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.11",
     },
     {
       id: 8,
-      distance: '45.256',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.10'
+      distance: "45.256",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.10",
     },
     {
       id: 9,
-      distance: '32.789',
-      source: 'manual',
-      sourceText: '手动录入',
-      date: '2025.06.10'
+      distance: "32.789",
+      source: "manual",
+      sourceText: "手动录入",
+      date: "2025.06.10",
     },
     {
       id: 10,
-      distance: '67.543',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.09'
+      distance: "67.543",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.09",
     },
     {
       id: 11,
-      distance: '89.012',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.09'
+      distance: "89.012",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.09",
     },
     {
       id: 12,
-      distance: '23.456',
-      source: 'manual',
-      sourceText: '手动录入',
-      date: '2025.06.08'
+      distance: "23.456",
+      source: "manual",
+      sourceText: "手动录入",
+      date: "2025.06.08",
     },
     {
       id: 13,
-      distance: '56.789',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.08'
+      distance: "56.789",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.08",
     },
     {
       id: 14,
-      distance: '41.234',
-      source: 'wechat',
-      sourceText: '来自微信运动',
-      date: '2025.06.07'
+      distance: "41.234",
+      source: "wechat",
+      sourceText: "来自微信运动",
+      date: "2025.06.07",
     },
     {
       id: 15,
-      distance: '72.901',
-      source: 'manual',
-      sourceText: '手动录入',
-      date: '2025.06.07'
-    }
-  ]
-  
-  sportsDataList.value = mockData
-}
+      distance: "72.901",
+      source: "manual",
+      sourceText: "手动录入",
+      date: "2025.06.07",
+    },
+  ];
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/distance/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      userId: uni.getStorageSync("userInfo").id,
+    },
+  });
+  console.log("🚀 ~ getSportList ~ res:", res);
+  sportsDataList.value = res.data.rows;
+};
 
 // 方法
 const switchTab = (tab: string) => {
-  activeTab.value = tab
-}
+  activeTab.value = tab;
+};
 
 const addSportsData = () => {
   uni.navigateTo({
-    url: '/pages/add-sports-data/index'
-  })
-}
+    url: "/pages/add-sports-data/index",
+  });
+};
 
 const addNewAuth = () => {
-  showAddAuthModal.value = true
-}
+  showAddAuthModal.value = true;
+};
 
 // 删除运动数据
 const deleteSportsData = (index: number) => {
-  deleteIndex.value = index
-  showDeleteModal.value = true
-}
+  deleteIndex.value = index;
+  showDeleteModal.value = true;
+};
 
 // 确认删除
 const confirmDelete = () => {
   if (deleteIndex.value !== -1) {
-    sportsDataList.value.splice(deleteIndex.value, 1)
-    
+    sportsDataList.value.splice(deleteIndex.value, 1);
+
     uni.showToast({
-      title: '删除成功',
-      icon: 'success'
-    })
+      title: "删除成功",
+      icon: "success",
+    });
   }
-  
-  showDeleteModal.value = false
-  deleteIndex.value = -1
-}
+
+  showDeleteModal.value = false;
+  deleteIndex.value = -1;
+};
 
 const confirmAddAuth = () => {
   uni.showToast({
-    title: '授权成功',
-    icon: 'success'
-  })
-}
+    title: "授权成功",
+    icon: "success",
+  });
+};
 
 onMounted(() => {
-  console.log('记录页面加载完成')
-  initSportsData()
-})
+  console.log("记录页面加载完成");
+  getSportList();
+});
 </script>
 
 <style lang="scss" scoped>
 .page {
-  background-color: #242A36;
+  background-color: #242a36;
   min-height: 100vh;
   color: #ffffff;
 }
@@ -410,11 +440,10 @@ onMounted(() => {
   margin-bottom: 32rpx;
   display: block;
 }
-.app-item-container{
-  
+.app-item-container {
   padding: 32rpx;
   border-radius: 8rpx;
-background: #313743;
+  background: #313743;
 }
 .app-list {
   margin-bottom: 32rpx;
@@ -449,7 +478,7 @@ background: #313743;
   color: #ffffff;
   font-size: 32rpx;
   font-weight: 500;
-  
+
   &::after {
     border: none;
   }
@@ -520,12 +549,12 @@ background: #313743;
 .distance-value {
   font-size: 34rpx;
   font-weight: 600;
-  color: #7B412D;;
+  color: #7b412d;
 }
 
 .distance-unit {
   font-size: 24rpx;
-  color: #7B412D;;
+  color: #7b412d;
 }
 
 .source-info {
@@ -545,7 +574,6 @@ background: #313743;
 }
 
 .item-right {
-  
 }
 
 .date-text {
@@ -568,7 +596,7 @@ background: #313743;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #F02525;
+  background-color: #f02525;
   color: #fff;
   border-radius: 50%;
   border: 1rpx solid rgba(0, 0, 0, 0.09);
@@ -607,4 +635,4 @@ background: #313743;
   color: #999999;
   opacity: 0.8;
 }
-</style> 
+</style>
