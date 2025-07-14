@@ -165,51 +165,15 @@ const challengeCode = ref("");
 const showToast = ref(false);
 const toastType = ref("success"); // success | error
 
+// 分页相关状态
+const pageNum = ref(1);
+const pageSize = ref(10);
+const total = ref(0);
+const loading = ref(false);
+const hasMore = ref(true);
+
 // mock数据
-const myChallenges = ref<any[]>([
-  {
-    id: 1,
-    title: "万里长城徒步挑战",
-    avatar: "/static/challenges/great-wall.jpg",
-    distance: "78.121",
-    progress: 80,
-  },
-  {
-    id: 2,
-    title: "撒哈拉沙漠穿越",
-    avatar: "/static/challenges/sahara.jpg",
-    distance: "156.8",
-    progress: 45,
-  },
-  {
-    id: 3,
-    title: "丝绸之路探索",
-    avatar: "/static/challenges/silk-road.jpg",
-    distance: "89.5",
-    progress: 92,
-  },
-  {
-    id: 4,
-    title: "亚马逊雨林冒险",
-    avatar: "/static/challenges/amazon.jpg",
-    distance: "67.3",
-    progress: 38,
-  },
-  {
-    id: 5,
-    title: "喜马拉雅山脉挑战",
-    avatar: "/static/challenges/great-wall.jpg",
-    distance: "124.7",
-    progress: 15,
-  },
-  {
-    id: 6,
-    title: "北极圈极地探险",
-    avatar: "/static/challenges/sahara.jpg",
-    distance: "45.2",
-    progress: 73,
-  },
-]);
+const myChallenges = ref<any[]>();
 
 const challengeProjects = ref<Project[]>([]);
 
@@ -247,25 +211,57 @@ const faqList = ref([
 ]);
 
 // 接口
-const getMyChallenges = async () => {
-  const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject/list",
-    method: "POST",
-    header: {
-      "X-WX-TOKEN": uni.getStorageSync("token"),
-    },
-    data: {
-      query: {
-        pageNum: 1,
-        pageSize: 10,
+const getMyChallenges = async (page = 1, append = false) => {
+  if (loading.value) return;
+
+  loading.value = true;
+
+  try {
+    const res: any = await uni.request({
+      url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject/list",
+      method: "POST",
+      header: {
+        "X-WX-TOKEN": uni.getStorageSync("token"),
       },
-    },
-  });
-  console.log("🚀 ~ getMyChallenges ~ res:", res);
-  if (res.data.code === 200) {
-    myChallenges.value = res.data.rows;
+      data: {
+        query: {
+          pageNum: page,
+          pageSize: pageSize.value,
+        },
+      },
+    });
+    if (res.data.code === 200) {
+      const { rows, total: totalCount } = res.data;
+
+      if (append) {
+        // 追加数据
+        myChallenges.value = [...myChallenges.value, ...rows];
+      } else {
+        // 替换数据（首次加载）
+        myChallenges.value = rows;
+      }
+
+      total.value = totalCount;
+      pageNum.value = page;
+
+      // 判断是否还有更多数据
+      hasMore.value = myChallenges.value.length < totalCount;
+
+      console.log(
+        `加载第${page}页数据，当前总数：${myChallenges.value.length}，总记录数：${totalCount}`
+      );
+    }
+
+    return res.data;
+  } catch (error) {
+    console.error("获取我的挑战失败:", error);
+    uni.showToast({
+      title: "加载失败",
+      icon: "none",
+    });
+  } finally {
+    loading.value = false;
   }
-  return res.data;
 };
 const getChallengeList = async () => {
   const res: any = await uni.request({
@@ -304,7 +300,37 @@ const navigateTo = (url: string) => {
 };
 
 const handleScroll = (e: any) => {
-  console.log("🚀 ~ handleScroll ~ e:", e);
+  // 检测是否滑动到底部或接近底部
+  const { scrollLeft, scrollWidth } = e.detail;
+
+  // 计算剩余可滑动距离
+  const remaining = scrollWidth - scrollLeft;
+
+  console.log(
+    `滑动状态: scrollLeft=${scrollLeft}, scrollWidth=${scrollWidth}, remaining=${remaining}`
+  );
+
+  // 当剩余距离小于阈值时（接近底部），且还有更多数据，且不在加载中
+  if (remaining <= 600 && hasMore.value && !loading.value) {
+    console.log("触发分页加载，加载第", pageNum.value + 1, "页");
+
+    // 加载下一页数据
+    getMyChallenges(pageNum.value + 1, true);
+  }
+};
+
+// 刷新数据
+const refreshMyChallenges = async () => {
+  console.log("刷新我的挑战数据");
+
+  // 重置状态
+  pageNum.value = 1;
+  total.value = 0;
+  hasMore.value = true;
+  myChallenges.value = [];
+
+  // 重新加载第一页数据
+  await getMyChallenges(1, false);
 };
 const handleLikeProject = (projectId: number) => {
   const project = challengeProjects.value.find((p) => p.id === projectId);
@@ -372,7 +398,7 @@ const loginWX = async () => {
               userStore.updateToken(res.data.data.token);
               uni.setStorageSync("token", res.data.data.token);
               getChallengeList();
-              getMyChallenges();
+              getMyChallenges(1, false); // 首次加载第1页数据
             }
           });
       } else {
@@ -386,6 +412,13 @@ onMounted(async () => {
   console.log("我的挑战数量:", myChallenges.value.length);
   console.log("挑战项目数量:", challengeProjects.value.length);
   console.log("FAQ数量:", faqList.value.length);
+
+  // 重置分页状态
+  pageNum.value = 1;
+  total.value = 0;
+  hasMore.value = true;
+  myChallenges.value = [];
+
   await loginWX();
 });
 </script>
