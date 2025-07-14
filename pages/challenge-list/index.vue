@@ -266,113 +266,12 @@ const selectedFilters = ref({
 });
 
 // Mock 10条挑战数据
-const allChallenges = ref([
-  {
-    id: 1,
-    title: "万里长城征途",
-    description: "副标题副标题支撑最多两行显示",
-    image: "/static/challenges/great-wall.jpg",
-    isLiked: false,
-    difficulty: "中等",
-    category: "历史",
-    createTime: "2024-01-15",
-  },
-  {
-    id: 2,
-    title: "撒哈拉沙漠探索",
-    description: "副标题副标题",
-    image: "/static/challenges/sahara.jpg",
-    isLiked: true,
-    difficulty: "困难",
-    category: "自然",
-    createTime: "2024-01-10",
-  },
-  {
-    id: 3,
-    title: "亚马逊雨林冒险",
-    description: "副标题副标题支撑最多两行显示",
-    image: "/static/challenges/amazon.jpg",
-    isLiked: false,
-    difficulty: "极限",
-    category: "自然",
-    createTime: "2024-01-08",
-  },
-  {
-    id: 4,
-    title: "丝绸之路重走",
-    description: "副标题副标题",
-    image: "/static/challenges/silk-road.jpg",
-    isLiked: false,
-    difficulty: "中等",
-    category: "历史",
-    createTime: "2024-01-05",
-  },
-  {
-    id: 5,
-    title: "喜马拉雅山脉挑战",
-    description: "副标题副标题支撑最多两行显示",
-    image: "/static/challenges/great-wall.jpg",
-    isLiked: true,
-    difficulty: "极限",
-    category: "自然",
-    createTime: "2024-01-03",
-  },
-  {
-    id: 6,
-    title: "北极圈极地探险",
-    description: "副标题副标题",
-    image: "/static/challenges/sahara.jpg",
-    isLiked: false,
-    difficulty: "困难",
-    category: "自然",
-    createTime: "2024-01-01",
-  },
-  {
-    id: 7,
-    title: "马拉松环球挑战",
-    description: "副标题副标题支撑最多两行显示",
-    image: "/static/challenges/amazon.jpg",
-    isLiked: true,
-    difficulty: "简单",
-    category: "运动",
-    createTime: "2023-12-28",
-  },
-  {
-    id: 8,
-    title: "古代商路探索",
-    description: "副标题副标题",
-    image: "/static/challenges/silk-road.jpg",
-    isLiked: false,
-    difficulty: "中等",
-    category: "历史",
-    createTime: "2023-12-25",
-  },
-  {
-    id: 9,
-    title: "热带雨林穿越",
-    description: "副标题副标题支撑最多两行显示",
-    image: "/static/challenges/amazon.jpg",
-    isLiked: false,
-    difficulty: "困难",
-    category: "自然",
-    createTime: "2023-12-20",
-  },
-  {
-    id: 10,
-    title: "沙漠生存挑战",
-    description: "副标题副标题",
-    image: "/static/challenges/sahara.jpg",
-    isLiked: true,
-    difficulty: "极限",
-    category: "生存",
-    createTime: "2023-12-15",
-  },
-]);
-
+const allChallenges = ref([]);
+const favoriteChallenges = ref<any[]>([]);
 // 收藏的挑战
-const favoriteChallenges = computed(() => {
-  return allChallenges.value.filter((challenge) => challenge.isLiked);
-});
+// const favoriteChallenges = computed(() => {
+//   return allChallenges.value.filter((challenge) => challenge.isLiked);
+// });
 
 // 显示的挑战列表
 const displayChallenges = computed(() => {
@@ -492,9 +391,50 @@ const handleChallengeClick = (challengeId: number) => {
     url: `/pages/route-detail/index?id=${challengeId}`,
   });
 };
-
+const getChallengeList = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+    },
+  });
+  console.log("🚀 ~ getChallengeList ~ res:", res);
+  if (res.data.code === 200) {
+    allChallenges.value = res.data.rows;
+  }
+  return res.data;
+};
+const getMyCollection = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/collection/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+    },
+  });
+  console.log("🚀 ~ getMyCollection ~ res:", res);
+  if (res.data.code === 200) {
+    favoriteChallenges.value = res.data.rows;
+  }
+  return res.data;
+};
 onMounted(() => {
   console.log("全部挑战页面加载完成");
+  getChallengeList();
+  getMyCollection();
   console.log("挑战总数:", allChallenges.value.length);
 });
 </script>

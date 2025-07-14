@@ -173,7 +173,7 @@ const loading = ref(false);
 const hasMore = ref(true);
 
 // mock数据
-const myChallenges = ref<any[]>();
+const myChallenges = ref<any[]>([]);
 
 const challengeProjects = ref<Project[]>([]);
 
@@ -211,6 +211,7 @@ const faqList = ref([
 ]);
 
 // 接口
+// 获取我的挑战
 const getMyChallenges = async (page = 1, append = false) => {
   if (loading.value) return;
 
@@ -263,6 +264,7 @@ const getMyChallenges = async (page = 1, append = false) => {
     loading.value = false;
   }
 };
+// 获取挑战项目
 const getChallengeList = async () => {
   const res: any = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
@@ -281,6 +283,29 @@ const getChallengeList = async () => {
   if (res.data.code === 200) {
     challengeProjects.value = res.data.rows;
   }
+  return res.data;
+};
+// 收藏挑战项目
+const likeCollection = async (id) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/collection/${id}`,
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getMyCollection ~ res:", res);
+  return res.data;
+};
+// 取消收藏挑战项目
+const cancelCollection = async (id) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/collection/remove/${id}`,
+    method: "DELETE",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
   return res.data;
 };
 // 方法
@@ -319,23 +344,13 @@ const handleScroll = (e: any) => {
   }
 };
 
-// 刷新数据
-const refreshMyChallenges = async () => {
-  console.log("刷新我的挑战数据");
-
-  // 重置状态
-  pageNum.value = 1;
-  total.value = 0;
-  hasMore.value = true;
-  myChallenges.value = [];
-
-  // 重新加载第一页数据
-  await getMyChallenges(1, false);
-};
-const handleLikeProject = (projectId: number) => {
-  const project = challengeProjects.value.find((p) => p.id === projectId);
-  if (project) {
-    project.isLiked = !project.isLiked;
+const handleLikeProject = async (projectId: number) => {
+  const res = await likeCollection(projectId);
+  if (res.data === true) {
+    const project = challengeProjects.value.find((p) => p.id === projectId);
+    if (project) {
+      project.isLiked = !project.isLiked;
+    }
   }
 };
 
@@ -380,6 +395,7 @@ const handleFaqClick = (faqId: number) => {
 };
 
 const loginWX = async () => {
+  console.log("登录");
   uni.login({
     success(res) {
       if (res.code) {

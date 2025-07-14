@@ -4,14 +4,21 @@
     <view class="hero-section">
       <image
         class="hero-image"
-        :src="challengeDetail.image"
+        :src="challengeDetail.productCover"
         mode="aspectFill"
       ></image>
       <view class="navbar-content">
-        <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
-          <view class="navbar-left" @click="goBack">
-            <image class="back-icon" src="/static/arrow-left.png" mode="aspectFill"></image>
-          </view>
+        <view
+          class="status-bar"
+          :style="{ height: statusBarHeight + 'px' }"
+        ></view>
+        <view class="navbar-left" @click="goBack">
+          <image
+            class="back-icon"
+            src="/static/arrow-left.png"
+            mode="aspectFill"
+          ></image>
+        </view>
       </view>
       <view
         class="like-btn"
@@ -37,29 +44,29 @@
     <view class="content">
       <!-- 主标题 -->
       <view class="title-section">
-        <text class="main-title">{{ challengeDetail.title }}</text>
+        <text class="main-title">{{ challengeDetail.challengeTitle }}</text>
       </view>
 
       <!-- 副标题描述 -->
       <view class="subtitle-section">
-        <text class="subtitle-text">{{ challengeDetail.description }}</text>
+        <text class="subtitle-text">{{ challengeDetail.subtitle }}</text>
       </view>
 
       <!-- 相关商品/装备推荐 -->
       <view class="products-grid">
         <view
-          v-for="product in relatedProducts"
+          v-for="product in challengeDetail.productSpecificationList"
           :key="product.id"
           class="product-card"
           @click="handleProductClick(product.id)"
         >
           <image
             class="product-image"
-            :src="product.image"
+            :src="product.logo"
             mode="aspectFill"
           ></image>
           <view class="product-info">
-            <text class="product-name">{{ product.name }}</text>
+            <text class="product-name">{{ product.title }}</text>
             <text class="product-price">¥{{ product.price }}</text>
             <button class="buy-btn" @click.stop="handleBuyProduct(product.id)">
               <text class="buy-text">购买</text>
@@ -69,7 +76,10 @@
       </view>
     </view>
     <!-- 底部安全区域 -->
-    <view class="safe-area-bottom" :style="{ height: safeAreaBottom + 'px' }"></view>
+    <view
+      class="safe-area-bottom"
+      :style="{ height: safeAreaBottom + 'px' }"
+    ></view>
   </view>
 </template>
 
@@ -78,56 +88,57 @@ import { ref, onMounted } from "vue";
 
 // 页面参数
 const challengeId = ref("");
-const statusBarHeight = ref(44)
-const safeAreaBottom = ref(34)
+const statusBarHeight = ref(44);
+const safeAreaBottom = ref(34);
 
 // 挑战详情数据
 const challengeDetail = ref({
-  id: 1,
-  title: "这是一个主标题",
-  description:
-    "这是一段副标题这是一段副标题这是一段副标题这是一段副标题这是一段副标题",
-  image: "/static/challenges/great-wall.jpg",
-  isLiked: false,
-  introduction:
-    "万里长城是中国古代军事防御工程的杰出代表，也是世界文化遗产。这个挑战将带你领略长城的壮丽风光，感受古代劳动人民的智慧与汗水。",
-  rules:
-    "1. 每日完成指定的运动量\n2. 记录并分享你的挑战进度\n3. 与其他参与者互动交流\n4. 坚持完成全程挑战",
-  rewards:
-    "完成挑战后，你将获得：\n• 专属长城徽章\n• 挑战证书\n• 积分奖励\n• 实物纪念品",
-  participants: "1.2k",
-  duration: "30天",
-  difficulty: "中等",
+  challengeTitle: "12",
+  cooperationAuthorization: "李宁",
+  createBy: "admin",
+  createTime: "2025-07-07 16:27:05",
+  distance: 1000.2,
+  id: "1942138284374474754",
+  params: {},
+  productCover:
+    "/profile/upload/2025/07/11/2c30-hutwezf6832339_20250711150903A001.jpg",
+  productDescription: "商品描述",
+  productSpecificationList: [
+    {
+      challengeId: "1942138284374474754",
+      createBy: "admin",
+      discount: 0.87,
+      id: "1",
+      logo: "/profile/upload/2025/07/14/2c30-hutwezf6832339_20250714180129A003.jpg",
+      params: {},
+      price: 1.33,
+      title: "test",
+      updateBy: "admin",
+      updateTime: "2025-07-14 19:18:17",
+    },
+  ],
+  scenicSpotList: [{}],
+  subtitle: "2121",
+  updateBy: "admin",
+  updateTime: "2025-07-14 19:18:17",
 });
 
-// 相关商品数据
-const relatedProducts = ref([
-  {
-    id: 1,
-    name: "产品规格名称产品规格名称产品规格名称",
-    price: 99,
-    image: "/static/challenges/great-wall.jpg",
-  },
-  {
-    id: 2,
-    name: "产品规格名称产品规格名称产品规格名称",
-    price: 99,
-    image: "/static/challenges/great-wall.jpg",
-  },
-  {
-    id: 3,
-    name: "产品规格名称产品规格名称产品规格名称",
-    price: 99,
-    image: "/static/challenges/great-wall.jpg",
-  },
-  {
-    id: 4,
-    name: "产品规格名称产品规格名称产品规格名称",
-    price: 99,
-    image: "/static/challenges/great-wall.jpg",
-  },
-]);
-
+// 接口
+// 获取挑战详情
+const getChallengeDetail = async () => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/challengeProject/detail/${challengeId.value}`,
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getChallengeDetail ~ res:", res);
+  if (res.data.code === 200) {
+    challengeDetail.value = res.data.data;
+  }
+  return res.data;
+};
 // 方法
 const goBack = () => {
   const pages = getCurrentPages();
@@ -142,20 +153,6 @@ const goBack = () => {
   }
 };
 
-const joinChallenge = () => {
-  // 加入挑战逻辑
-  uni.showToast({
-    title: "加入挑战成功！",
-    icon: "success",
-    duration: 2000,
-  });
-
-  // 延迟跳转到我的运动页面
-  setTimeout(() => {
-    uni.switchTab({ url: "/pages/message/index" });
-  }, 2000);
-};
-
 const toggleLike = () => {
   challengeDetail.value.isLiked = !challengeDetail.value.isLiked;
   uni.showToast({
@@ -165,28 +162,29 @@ const toggleLike = () => {
   });
 };
 
-const handleProductClick = (productId: number) => {
+const handleProductClick = (productId: string) => {
   console.log("点击商品:", productId);
   // 这里可以跳转到商品详情页
   // uni.navigateTo({ url: `/pages/product-detail/index?id=${productId}` });
 };
 
-const handleBuyProduct = (productId: number) => {
+const handleBuyProduct = (productId: string) => {
   uni.navigateTo({
     url: `/pages/order-detail/index?productId=${productId}`,
   });
 };
 // 获取系统信息
 const getSystemInfo = () => {
-  const systemInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = systemInfo.statusBarHeight || 44
-  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34
-}
+  const systemInfo = uni.getSystemInfoSync();
+  statusBarHeight.value = systemInfo.statusBarHeight || 44;
+  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34;
+};
 // 获取页面参数
 onMounted(() => {
-  getSystemInfo()
+  getSystemInfo();
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1] as any;
+  console.log("🚀 ~ onMounted ~ currentPage:", currentPage);
 
   // 从 URL 参数获取 challengeId 或 projectId
   if (currentPage.options?.projectId) {
@@ -194,16 +192,8 @@ onMounted(() => {
   } else if (currentPage.options?.id) {
     challengeId.value = currentPage.options.id;
   }
-
-  // 根据 ID 加载对应的挑战详情
-  loadChallengeDetail();
+  getChallengeDetail();
 });
-
-const loadChallengeDetail = () => {
-  // 这里可以根据 challengeId 加载不同的挑战详情
-  // 暂时使用 mock 数据
-  console.log("加载挑战详情，ID:", challengeId.value);
-};
 </script>
 
 <style lang="scss" scoped>
@@ -232,7 +222,6 @@ const loadChallengeDetail = () => {
 .status-bar {
   width: 100%;
 }
-
 
 .navbar-left {
   margin-left: 32rpx;
@@ -331,7 +320,7 @@ const loadChallengeDetail = () => {
 .product-price {
   font-size: 44rpx;
   font-weight: 500;
-  color: #7B412D;
+  color: #7b412d;
   margin-bottom: 24rpx;
   display: block;
 }
