@@ -319,6 +319,16 @@ const confirmDelete = () => {
 };
 
 const confirmAddAuth = () => {
+  wx.getWeRunData({
+    success(res) {
+      console.log("🚀 ~ success ~ res:", res);
+      // 拿 encryptedData 到开发者后台解密开放数据
+      const encryptedData = res.encryptedData;
+      // 或拿 cloudID 通过云调用直接获取开放数据
+      const cloudID = res.cloudID;
+    },
+  });
+
   uni.showToast({
     title: "授权成功",
     icon: "success",
