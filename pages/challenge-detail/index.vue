@@ -22,11 +22,11 @@
       </view>
       <view
         class="like-btn"
-        :class="{ liked: challengeDetail.isLiked }"
+        :class="{ liked: challengeDetail.collectFlag }"
         @click.stop="toggleLike"
       >
         <image
-          v-if="challengeDetail.isLiked"
+          v-if="challengeDetail.collectFlag"
           class="like-icon"
           src="/static/heart-fill.png"
           mode="aspectFill"
@@ -68,7 +68,7 @@
           <view class="product-info">
             <text class="product-name">{{ product.title }}</text>
             <text class="product-price">¥{{ product.price }}</text>
-            <button class="buy-btn" @click.stop="handleBuyProduct(product.id)">
+            <button class="buy-btn" @click.stop="handleBuyProduct(product)">
               <text class="buy-text">购买</text>
             </button>
           </view>
@@ -94,6 +94,7 @@ const safeAreaBottom = ref(34);
 // 挑战详情数据
 const challengeDetail = ref({
   challengeTitle: "12",
+  collectFlag: false,
   cooperationAuthorization: "李宁",
   createBy: "admin",
   createTime: "2025-07-07 16:27:05",
@@ -154,9 +155,9 @@ const goBack = () => {
 };
 
 const toggleLike = () => {
-  challengeDetail.value.isLiked = !challengeDetail.value.isLiked;
+  challengeDetail.value.collectFlag = !challengeDetail.value.collectFlag;
   uni.showToast({
-    title: challengeDetail.value.isLiked ? "已收藏" : "已取消收藏",
+    title: challengeDetail.value.collectFlag ? "已收藏" : "已取消收藏",
     icon: "none",
     duration: 1500,
   });
@@ -168,9 +169,10 @@ const handleProductClick = (productId: string) => {
   // uni.navigateTo({ url: `/pages/product-detail/index?id=${productId}` });
 };
 
-const handleBuyProduct = (productId: string) => {
+const handleBuyProduct = (product: any) => {
+  uni.setStorageSync("currentProduct", product);
   uni.navigateTo({
-    url: `/pages/order-detail/index?productId=${productId}`,
+    url: `/pages/order-detail/index?challengeTitle=${challengeDetail.value.challengeTitle}`,
   });
 };
 // 获取系统信息

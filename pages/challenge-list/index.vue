@@ -128,15 +128,15 @@
           <view class="radio-options">
             <view
               v-for="(type, index) in displayChallengeTypes"
-              :key="type.value"
+              :key="type.dictValue"
               class="radio-option"
-              @click="toggleCheckbox('challengeType', type.value)"
+              @click="toggleCheckbox('challengeType', type.dictValue)"
             >
-              <text class="option-text">{{ type.label }}</text>
+              <text class="option-text">{{ type.dictLabel }}</text>
               <image
                 class="checkbox-icon"
                 :src="
-                  selectedFilters.challengeType.includes(type.value)
+                  selectedFilters.challengeType.includes(type.dictValue)
                     ? '/static/cell-on.png'
                     : '/static/cell-off.png'
                 "
@@ -144,7 +144,11 @@
               />
             </view>
           </view>
-          <text class="expand-btn" @click="toggleExpand('challengeType')">
+          <text
+            v-if="challengeTypes.length > 4"
+            class="expand-btn"
+            @click="toggleExpand('challengeType')"
+          >
             {{ expandState.challengeType ? "收起" : "更多" }}
           </text>
         </view>
@@ -155,15 +159,19 @@
           <view class="radio-options">
             <view
               v-for="(brand, index) in displayBrandPartners"
-              :key="brand.value"
+              :key="brand.dictValue"
               class="radio-option"
-              @click="toggleCheckbox('brandPartner', brand.value)"
+              @click="
+                toggleCheckbox('cooperationAuthorizations', brand.dictValue)
+              "
             >
-              <text class="option-text">{{ brand.label }}</text>
+              <text class="option-text">{{ brand.dictLabel }}</text>
               <image
                 class="checkbox-icon"
                 :src="
-                  selectedFilters.brandPartner.includes(brand.value)
+                  selectedFilters.cooperationAuthorizations.includes(
+                    brand.dictValue
+                  )
                     ? '/static/cell-on.png'
                     : '/static/cell-off.png'
                 "
@@ -171,8 +179,12 @@
               />
             </view>
           </view>
-          <text class="expand-btn" @click="toggleExpand('brandPartner')">
-            {{ expandState.brandPartner ? "收起" : "更多" }}
+          <text
+            v-if="brandPartners.length > 3"
+            class="expand-btn"
+            @click="toggleExpand('cooperationAuthorizations')"
+          >
+            {{ expandState.cooperationAuthorizations ? "收起" : "更多" }}
           </text>
         </view>
 
@@ -181,13 +193,13 @@
           <view
             class="radio-option"
             style="border-radius: 8rpx; border: 0rpx"
-            @click="toggleCheckbox('purchased', 'purchased')"
+            @click="toggleCheckbox('hasPurchase', 'hasPurchase')"
           >
             <text class="option-text">过滤我已购买的挑战</text>
             <image
               class="checkbox-icon"
               :src="
-                selectedFilters.purchased
+                selectedFilters.hasPurchase
                   ? '/static/cell-on.png'
                   : '/static/cell-off.png'
               "
@@ -211,6 +223,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
 import ChallengeCard from "@/components/challenge-card/index.vue";
+import { Project } from "@/components/challenge-card/index.vue";
 
 // 响应式数据
 const activeTab = ref("all");
@@ -234,35 +247,20 @@ const distanceOptions = ref([
   { label: "超长距：<2414+km", value: "ultra" },
 ]);
 
-const challengeTypes = ref([
-  { label: "亚洲", value: "asia" },
-  { label: "亚洲", value: "asia2" },
-  { label: "亚洲", value: "asia3" },
-  { label: "亚洲", value: "asia4" },
-  { label: "欧洲", value: "europe" },
-  { label: "非洲", value: "africa" },
-  { label: "美洲", value: "america" },
-]);
+const challengeTypes = uni.getStorageSync("challenge_type");
 
-const brandPartners = ref([
-  { label: "李宁", value: "lining" },
-  { label: "耐克", value: "nike" },
-  { label: "阿迪达斯", value: "adidas" },
-  { label: "安踏", value: "anta" },
-  { label: "匹克", value: "peak" },
-  { label: "特步", value: "xtep" },
-]);
+const brandPartners = uni.getStorageSync("operation_comp");
 
 const expandState = ref({
   challengeType: false,
-  brandPartner: false,
+  cooperationAuthorizations: false,
 });
 
 const selectedFilters = ref({
   distance: [] as string[], // 改为多选
   challengeType: [] as string[], // 改为多选
-  brandPartner: [] as string[], // 改为多选
-  purchased: false,
+  cooperationAuthorizations: [] as string[], // 改为多选
+  hasPurchase: false,
 });
 
 // Mock 10条挑战数据
@@ -282,18 +280,47 @@ const displayChallenges = computed(() => {
 
 // 显示的挑战类型（支持展开收起）
 const displayChallengeTypes = computed(() => {
-  return expandState.value.challengeType
-    ? challengeTypes.value
-    : challengeTypes.value.slice(0, 4);
+  if (challengeTypes.length > 4) {
+    return expandState.value.challengeType
+      ? challengeTypes
+      : challengeTypes.slice(0, 4);
+  }
+  return challengeTypes.value;
 });
 
 // 显示的品牌合作伙伴（支持展开收起）
 const displayBrandPartners = computed(() => {
-  return expandState.value.brandPartner
-    ? brandPartners.value
-    : brandPartners.value.slice(0, 3);
+  if (brandPartners.length > 3) {
+    return expandState.value.cooperationAuthorizations
+      ? brandPartners
+      : brandPartners.slice(0, 3);
+  }
+  return brandPartners;
 });
-
+// 接口
+// 收藏挑战项目
+const likeCollection = async (id) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/collection/${id}`,
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getMyCollection ~ res:", res);
+  return res.data;
+};
+// 取消收藏挑战项目
+const cancelCollection = async (id) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/collection/remove/${id}`,
+    method: "DELETE",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  return res.data;
+};
 // 方法
 const goBack = () => {
   const pages = getCurrentPages();
@@ -332,8 +359,9 @@ const selectDistance = (value: string) => {
 const toggleExpand = (type: string) => {
   if (type === "challengeType") {
     expandState.value.challengeType = !expandState.value.challengeType;
-  } else if (type === "brandPartner") {
-    expandState.value.brandPartner = !expandState.value.brandPartner;
+  } else if (type === "cooperationAuthorizations") {
+    expandState.value.cooperationAuthorizations =
+      !expandState.value.cooperationAuthorizations;
   }
 };
 
@@ -346,24 +374,25 @@ const toggleCheckbox = (type: string, value: string) => {
     } else {
       selectedFilters.value.challengeType.push(value);
     }
-  } else if (type === "brandPartner") {
-    const index = selectedFilters.value.brandPartner.indexOf(value);
+  } else if (type === "cooperationAuthorizations") {
+    const index =
+      selectedFilters.value.cooperationAuthorizations.indexOf(value);
     if (index > -1) {
-      selectedFilters.value.brandPartner.splice(index, 1);
+      selectedFilters.value.cooperationAuthorizations.splice(index, 1);
     } else {
-      selectedFilters.value.brandPartner.push(value);
+      selectedFilters.value.cooperationAuthorizations.push(value);
     }
-  } else if (type === "purchased") {
-    selectedFilters.value.purchased = !selectedFilters.value.purchased;
+  } else if (type === "hasPurchase") {
+    selectedFilters.value.hasPurchase = !selectedFilters.value.hasPurchase;
   }
 };
 
 // 重置筛选
 const resetFilters = () => {
-  selectedFilters.value.distance = [];
+  // selectedFilters.value.distance = [];
   selectedFilters.value.challengeType = [];
-  selectedFilters.value.brandPartner = [];
-  selectedFilters.value.purchased = false;
+  selectedFilters.value.cooperationAuthorizations = [];
+  selectedFilters.value.hasPurchase = false;
 };
 
 // 确认筛选
@@ -371,12 +400,22 @@ const confirmFilters = () => {
   showFilterModal.value = false;
   // TODO: 实现筛选逻辑
   console.log("应用筛选条件:", selectedFilters.value);
+  getChallengeList(selectedFilters.value);
 };
 
-const handleLikeChallenge = (challengeId: number) => {
-  const challenge = allChallenges.value.find((c) => c.id === challengeId);
-  if (challenge) {
-    challenge.isLiked = !challenge.isLiked;
+const handleLikeChallenge = async (project: Project) => {
+  if (project.collectFlag) {
+    const res = await cancelCollection(project.id);
+    console.log("🚀 ~ cancelCollection ~ res:", res);
+    if (res.code === 200) {
+      project.collectFlag = false;
+    }
+  } else {
+    const res = await likeCollection(project.id);
+    console.log("🚀 ~ likeCollection ~ res:", res);
+    if (res.code === 200) {
+      project.collectFlag = true;
+    }
   }
 };
 
@@ -391,7 +430,7 @@ const handleChallengeClick = (challengeId: number) => {
     url: `/pages/route-detail/index?id=${challengeId}`,
   });
 };
-const getChallengeList = async () => {
+const getChallengeList = async (selectedFilters?: any) => {
   const res: any = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
     method: "POST",
@@ -402,6 +441,7 @@ const getChallengeList = async () => {
       query: {
         pageNum: 1,
         pageSize: 10,
+        ...selectedFilters,
       },
     },
   });

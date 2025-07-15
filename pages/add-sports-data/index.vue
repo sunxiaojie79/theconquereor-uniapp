@@ -19,7 +19,7 @@
         <text class="label"> <text class="required">*</text>时间 </text>
         <picker
           mode="date"
-          :value="formData.date"
+          :value="formData.createTime"
           @change="onDateChange"
           class="date-picker"
         >
@@ -63,9 +63,9 @@
         <view class="picker-content" @click="showChallengeModal = true">
           <text
             class="picker-text"
-            :class="{ placeholder: !formData.challenge }"
+            :class="{ placeholder: !formData.challengeProjectId }"
           >
-            {{ formData.challenge || "默认一个挑战" }}
+            {{ challengeProjectTitle || "默认一个挑战" }}
           </text>
           <image
             class="arrow-icon"
@@ -133,10 +133,10 @@
             v-for="option in sportsTypeOptions"
             :key="option.value"
             class="modal-option"
-            :class="{ selected: formData.sportsType === option.label }"
+            :class="{ selected: formData.sportsType === option.dictValue }"
             @click="selectSportsType(option)"
           >
-            <text class="modal-option-text">{{ option.label }}</text>
+            <text class="modal-option-text">{{ option.dictLabel }}</text>
           </view>
         </view>
         <view class="modal-cancel-container">
@@ -157,12 +157,12 @@
         <view class="modal-options-container">
           <view
             v-for="option in challengeOptions"
-            :key="option.value"
+            :key="option.id"
             class="modal-option"
-            :class="{ selected: formData.challenge === option.label }"
+            :class="{ selected: formData.challengeProjectId === option.id }"
             @click="selectChallenge(option)"
           >
-            <text class="modal-option-text">{{ option.label }}</text>
+            <text class="modal-option-text">{{ option.challengeTitle }}</text>
           </view>
         </view>
         <view class="modal-cancel-container">
@@ -181,39 +181,59 @@ import { ref, onMounted } from "vue";
 // 响应式数据
 const formData = ref({
   distance: "",
-  date: "",
+  createTime: "",
   dateDisplay: "",
   sportsType: "",
-  challenge: "",
+  challengeProjectId: "",
   content: "",
   image: "",
 });
+
+const challengeProjectTitle = ref("");
 
 const showSportsTypeModal = ref(false);
 const showChallengeModal = ref(false);
 
 // 运动类型选项
-const sportsTypeOptions = ref([
-  { label: "游泳", value: "swimming" },
-  { label: "骑行", value: "cycling" },
-  { label: "步行", value: "walking" },
-  { label: "室内步行", value: "indoor_walking" },
-  { label: "跑步", value: "running" },
-  { label: "室内跑步", value: "indoor_running" },
-]);
+const sportsTypeOptions = ref(uni.getStorageSync("challenge_type"));
 
 // 挑战项目选项
-const challengeOptions = ref([
-  { label: "万里长城征途", value: "great_wall" },
-  { label: "撒哈拉沙漠探索", value: "sahara" },
-  { label: "亚马逊雨林冒险", value: "amazon" },
-  { label: "丝绸之路重走", value: "silk_road" },
-  { label: "喜马拉雅山脉挑战", value: "himalaya" },
-  { label: "北极圈极地探险", value: "arctic" },
-  { label: "马拉松环球挑战", value: "marathon" },
-  { label: "古代商路探索", value: "ancient_route" },
-]);
-
+const challengeOptions = ref([]);
+// 接口
+// 获取挑战项目
+const getMyChallenges = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 100,
+      },
+    },
+  });
+  console.log("🚀 ~ getMyChallenges ~ res:", res);
+  if (res.data.code === 200 && res.data.rows.length > 0) {
+    challengeOptions.value = res.data.rows;
+    challengeProjectTitle.value = challengeOptions.value[0].challengeTitle;
+  }
+};
+// 手动新增运动记录
+const addSportsData = async (data: any) => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/distance/add",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data,
+  });
+  console.log("🚀 ~ addSportsData ~ res:", res);
+  return res.data;
+};
 // 方法
 const onDistanceInput = (event: any) => {
   const value = event.detail.value;
@@ -228,7 +248,7 @@ const onDistanceInput = (event: any) => {
 };
 
 const onDateChange = (event: any) => {
-  formData.value.date = event.detail.value;
+  formData.value.createTime = event.detail.value;
   // 格式化日期显示
   const date = new Date(event.detail.value);
   const year = date.getFullYear();
@@ -238,13 +258,14 @@ const onDateChange = (event: any) => {
 };
 
 const selectSportsType = (option: any) => {
-  formData.value.sportsType = option.label;
+  formData.value.sportsType = option.dictValue;
   showSportsTypeModal.value = false;
 };
 
 const selectChallenge = (option: any) => {
-  formData.value.challenge = option.label;
+  formData.value.challengeProjectId = option.id;
   showChallengeModal.value = false;
+  challengeProjectTitle.value = option.challengeTitle;
 };
 
 const chooseImage = () => {
@@ -272,7 +293,7 @@ const previewImage = () => {
   });
 };
 
-const onSubmit = () => {
+const onSubmit = async () => {
   // 验证必填项
   if (!formData.value.distance) {
     uni.showToast({
@@ -282,7 +303,7 @@ const onSubmit = () => {
     return;
   }
 
-  if (!formData.value.date) {
+  if (!formData.value.createTime) {
     uni.showToast({
       title: "请选择时间",
       icon: "none",
@@ -298,7 +319,7 @@ const onSubmit = () => {
     return;
   }
 
-  if (!formData.value.challenge) {
+  if (!formData.value.challengeProjectId) {
     uni.showToast({
       title: "请选择挑战项目",
       icon: "none",
@@ -308,10 +329,20 @@ const onSubmit = () => {
 
   console.log("提交数据:", formData.value);
 
-  uni.showToast({
-    title: "提交成功",
-    icon: "success",
+  const res = await addSportsData({
+    distance: formData.value.distance,
+    createTime: formData.value.createTime,
+    sportsType: formData.value.sportsType,
+    challengeProjectId: formData.value.challengeProjectId,
+    content: formData.value.content,
+    image: formData.value.image,
   });
+  if (res.code === 200) {
+    uni.showToast({
+      title: "提交成功",
+      icon: "success",
+    });
+  }
 
   // 延时返回上一页
   setTimeout(() => {
@@ -326,18 +357,19 @@ const initFormData = () => {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
-  formData.value.date = `${year}-${month}-${day}`;
+  formData.value.createTime = `${year}-${month}-${day}`;
   formData.value.dateDisplay = `${year}.${month}.${day}`;
 
   // 设置默认运动类型
-  formData.value.sportsType = sportsTypeOptions.value[0].label;
+  formData.value.sportsType = sportsTypeOptions.value[0].dictValue;
 
   // 设置默认挑战项目
-  formData.value.challenge = challengeOptions.value[0].label;
+  formData.value.challengeProjectId = challengeOptions.value[0].id;
 };
 
-onMounted(() => {
+onMounted(async () => {
   console.log("添加运动数据页面加载完成");
+  await getMyChallenges();
   initFormData();
 });
 </script>

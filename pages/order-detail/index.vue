@@ -3,21 +3,32 @@
     <!-- 地址信息区域 -->
     <view class="address-section">
       <!-- 无地址状态 -->
-      <view v-if="!hasAddress" class="create-address" @click="handleCreateAddress">
+      <view
+        v-if="!hasAddress"
+        class="create-address"
+        @click="handleCreateAddress"
+      >
         <text class="create-address-text">创建地址</text>
-        <image class="arrow-icon" src="/static/arrow-right-black.png" mode="aspectFill"></image>
+        <image
+          class="arrow-icon"
+          src="/static/arrow-right-black.png"
+          mode="aspectFill"
+        ></image>
       </view>
-      
+
       <!-- 有地址状态 -->
       <view v-else class="address-info" @click="handleEditAddress">
         <view class="address-header">
           <view class="default-tag">默认</view>
           <text class="address-location">广东省广州市黄埔区</text>
-          
         </view>
         <view class="address-detail-container">
-        <text class="address-detail">这是一个算详细地址详情</text>
-        <image class="arrow-icon" src="/static/arrow-right-black.png" mode="aspectFill"></image>
+          <text class="address-detail">这是一个算详细地址详情</text>
+          <image
+            class="arrow-icon"
+            src="/static/arrow-right-black.png"
+            mode="aspectFill"
+          ></image>
         </view>
         <text class="recipient-info">收件人 13612345678</text>
       </view>
@@ -26,14 +37,18 @@
     <!-- 商品信息区域 -->
     <view class="product-section">
       <view class="product-header">
-        <text class="product-name">{{ productInfo.name }}</text>
+        <text class="product-name">{{ challengeTitle }}</text>
         <text class="order-status">待支付</text>
       </view>
-      
+
       <view class="product-content">
-        <image class="product-image" :src="productInfo.image" mode="aspectFill"></image>
+        <image
+          class="product-image"
+          :src="productInfo.image"
+          mode="aspectFill"
+        ></image>
         <view class="product-details">
-          <text class="product-spec">规格：{{ productInfo.spec }}</text>
+          <text class="product-spec">规格：{{ productInfo.title }}</text>
           <text class="product-price">¥{{ productInfo.price }}</text>
         </view>
       </view>
@@ -48,68 +63,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
 
 // 页面状态
 const hasAddress = ref(true);
-const productInfo = ref({
-  name: '产品名称产品名称产品名称',
-  image: '/static/challenges/great-wall.jpg',
-  spec: '规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示规格文案规格文案规格文案规格文案规格文案规格文案全量展示',
-  price: 99
-});
+const productInfo = ref(uni.getStorageSync("currentProduct"));
+const challengeTitle = ref("");
 
 // 方法
 const handleCreateAddress = () => {
   // 跳转到地址列表页面
   uni.navigateTo({
-    url: '/pages/address-edit/index'
+    url: "/pages/address-edit/index",
   });
 };
 
 const handleEditAddress = () => {
   // 跳转到地址列表页面
   uni.navigateTo({
-    url: '/pages/address-list/index'
+    url: "/pages/address-list/index",
   });
 };
 
 const handlePayment = () => {
   if (!hasAddress.value) {
     uni.showToast({
-      title: '请先创建收货地址',
-      icon: 'none',
-      duration: 2000
+      title: "请先创建收货地址",
+      icon: "none",
+      duration: 2000,
     });
     return;
   }
-  
+
   uni.showToast({
-    title: '支付成功！',
-    icon: 'success',
-    duration: 2000
+    title: "支付成功！",
+    icon: "success",
+    duration: 2000,
   });
-  
+
   // 延迟跳转
   setTimeout(() => {
     uni.navigateBack();
   }, 2000);
 };
 
-
-
 // 获取页面参数
 onMounted(() => {
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1] as any;
-  
+
   // 从 URL 参数获取商品信息
-  if (currentPage.options?.productId) {
-    const productId = currentPage.options.productId;
-    console.log('商品ID:', productId);
-    // 这里可以根据 productId 加载对应的商品信息
+  if (currentPage.options?.challengeTitle) {
+    challengeTitle.value = currentPage.options.challengeTitle;
+    console.log("挑战标题:", challengeTitle);
   }
-  
+});
+
+onUnmounted(() => {
+  uni.removeStorageSync("currentProduct");
 });
 </script>
 
@@ -121,7 +132,6 @@ onMounted(() => {
   height: 100vh;
   // padding-bottom: 120rpx;
   box-sizing: border-box;
-
 }
 
 /* 地址信息区域 */
@@ -235,7 +245,7 @@ onMounted(() => {
 .product-image {
   width: 240rpx;
   height: 240rpx;
-  border: 1px solid #CDD5D7;
+  border: 1px solid #cdd5d7;
   margin-bottom: 24rpx;
 }
 
@@ -255,13 +265,11 @@ onMounted(() => {
 
 .product-price {
   font-size: 44rpx;
-  color: #7B412D;
+  color: #7b412d;
   font-weight: 500;
   display: block;
   text-align: right;
 }
-
-
 
 /* 底部支付按钮 */
 .pay-section {
@@ -292,4 +300,4 @@ onMounted(() => {
   font-weight: 500;
   color: #242a36;
 }
-</style> 
+</style>

@@ -158,7 +158,22 @@ const sportsDataList = ref([]);
 const showDeleteModal = ref(false);
 const deleteIndex = ref(-1);
 const showAddAuthModal = ref(false);
-
+// 解密微信运动数据
+const decryptWeChatData = async (encryptedData: string, iv: string) => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/getWxStepInfo",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      encryptedData,
+      iv,
+    },
+  });
+  console.log("🚀 ~ decryptWeChatData ~ res:", res);
+  return res.data;
+};
 // 初始化运动数据
 const getSportList = async () => {
   const mockData = [
@@ -274,9 +289,7 @@ const getSportList = async () => {
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      userId: uni.getStorageSync("userInfo").id,
-    },
+    data: {},
   });
   console.log("🚀 ~ getSportList ~ res:", res);
   sportsDataList.value = res.data.rows;
@@ -318,14 +331,16 @@ const confirmDelete = () => {
   deleteIndex.value = -1;
 };
 
-const confirmAddAuth = () => {
+const confirmAddAuth = async () => {
   wx.getWeRunData({
-    success(res) {
+    success: async (res) => {
       console.log("🚀 ~ success ~ res:", res);
       // 拿 encryptedData 到开发者后台解密开放数据
       const encryptedData = res.encryptedData;
       // 或拿 cloudID 通过云调用直接获取开放数据
-      const cloudID = res.cloudID;
+      const iv = res.iv;
+      const res2 = await decryptWeChatData(encryptedData, iv);
+      console.log("🚀 ~ success ~ res2:", res2);
     },
   });
 

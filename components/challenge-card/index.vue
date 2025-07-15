@@ -8,11 +8,11 @@
       ></image>
       <view
         class="like-btn"
-        :class="{ liked: project.isLiked }"
+        :class="{ liked: project.collectFlag }"
         @click.stop="handleLikeClick"
       >
         <image
-          v-if="project.isLiked"
+          v-if="project.collectFlag"
           class="like-icon"
           src="/static/heart-fill.png"
           mode="aspectFill"
@@ -40,7 +40,7 @@ export interface Project {
   subtitle: string;
   productDescription: string;
   productCover: string;
-  isLiked: boolean;
+  collectFlag: boolean;
 }
 
 interface Props {
@@ -48,7 +48,7 @@ interface Props {
 }
 
 interface Emits {
-  (e: "like", projectId: number): void;
+  (e: "like", project: Project): void;
   (e: "join", projectId: number): void;
 }
 
@@ -56,7 +56,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const handleLikeClick = () => {
-  emit("like", props.project.id);
+  emit("like", props.project);
 };
 
 const handleJoinClick = () => {

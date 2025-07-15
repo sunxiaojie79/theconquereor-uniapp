@@ -32,15 +32,15 @@
       <view class="stats-row">
         <view class="stat-item">
           <text class="stat-label">累计跑量</text>
-          <text class="stat-value">{{ userInfo.totalDistance }}km</text>
+          <text class="stat-value">{{ distanceInfo.totalDistance }}km</text>
         </view>
         <view class="stat-item">
           <text class="stat-label">本月跑量</text>
-          <text class="stat-value">165.20km</text>
+          <text class="stat-value">{{ distanceInfo.monthDistance }}km</text>
         </view>
         <view class="stat-item">
           <text class="stat-label">本年跑量</text>
-          <text class="stat-value">165.20km</text>
+          <text class="stat-value">{{ distanceInfo.yearDistance }}km</text>
         </view>
       </view>
 
@@ -280,6 +280,11 @@ const tempNickname = ref("");
 
 // 计算属性
 const userInfo = computed(() => userStore.userInfo);
+const distanceInfo = ref({
+  monthDistance: 0,
+  totalDistance: 0,
+  yearDistance: 0,
+});
 
 // 获取用户信息
 const getUserInfo = async () => {
@@ -289,11 +294,11 @@ const getUserInfo = async () => {
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    // data: {
-    //   userId: uni.getStorageSync("userInfo").id,
-    // },
   });
   console.log("🚀 ~ getUserInfo ~ res:", res);
+  if (res.data.code === 200) {
+    distanceInfo.value = res.data.data;
+  }
 };
 // 头像选择处理
 const onChooseAvatar = (e: any) => {

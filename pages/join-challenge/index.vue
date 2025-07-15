@@ -166,9 +166,7 @@ const initChallengeCodeList = async () => {
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      userId: uni.getStorageSync("userInfo").id,
-    },
+    data: {},
   });
   console.log("🚀 ~ initChallengeCodeList ~ res:", res);
   if (res.data.code === 200) {

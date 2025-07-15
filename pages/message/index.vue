@@ -184,9 +184,7 @@ const initMessageList = async () => {
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      userId: uni.getStorageSync("userInfo").id,
-    },
+    data: {},
   });
   console.log("🚀 ~ initMessageList ~ res:", res);
   // messageList.value = res.data.rows;

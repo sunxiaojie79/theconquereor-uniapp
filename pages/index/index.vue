@@ -67,7 +67,7 @@
                 <text class="distance-unit">km</text>
               </view>
               <view>
-                <text class="progress">{{ challenge.progress }} </text>
+                <text class="progress">{{ challenge.process }} </text>
                 <text class="progress-unit">%</text>
               </view>
             </view>
@@ -316,11 +316,24 @@ const getMyAddress = async () => {
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      id: "1944668554736496642",
-    },
+    data: {},
   });
   console.log("🚀 ~ getMyAddress ~ res:", res);
+  return res.data;
+};
+// 获取字典数据
+const getDictData = async (dictType: string) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/dict/list/${dictType}`,
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getDictData ~ res:", res);
+  if (res.data.code === 200) {
+    uni.setStorageSync(dictType, res.data.rows);
+  }
   return res.data;
 };
 // 方法
@@ -359,12 +372,18 @@ const handleScroll = (e: any) => {
   }
 };
 
-const handleLikeProject = async (projectId: number) => {
-  const res = await likeCollection(projectId);
-  if (res.data === true) {
-    const project = challengeProjects.value.find((p) => p.id === projectId);
-    if (project) {
-      project.isLiked = !project.isLiked;
+const handleLikeProject = async (project: Project) => {
+  if (project.collectFlag) {
+    const res = await cancelCollection(project.id);
+    console.log("🚀 ~ cancelCollection ~ res:", res);
+    if (res.code === 200) {
+      project.collectFlag = false;
+    }
+  } else {
+    const res = await likeCollection(project.id);
+    console.log("🚀 ~ likeCollection ~ res:", res);
+    if (res.code === 200) {
+      project.collectFlag = true;
     }
   }
 };
@@ -413,6 +432,7 @@ const loginWX = async () => {
   console.log("登录");
   uni.login({
     success(res) {
+      console.log("🚀 ~ success ~ res:", res);
       if (res.code) {
         //发起网络请求
         uni
@@ -431,6 +451,16 @@ const loginWX = async () => {
               getChallengeList();
               getMyChallenges(1, false); // 首次加载第1页数据
               getMyAddress();
+              getDictData("operation_comp");
+              getDictData("challenge_type");
+              console.log(
+                "🚀 ~ getStorageSync ~ operation_comp:",
+                uni.getStorageSync("operation_comp")
+              );
+              console.log(
+                "🚀 ~ getStorageSync ~ challenge_type:",
+                uni.getStorageSync("challenge_type")
+              );
             }
           });
       } else {
