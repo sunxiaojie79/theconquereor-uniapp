@@ -234,6 +234,37 @@ const addSportsData = async (data: any) => {
   console.log("🚀 ~ addSportsData ~ res:", res);
   return res.data;
 };
+// 图片上传
+const uploadImage = async (file: string) => {
+  uni.uploadFile({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/upload",
+    filePath: file,
+    name: "file", // 后端接收文件的字段名
+    formData: {
+      userId: uni.getStorageSync("userInfo").id, // 示例：传递用户ID
+    },
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+      "Content-Type": "multipart/form-data",
+    },
+    success: (uploadRes) => {
+      console.log("111上传成功", uploadRes);
+
+      const data = JSON.parse(uploadRes.data);
+      console.log("🚀 ~ uploadImage ~ data:", data);
+      if (data.code === 200) {
+        formData.value.image = data.url; // 假设服务器返回的URL在data.url字段
+      }
+    },
+    fail: (err) => {
+      console.error("上传失败", err);
+      uni.showToast({
+        title: `图片上传失败: ${err.errMsg}`,
+        icon: "none",
+      });
+    },
+  });
+};
 // 方法
 const onDistanceInput = (event: any) => {
   const value = event.detail.value;
@@ -273,9 +304,9 @@ const chooseImage = () => {
     count: 1,
     sizeType: ["compressed"],
     sourceType: ["album"],
-    success: (res) => {
-      const tempFilePath = res.tempFilePaths[0];
-      formData.value.image = tempFilePath;
+    success: async (res) => {
+      console.log("🚀 ~ success: ~ res:", res);
+      uploadImage(res.tempFilePaths[0]);
     },
     fail: (err) => {
       console.error("选择图片失败:", err);

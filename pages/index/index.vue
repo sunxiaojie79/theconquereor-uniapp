@@ -177,40 +177,21 @@ const myChallenges = ref<any[]>([]);
 
 const challengeProjects = ref<Project[]>([]);
 
-const faqList = ref([
-  {
-    id: 1,
-    question: "如何开始我的第一个挑战？",
-    answer:
-      "在挑战广场选择适合的项目，点击加入挑战即可开始您的征程。建议新手先从简单的挑战开始。",
-  },
-  {
-    id: 2,
-    question: "挑战口令是什么？如何使用？",
-    answer:
-      "挑战口令是特殊的邀请码，输入后可以解锁专属挑战或获得额外奖励。口令通常由官方或好友分享。",
-  },
-  {
-    id: 3,
-    question: "如何邀请朋友一起参加挑战？",
-    answer:
-      "在挑战详情页面点击邀请按钮，分享给您的朋友即可组队挑战。组队完成挑战会获得额外的团队奖励。",
-  },
-  {
-    id: 4,
-    question: "完成挑战后会获得什么奖励？",
-    answer:
-      "完成挑战将获得相应的勋章、积分和专属称号，还有机会获得实物奖励。不同难度的挑战奖励也不同。",
-  },
-  {
-    id: 5,
-    question: "如何查看我的挑战进度？",
-    answer:
-      "在个人中心或挑战详情页面都可以查看您的实时进度和历史记录。系统会自动记录您的运动数据。",
-  },
-]);
+const faqList = ref<any[]>([]);
 
 // 接口
+// 获取地区
+const getArea = async (parentCode) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/area/list/${parentCode}`,
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getArea ~ res:", res);
+  return res.data;
+};
 // 获取我的挑战
 const getMyChallenges = async (page = 1, append = false) => {
   if (loading.value) return;
@@ -336,6 +317,20 @@ const getDictData = async (dictType: string) => {
   }
   return res.data;
 };
+// 获取Q&A列表
+const getFaqList = async () => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/qa/list",
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getFaqList ~ res:", res);
+  if (res.data.code === 200) {
+    faqList.value = res.data.data.slice(0, 5);
+  }
+};
 // 方法
 const navigateTo = (url: string) => {
   const tabBarPages = [
@@ -453,14 +448,8 @@ const loginWX = async () => {
               getMyAddress();
               getDictData("operation_comp");
               getDictData("challenge_type");
-              console.log(
-                "🚀 ~ getStorageSync ~ operation_comp:",
-                uni.getStorageSync("operation_comp")
-              );
-              console.log(
-                "🚀 ~ getStorageSync ~ challenge_type:",
-                uni.getStorageSync("challenge_type")
-              );
+              getArea("0");
+              getFaqList();
             }
           });
       } else {
