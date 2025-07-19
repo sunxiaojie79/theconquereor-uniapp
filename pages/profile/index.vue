@@ -163,7 +163,7 @@
             @click="navigateToSports(item.id)"
           >
             <view class="sports-header">
-              <text class="sports-title">{{ item.name }}</text>
+              <text class="sports-title">{{ item.challengeType }}</text>
               <text class="badge-text">{{ item.badgeText }}</text>
             </view>
             <image
@@ -175,21 +175,23 @@
               <view class="sports-total">
                 <view class="sports-stat1">
                   <text class="stat1-label">此活动总里程</text>
-                  <text class="stat1-value">{{ item.totalDistance }}</text>
+                  <text class="stat1-value">{{ item.totalDistance }} km</text>
                 </view>
                 <view class="sports-stat2">
                   <text class="stat2-label">总计</text>
-                  <text class="stat2-value">{{ item.percentage }}%</text>
+                  <text class="stat2-value">{{ item.percent }}%</text>
                 </view>
               </view>
               <view class="sports-progress">
                 <view class="progress-info" style="background: #fadb47">
                   <text class="progress-label">本月</text>
-                  <text class="progress-value">{{ item.monthDistance }}</text>
+                  <text class="progress-value"
+                    >{{ item.monthDistance }} km</text
+                  >
                 </view>
                 <view class="progress-info" style="background: #aaaaaa">
                   <text class="progress-label">本年</text>
-                  <text class="progress-value">{{ item.yearDistance }}</text>
+                  <text class="progress-value">{{ item.yearDistance }} km</text>
                 </view>
               </view>
             </view>
@@ -294,6 +296,7 @@ const distanceInfo = ref({
   monthDistance: 0,
   totalDistance: 0,
   yearDistance: 0,
+  activitySummaryList: [],
 });
 
 // 获取用户信息
@@ -308,6 +311,7 @@ const getUserInfo = async () => {
   console.log("🚀 ~ getUserInfo ~ res:", res);
   if (res.data.code === 200) {
     distanceInfo.value = res.data.data;
+    initSportsList();
   }
 };
 // 头像选择处理
@@ -532,8 +536,8 @@ const initChallengeList = async () => {
 };
 
 const initSportsList = () => {
-  sportsList.value = [
-    {
+  const sportsMap = {
+    跑步: {
       id: "running",
       name: "跑步",
       badgeText: "RUNNING",
@@ -543,7 +547,7 @@ const initSportsList = () => {
       monthDistance: "0.00 km",
       yearDistance: "45.00 km",
     },
-    {
+    室内跑步: {
       id: "indoor",
       name: "室内跑步",
       badgeText: "RUNNING INDOOR",
@@ -553,7 +557,7 @@ const initSportsList = () => {
       monthDistance: "0.00 km",
       yearDistance: "45.00 km",
     },
-    {
+    步行: {
       id: "walking",
       name: "步行",
       badgeText: "WALKING",
@@ -563,7 +567,7 @@ const initSportsList = () => {
       monthDistance: "0.00 km",
       yearDistance: "45.00 km",
     },
-    {
+    室内步行: {
       id: "walkingindoor",
       name: "室内步行",
       badgeText: "WALKING INDOOR",
@@ -573,7 +577,7 @@ const initSportsList = () => {
       monthDistance: "0.00 km",
       yearDistance: "45.00 km",
     },
-    {
+    骑行: {
       id: "cycling",
       name: "骑行",
       badgeText: "CYCLING",
@@ -583,7 +587,7 @@ const initSportsList = () => {
       monthDistance: "0.00 km",
       yearDistance: "45.00 km",
     },
-    {
+    游泳: {
       id: "swimming",
       name: "游泳",
       badgeText: "SWIMMING",
@@ -593,13 +597,82 @@ const initSportsList = () => {
       monthDistance: "0.00 km",
       yearDistance: "45.00 km",
     },
-  ];
+  };
+  // sportsList.value = [
+  //   {
+  //     id: "running",
+  //     name: "跑步",
+  //     badgeText: "RUNNING",
+  //     icon: "/static/sports/running.png",
+  //     totalDistance: "161.20 km",
+  //     percentage: "40",
+  //     monthDistance: "0.00 km",
+  //     yearDistance: "45.00 km",
+  //   },
+  //   {
+  //     id: "indoor",
+  //     name: "室内跑步",
+  //     badgeText: "RUNNING INDOOR",
+  //     icon: "/static/sports/runningindoor.png",
+  //     totalDistance: "161.20 km",
+  //     percentage: "40",
+  //     monthDistance: "0.00 km",
+  //     yearDistance: "45.00 km",
+  //   },
+  //   {
+  //     id: "walking",
+  //     name: "步行",
+  //     badgeText: "WALKING",
+  //     icon: "/static/sports/walking.png",
+  //     totalDistance: "161.20 km",
+  //     percentage: "40",
+  //     monthDistance: "0.00 km",
+  //     yearDistance: "45.00 km",
+  //   },
+  //   {
+  //     id: "walkingindoor",
+  //     name: "室内步行",
+  //     badgeText: "WALKING INDOOR",
+  //     icon: "/static/sports/walkingindoor.png",
+  //     totalDistance: "161.20 km",
+  //     percentage: "40",
+  //     monthDistance: "0.00 km",
+  //     yearDistance: "45.00 km",
+  //   },
+  //   {
+  //     id: "cycling",
+  //     name: "骑行",
+  //     badgeText: "CYCLING",
+  //     icon: "/static/sports/cycling.png",
+  //     totalDistance: "161.20 km",
+  //     percentage: "40",
+  //     monthDistance: "0.00 km",
+  //     yearDistance: "45.00 km",
+  //   },
+  //   {
+  //     id: "swimming",
+  //     name: "游泳",
+  //     badgeText: "SWIMMING",
+  //     icon: "/static/sports/swimming.png",
+  //     totalDistance: "161.20 km",
+  //     percentage: "40",
+  //     monthDistance: "0.00 km",
+  //     yearDistance: "45.00 km",
+  //   },
+  // ];
+  distanceInfo.value.activitySummaryList.forEach((item) => {
+    sportsList.value.push({
+      ...sportsMap[item.challengeType],
+      ...item,
+    });
+  });
+  console.log(111, sportsList.value);
 };
 
 onMounted(() => {
   initChallengeList();
-  initSportsList();
   getUserInfo();
+
   // 初始化昵称
   tempNickname.value = userStore.userInfo.nickname;
 

@@ -124,7 +124,9 @@ const handlePayment = async () => {
       duration: 2000,
     });
     uni.navigateTo({
-      url: `/pages/payment/index?codeUrl=${res.data.data.codeUrl}`,
+      url: `/pages/payment/index?codeUrl=${encodeURIComponent(
+        res.data.data.codeUrl
+      )}`,
     });
   } else {
     uni.showToast({

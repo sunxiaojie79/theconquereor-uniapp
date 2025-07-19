@@ -79,6 +79,8 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { onShow } from "@dcloudio/uni-app"; // 页面生命周期从 uni-app 导入
+
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 // 响应式数据
@@ -198,8 +200,8 @@ const addAddress = () => {
   });
 };
 
-// 页面加载时初始化数据
-onMounted(() => {
+onShow(() => {
+  console.log("🚀 ~ onShow ~ onShow");
   getMyAddress();
 });
 </script>

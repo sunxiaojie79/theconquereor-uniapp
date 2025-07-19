@@ -365,6 +365,7 @@ onMounted(() => {
 .product-spec {
   width: 480rpx;
   height: 40rpx;
+  line-height: 40rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

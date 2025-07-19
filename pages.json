@@ -31,9 +31,7 @@
     {
       "path": "pages/route-detail/index",
       "style": {
-        "navigationBarTitleText": "路线详情",
-        "navigationBarBackgroundColor": "#165DFF",
-        "navigationBarTextStyle": "white"
+        "navigationBarTitleText": "路线详情"
       }
     },
     {

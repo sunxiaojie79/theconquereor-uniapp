@@ -179,9 +179,7 @@ const handleConfirm = async () => {
   }
   // 延迟返回上一页
   setTimeout(() => {
-    uni.navigateTo({
-      url: "/pages/address-list/index",
-    });
+    uni.navigateBack();
   }, 2000);
 };
 
