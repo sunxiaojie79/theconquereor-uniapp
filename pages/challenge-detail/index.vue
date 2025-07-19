@@ -172,7 +172,7 @@ const handleProductClick = (productId: string) => {
 const handleBuyProduct = (product: any) => {
   uni.setStorageSync("currentProduct", product);
   uni.navigateTo({
-    url: `/pages/order-detail/index?challengeTitle=${challengeDetail.value.challengeTitle}`,
+    url: `/pages/order-detail/index?challengeTitle=${challengeDetail.value.challengeTitle}&challengeId=${challengeDetail.value.id}`,
   });
 };
 // 获取系统信息
@@ -313,6 +313,7 @@ onMounted(() => {
 
 .product-name {
   font-size: 28rpx;
+  height: 80rpx;
   color: rgba(0, 0, 0, 0.85);
   line-height: normal;
   margin-bottom: 16rpx;

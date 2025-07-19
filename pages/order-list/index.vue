@@ -15,25 +15,30 @@
 
     <!-- 订单列表 -->
     <view class="order-list">
-      <view v-for="order in filteredOrders" :key="order.id" class="order-item" :style="{ height: order.status === 'completed' ? '232rpx' : '328rpx' }">
+      <view
+        v-for="order in orderList"
+        :key="order.id"
+        class="order-item"
+        :style="{ height: order.status === 'completed' ? '232rpx' : '328rpx' }"
+      >
         <!-- 商品信息 -->
         <view class="product-info">
           <view class="product-top">
-            <text class="product-name">{{ order.productName }}</text>
+            <text class="product-name">{{ order.challengeTitle }}</text>
             <text class="product-status">{{
-              getStatusText(order.status)
+              getStatusText(Number(order.status))
             }}</text>
           </view>
           <view class="product-bottom">
             <image
               class="product-image"
-              :src="order.productImage"
+              :src="order.productCover"
               mode="aspectFill"
             ></image>
             <view class="product-bottom-right">
               <view class="product-bottom-right-top">
                 <text class="product-spec"
-                  >规格：{{ order.specification }}</text
+                  >规格：{{ order.productDescription }}</text
                 >
                 <text class="product-price">¥{{ order.price }}</text>
               </view>
@@ -106,26 +111,26 @@ const orderList = ref([]);
 
 // 订单分类
 const orderTabs = [
-  { label: "全部", key: "all" },
-  { label: "待支付", key: "pending" },
+  { label: "全部", key: "" },
+  { label: "待支付", key: 0 },
   { label: "待发货", key: "shipped" },
   { label: "待收货", key: "delivered" },
   { label: "完成/取消", key: "finished" },
 ];
 
 // 计算属性 - 根据选中的tab过滤订单
-const filteredOrders = computed(() => {
-  const currentTab = orderTabs[selectedTab.value];
-  if (currentTab.key === "all") {
-    return orderList.value;
-  } else if (currentTab.key === "finished") {
-    return orderList.value.filter(
-      (order) => order.status === "completed" || order.status === "cancelled"
-    );
-  } else {
-    return orderList.value.filter((order) => order.status === currentTab.key);
-  }
-});
+// const filteredOrders = computed(() => {
+//   const currentTab = orderTabs[selectedTab.value];
+//   if (currentTab.key === "all") {
+//     return orderList.value;
+//   } else if (currentTab.key === "finished") {
+//     return orderList.value.filter(
+//       (order) => order.status === "completed" || order.status === "cancelled"
+//     );
+//   } else {
+//     return orderList.value.filter((order) => order.status === currentTab.key);
+//   }
+// });
 
 // 切换tab
 const switchTab = (index: number) => {
@@ -133,13 +138,15 @@ const switchTab = (index: number) => {
 };
 
 // 获取状态文本
-const getStatusText = (status: string) => {
+const getStatusText = (status: number) => {
+  // 0 - 项目待支付 1 - 待绑定 2 - 待挑战 3 - 挑战中 4 - 挑战成功 5 - 关闭
   const statusMap = {
-    pending: "待支付",
-    shipped: "待发货",
-    delivered: "待收货",
-    completed: "交易完成",
-    cancelled: "交易取消",
+    0: "待支付",
+    1: "待绑定",
+    2: "待挑战",
+    3: "挑战中",
+    4: "挑战成功",
+    5: "关闭",
   };
   return statusMap[status] || status;
 };
@@ -207,70 +214,29 @@ const deleteOrder = (orderId: string) => {
 };
 
 // 初始化订单数据
-const initOrderList = () => {
-  const mockOrders = [
-    // 待支付订单
-    {
-      id: "1",
-      productName: "产品名称产品名称产品名称",
-      productImage: "/static/challenges/great-wall.jpg",
-      specification: "规格文案",
-      price: "99",
-      status: "pending",
-      challengeCode: "DGDFGDFHFGDSFDGHFDG",
+const initOrderList = async () => {
+  const res = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/order/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    // 待发货订单
-    {
-      id: "2",
-      productName: "产品名称产品名称产品名称",
-      productImage: "/static/challenges/silk-road.jpg",
-      specification: "规格文案规格文案规格文案规...",
-      price: "99",
-      status: "shipped",
-      challengeCode: "DGDFGDFHFGDSFDGHFDG",
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 100,
+      },
     },
-    // 待收货订单
-    {
-      id: "3",
-      productName: "产品名称产品名称产品名称",
-      productImage: "/static/challenges/sahara.jpg",
-      specification: "规格文案",
-      price: "99",
-      status: "delivered",
-      challengeCode: "DGDFGDFHFGDSFDGHFDG",
-    },
-    // 交易完成订单
-    {
-      id: "4",
-      productName: "产品名称产品名称产品名称",
-      productImage: "/static/challenges/amazon.jpg",
-      specification: "规格文案",
-      price: "99",
-      status: "completed",
-      challengeCode: "DGDFGDFHFGDSFDGHFDG",
-    },
-    {
-      id: "5",
-      productName: "产品名称产品名称产品名称",
-      productImage: "/static/challenges/great-wall.jpg",
-      specification: "规格文案",
-      price: "99",
-      status: "completed",
-      challengeCode: "DGDFGDFHFGDSFDGHFDG",
-    },
-    // 交易取消订单
-    {
-      id: "6",
-      productName: "产品名称产品名称产品名称",
-      productImage: "/static/challenges/silk-road.jpg",
-      specification: "规格文案",
-      price: "99",
-      status: "cancelled",
-      challengeCode: "DGDFGDFHFGDSFDGHFDG",
-    },
-  ];
-
-  orderList.value = mockOrders;
+  });
+  console.log("🚀 ~ initOrderList ~ res:", res);
+  if (res.data.code === 200) {
+    orderList.value = res.data.rows;
+  } else {
+    uni.showToast({
+      title: "获取订单失败",
+      icon: "none",
+    });
+  }
 };
 
 onMounted(() => {
@@ -397,6 +363,11 @@ onMounted(() => {
   justify-content: space-between;
 }
 .product-spec {
+  width: 480rpx;
+  height: 40rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 28rpx;
   color: rgba(0, 0, 0, 0.65);
 }
@@ -461,7 +432,7 @@ onMounted(() => {
     background: #fadb47;
 
     .btn-text {
-      color: #242A36;
+      color: #242a36;
       font-size: 34rpx;
       font-weight: 500;
     }
@@ -472,7 +443,7 @@ onMounted(() => {
     border: 2rpx solid rgba(0, 0, 0, 0.45);
 
     .btn-text {
-      color: #242A36;
+      color: #242a36;
       font-size: 34rpx;
     }
   }

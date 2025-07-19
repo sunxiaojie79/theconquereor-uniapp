@@ -104,11 +104,19 @@
             class="challenge-card"
             @click="navigateToChallenge(item.id)"
           >
-            <image class="card-icon" :src="item.icon" mode="aspectFill"></image>
-            <image class="card-bg" :src="item.image" mode="aspectFill"></image>
+            <image
+              class="card-icon"
+              :src="item.productCover"
+              mode="aspectFill"
+            ></image>
+            <image
+              class="card-bg"
+              :src="item.productCover"
+              mode="aspectFill"
+            ></image>
             <view class="card-content">
               <view class="card-info">
-                <text class="card-title">{{ item.name }}</text>
+                <text class="card-title">{{ item.challengeTitle }}</text>
                 <view class="card-stats">
                   <view class="stat-row">
                     <text class="card-label">里程</text>
@@ -135,7 +143,9 @@
                   <text class="status-text">{{ item.statusText }}</text>
                 </view>
               </view>
-              <text class="card-description">{{ item.description }}</text>
+              <text class="card-description">{{
+                item.productDescription
+              }}</text>
             </view>
           </view>
         </view>
@@ -445,64 +455,80 @@ const handleChallengeAction = (item: any) => {
 };
 
 // 初始化数据
-const initChallengeList = () => {
-  challengeList.value = [
-    {
-      id: "challenge1",
-      name: "挑战名称",
-      image: "/static/bg/challenge.png",
-      icon: "/static/bg/challenge-icon.png",
-      distance: "161.2",
-      days: "14",
-      status: "success",
-      statusText: "挑战成功",
-      description: "你在14天内完成了挑战，点击查看详情",
+const initChallengeList = async () => {
+  // challengeList.value = [
+  //   {
+  //     id: "challenge1",
+  //     name: "挑战名称",
+  //     image: "/static/bg/challenge.png",
+  //     icon: "/static/bg/challenge-icon.png",
+  //     distance: "161.2",
+  //     days: "14",
+  //     status: "success",
+  //     statusText: "挑战成功",
+  //     description: "你在14天内完成了挑战，点击查看详情",
+  //   },
+  //   {
+  //     id: "challenge2",
+  //     name: "挑战名称",
+  //     image: "/static/bg/challenge.png",
+  //     icon: "/static/bg/challenge-icon.png",
+  //     distance: "161.2",
+  //     days: "14",
+  //     status: "progress",
+  //     statusText: "挑战中",
+  //     description: "你在14天内完成了挑战，点击查看详情",
+  //   },
+  //   {
+  //     id: "challenge3",
+  //     name: "挑战名称",
+  //     image: "/static/bg/challenge.png",
+  //     icon: "/static/bg/challenge-icon.png",
+  //     distance: "161.2",
+  //     days: "14",
+  //     status: "not-start",
+  //     statusText: "未开始",
+  //     description: "你在14天内完成了挑战，点击查看详情",
+  //   },
+  //   {
+  //     id: "challenge4",
+  //     name: "挑战名称",
+  //     image: "/static/bg/challenge.png",
+  //     icon: "/static/bg/challenge-icon.png",
+  //     distance: "161.2",
+  //     days: "14",
+  //     status: "progress",
+  //     statusText: "挑战中",
+  //     description: "你在14天内完成了挑战，点击查看详情",
+  //   },
+  //   {
+  //     id: "challenge5",
+  //     name: "挑战名称",
+  //     image: "/static/bg/challenge.png",
+  //     icon: "/static/bg/challenge-icon.png",
+  //     distance: "161.2",
+  //     days: "14",
+  //     status: "progress",
+  //     statusText: "挑战中",
+  //     description: "你在14天内完成了挑战，点击查看详情",
+  //   },
+  // ];
+  const res = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    {
-      id: "challenge2",
-      name: "挑战名称",
-      image: "/static/bg/challenge.png",
-      icon: "/static/bg/challenge-icon.png",
-      distance: "161.2",
-      days: "14",
-      status: "progress",
-      statusText: "挑战中",
-      description: "你在14天内完成了挑战，点击查看详情",
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 100,
+      },
     },
-    {
-      id: "challenge3",
-      name: "挑战名称",
-      image: "/static/bg/challenge.png",
-      icon: "/static/bg/challenge-icon.png",
-      distance: "161.2",
-      days: "14",
-      status: "not-start",
-      statusText: "未开始",
-      description: "你在14天内完成了挑战，点击查看详情",
-    },
-    {
-      id: "challenge4",
-      name: "挑战名称",
-      image: "/static/bg/challenge.png",
-      icon: "/static/bg/challenge-icon.png",
-      distance: "161.2",
-      days: "14",
-      status: "progress",
-      statusText: "挑战中",
-      description: "你在14天内完成了挑战，点击查看详情",
-    },
-    {
-      id: "challenge5",
-      name: "挑战名称",
-      image: "/static/bg/challenge.png",
-      icon: "/static/bg/challenge-icon.png",
-      distance: "161.2",
-      days: "14",
-      status: "progress",
-      statusText: "挑战中",
-      description: "你在14天内完成了挑战，点击查看详情",
-    },
-  ];
+  });
+  if (res.data.code === 200) {
+    challengeList.value = res.data.data;
+  }
 };
 
 const initSportsList = () => {
@@ -891,6 +917,9 @@ onMounted(() => {
 .card-description {
   width: 336rpx;
   height: 68rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   display: flex;
   text-align: center;
   line-height: 34rpx;

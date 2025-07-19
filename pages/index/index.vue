@@ -2,13 +2,13 @@
   <view class="page">
     <!-- 顶部搜索栏 -->
     <view class="search-header">
-      <view class="search-bar">
+      <!-- <view class="search-bar">
         <input
           class="item-input"
           placeholder="挑战项目"
           placeholder-style="color: #999;"
         />
-      </view>
+      </view> -->
     </view>
 
     <!-- 挑战口令输入区域 -->
@@ -51,7 +51,7 @@
         >
           <image
             class="challenge-avatar"
-            :src="challenge.avatar"
+            :src="challenge.productCover"
             mode="aspectFill"
           ></image>
           <view class="challenge-info">
@@ -180,18 +180,7 @@ const challengeProjects = ref<Project[]>([]);
 const faqList = ref<any[]>([]);
 
 // 接口
-// 获取地区
-const getArea = async (parentCode) => {
-  const res: any = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/area/list/${parentCode}`,
-    method: "GET",
-    header: {
-      "X-WX-TOKEN": uni.getStorageSync("token"),
-    },
-  });
-  console.log("🚀 ~ getArea ~ res:", res);
-  return res.data;
-};
+
 // 获取我的挑战
 const getMyChallenges = async (page = 1, append = false) => {
   if (loading.value) return;
@@ -200,7 +189,7 @@ const getMyChallenges = async (page = 1, append = false) => {
 
   try {
     const res: any = await uni.request({
-      url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject/list",
+      url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
       method: "POST",
       header: {
         "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -212,15 +201,16 @@ const getMyChallenges = async (page = 1, append = false) => {
         },
       },
     });
+    console.log("🚀 ~ getMyChallenges ~ res:", res);
     if (res.data.code === 200) {
-      const { rows, total: totalCount } = res.data;
+      const { data, total: totalCount } = res.data;
 
       if (append) {
         // 追加数据
-        myChallenges.value = [...myChallenges.value, ...rows];
+        myChallenges.value = [...myChallenges.value, ...data];
       } else {
         // 替换数据（首次加载）
-        myChallenges.value = rows;
+        myChallenges.value = data;
       }
 
       total.value = totalCount;
@@ -228,10 +218,6 @@ const getMyChallenges = async (page = 1, append = false) => {
 
       // 判断是否还有更多数据
       hasMore.value = myChallenges.value.length < totalCount;
-
-      console.log(
-        `加载第${page}页数据，当前总数：${myChallenges.value.length}，总记录数：${totalCount}`
-      );
     }
 
     return res.data;
@@ -292,7 +278,7 @@ const cancelCollection = async (id) => {
 // 获取我的收货地址
 const getMyAddress = async () => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/address",
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/address/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -353,11 +339,6 @@ const handleScroll = (e: any) => {
 
   // 计算剩余可滑动距离
   const remaining = scrollWidth - scrollLeft;
-
-  console.log(
-    `滑动状态: scrollLeft=${scrollLeft}, scrollWidth=${scrollWidth}, remaining=${remaining}`
-  );
-
   // 当剩余距离小于阈值时（接近底部），且还有更多数据，且不在加载中
   if (remaining <= 600 && hasMore.value && !loading.value) {
     console.log("触发分页加载，加载第", pageNum.value + 1, "页");
@@ -448,7 +429,6 @@ const loginWX = async () => {
               getMyAddress();
               getDictData("operation_comp");
               getDictData("challenge_type");
-              getArea("0");
               getFaqList();
             }
           });
@@ -483,6 +463,7 @@ onMounted(async () => {
 
 /* 顶部搜索栏 */
 .search-header {
+  background-color: #1c1f26;
   padding: 100rpx 30rpx 20rpx 30rpx;
 }
 
@@ -609,6 +590,10 @@ onMounted(async () => {
 }
 
 .challenge-title {
+  width: 270rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 34rpx;
   font-weight: 500;
   margin-bottom: 10rpx;

@@ -17,11 +17,13 @@
                     src="/static/cell-on.png"
                     mode="aspectFit"
                   />
-                  <view v-if="item.isDefault" class="default-tag">
+                  <view v-if="item.defaultFlag" class="default-tag">
                     <text class="default-text">默认</text>
                   </view>
                   <view class="address-region">
-                    <text>{{ item.region }} </text>
+                    <text
+                      >{{ item.province }}{{ item.city }}{{ item.district }}
+                    </text>
                   </view>
                 </view>
                 <image
@@ -32,25 +34,25 @@
                 ></image>
               </view>
               <view class="address-detail">
-                <text>{{ item.detail }}</text>
+                <text>{{ item.address }}</text>
               </view>
               <view class="name-phone">
-                <text class="name">{{ item.name }}</text>
-                <text class="phone">{{ item.phone }}</text>
+                <text class="name">{{ item.receiverName }}</text>
+                <text class="phone">{{ item.contact }}</text>
               </view>
             </view>
           </view>
           <template v-slot:right>
             <view class="delete-btn-container">
-            <view class="delete-btn">
-              <image
+              <view class="delete-btn">
+                <image
                   class="delete-icon"
                   src="/static/delete.png"
                   mode="aspectFill"
-                  @click.stop="deleteAddress(index)"
+                  @click.stop="deleteAddress(item.id)"
                 ></image>
+              </view>
             </view>
-          </view>
           </template>
         </uni-swipe-action-item>
       </uni-swipe-action>
@@ -76,81 +78,56 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 // 响应式数据
 const addressList = ref([]);
 const showDeleteModal = ref(false);
 const deleteIndex = ref(-1);
-const options2 = [
-  {
-    text: "收藏",
-    style: {
-      backgroundColor: "#3c9cff",
+
+// 获取我的收货地址
+const getMyAddress = async () => {
+  const res = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/address/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-  },
-  {
-    text: "删除",
-    style: {
-      backgroundColor: "#f56c6c",
-    },
-  },
-];
-// 初始化地址列表数据
-const initAddressList = () => {
-  addressList.value = [
-    {
-      id: 1,
-      name: "张三",
-      phone: "13612345678",
-      region: "广东省广州市黄埔区",
-      detail: "这是一个算详细地址详情",
-      isDefault: true,
-      isSelected: true,
-    },
-    {
-      id: 2,
-      name: "李四",
-      phone: "13812345678",
-      region: "广东省深圳市南山区",
-      detail: "科技园南区深南大道1001号",
-      isDefault: false,
-      isSelected: false,
-    },
-    {
-      id: 3,
-      name: "王五",
-      phone: "13912345678",
-      region: "广东省珠海市香洲区",
-      detail: "情侣路888号珠海大厦",
-      isDefault: false,
-      isSelected: false,
-    },
-  ];
+    data: {},
+  });
+  console.log("🚀 ~ getMyAddress ~ res:", res);
+  if (res.data.code === 200) {
+    addressList.value = res.data.rows;
+  }
 };
 // 编辑地址
 const editAddress = (item) => {
   // 跳转到编辑地址页面，传递地址信息
   uni.navigateTo({
-    url: `/pages/address-edit/index?id=${item.id}&name=${item.name}&phone=${item.phone}&region=${item.region}&detail=${item.detail}&isDefault=${item.isDefault}`,
+    url: `/pages/address-edit/index?id=${item.id}&receiverName=${item.receiverName}&contact=${item.contact}
+    &province=${item.province}&city=${item.city}&district=${item.district}
+    &address=${item.address}&defaultFlag=${item.defaultFlag}`,
   });
 };
 
 // 删除地址
-const deleteAddress = (index) => {
-  console.log(index);
-  deleteIndex.value = index;
+const deleteAddress = (id) => {
+  console.log(id);
+  deleteIndex.value = id;
   showDeleteModal.value = true;
 };
 
 // 确认删除
-const confirmDelete = () => {
+const confirmDelete = async () => {
   if (deleteIndex.value !== -1) {
-    const deletedItem = addressList.value[deleteIndex.value];
+    const deletedItem = addressList.value.find(
+      (item) => item.id === deleteIndex.value
+    );
+    console.log("🚀 ~ confirmDelete ~ deletedItem:", deletedItem);
 
     // 如果删除的是默认地址，需要重新设置默认地址
-    if (deletedItem.isDefault && addressList.value.length > 1) {
+    if (deletedItem.defaultFlag && addressList.value.length > 1) {
       // 找到第一个非删除的地址设为默认
       const remainingAddresses = addressList.value.filter(
         (_, i) => i !== deleteIndex.value
@@ -160,18 +137,32 @@ const confirmDelete = () => {
           (_, i) => i !== deleteIndex.value
         );
         if (firstAddress) {
-          firstAddress.isDefault = true;
+          firstAddress.defaultFlag = true;
         }
       }
     }
-
-    // 删除地址
-    addressList.value.splice(deleteIndex.value, 1);
-
-    uni.showToast({
-      title: "删除成功",
-      icon: "success",
+    const res = await uni.request({
+      url: `http://113.45.219.231:8005/prod-api/wx/app/my/address/${deleteIndex.value}`,
+      method: "DELETE",
+      header: {
+        "X-WX-TOKEN": uni.getStorageSync("token"),
+      },
     });
+    console.log("🚀 ~ confirmDelete ~ res:", res);
+    if (res.data.code === 200) {
+      // 删除地址
+      getMyAddress();
+
+      uni.showToast({
+        title: "删除成功",
+        icon: "success",
+      });
+    } else {
+      uni.showToast({
+        title: "删除失败",
+        icon: "none",
+      });
+    }
   }
 
   showDeleteModal.value = false;
@@ -209,7 +200,7 @@ const addAddress = () => {
 
 // 页面加载时初始化数据
 onMounted(() => {
-  initAddressList();
+  getMyAddress();
 });
 </script>
 
@@ -289,7 +280,7 @@ onMounted(() => {
 .name {
   margin-right: 16rpx;
 }
-.delete-btn-container{
+.delete-btn-container {
   width: 100rpx;
   height: 100%;
   display: flex;
@@ -302,7 +293,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #F02525;;
+  background-color: #f02525;
   color: #fff;
   border-radius: 50%;
   border: 1rpx solid rgba(0, 0, 0, 0.09);

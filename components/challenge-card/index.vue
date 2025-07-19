@@ -120,6 +120,7 @@ const handleJoinClick = () => {
 }
 
 .project-title {
+  height: 48rpx;
   color: rgba(0, 0, 0, 0.85);
   font-size: 34rpx;
   font-weight: 500;
@@ -128,6 +129,7 @@ const handleJoinClick = () => {
 }
 
 .project-desc {
+  height: 80rpx;
   color: rgba(0, 0, 0, 0.65);
   font-size: 28rpx;
   line-height: 1.4;

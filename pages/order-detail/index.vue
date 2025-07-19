@@ -69,7 +69,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 const hasAddress = ref(true);
 const productInfo = ref(uni.getStorageSync("currentProduct"));
 const challengeTitle = ref("");
-
+const challengeId = ref("");
 // 方法
 const handleCreateAddress = () => {
   // 跳转到地址列表页面
@@ -85,7 +85,7 @@ const handleEditAddress = () => {
   });
 };
 
-const handlePayment = () => {
+const handlePayment = async () => {
   if (!hasAddress.value) {
     uni.showToast({
       title: "请先创建收货地址",
@@ -94,17 +94,50 @@ const handlePayment = () => {
     });
     return;
   }
-
-  uni.showToast({
-    title: "支付成功！",
-    icon: "success",
-    duration: 2000,
+  const params = {
+    appDeliveryAddress: {
+      address: "555",
+      city: "长春市",
+      contact: "13333333333",
+      defaultFlag: false,
+      district: "南关区",
+      id: "1946548578777890817",
+      province: "吉林省",
+      receiverName: "test",
+    },
+    challengeId: challengeId.value,
+    productId: productInfo.value.id,
+  };
+  const res = await uni.request({
+    url: "http://113.45.219.231:8005//prod-api/wx/pay/createOrder",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: params,
   });
+  console.log("🚀 ~ handlePayment ~ res:", res);
+  if (res.data.code === 200) {
+    uni.showToast({
+      title: "支付成功！",
+      icon: "success",
+      duration: 2000,
+    });
+    uni.navigateTo({
+      url: `/pages/payment/index?codeUrl=${res.data.data.codeUrl}`,
+    });
+  } else {
+    uni.showToast({
+      title: "支付失败！",
+      icon: "none",
+      duration: 2000,
+    });
+  }
 
   // 延迟跳转
-  setTimeout(() => {
-    uni.navigateBack();
-  }, 2000);
+  // setTimeout(() => {
+  //   uni.navigateBack();
+  // }, 2000);
 };
 
 // 获取页面参数
@@ -115,7 +148,8 @@ onMounted(() => {
   // 从 URL 参数获取商品信息
   if (currentPage.options?.challengeTitle) {
     challengeTitle.value = currentPage.options.challengeTitle;
-    console.log("挑战标题:", challengeTitle);
+    challengeId.value = currentPage.options.challengeId;
+    console.log("挑战标题:", challengeTitle, challengeId);
   }
 });
 
@@ -250,6 +284,7 @@ onUnmounted(() => {
 }
 
 .product-details {
+  width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;

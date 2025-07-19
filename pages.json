@@ -1,194 +1,200 @@
 {
-	"pages": [
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/challenge-detail/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/message/index",
-			"style": {
-				"navigationBarTitleText": "CONQUEROR",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/profile/index",
-			"style": {
-				"navigationBarTitleText": "CONQUEROR",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/route-detail/index",
-			"style": {
-				"navigationBarTitleText": "路线详情",
-				"navigationBarBackgroundColor": "#165DFF",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/join-challenge/index",
-			"style": {
-				"navigationBarTitleText": "加入挑战",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/order-list/index",
-			"style": {
-				"navigationBarTitleText": "商品订单",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/record/index",
-			"style": {
-				"navigationBarTitleText": "CONQUEROR",
-				"navigationBarBackgroundColor": "#242A36"
-			}
-		},
-		{
-			"path": "pages/settings/index",
-			"style": {
-				"navigationBarTitleText": "设置",
-				"navigationBarBackgroundColor": "#242A36"
-			}
-		},
-		{
-			"path": "pages/map-detail/index",
-			"style": {
-				"navigationBarTitleText": "路线地图"
-			}
-		},
-		{
-			"path": "pages/faq-list/index",
-			"style": {
-				"navigationBarTitleText": "常见问题解答",
-				"navigationBarBackgroundColor": "#242A36"
-			}
-		},
-		{
-			"path": "pages/faq-detail/index",
-			"style": {
-				"navigationBarTitleText": "常见问题",
-				"navigationBarBackgroundColor": "#242A36"
-			}
-		},
-		{
-			"path": "pages/challenge-list/index",
-			"style": {
-				"navigationBarTitleText": "全部挑战",
-				"navigationBarBackgroundColor": "#242A36"
-			}
-		},
-		{
-			"path": "pages/order-detail/index",
-			"style": {
-				"navigationBarTitleText": "交易详情",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/address-edit/index",
-			"style": {
-				"navigationBarTitleText": "编辑地址",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/add-sports-data/index",
-			"style": {
-				"navigationBarTitleText": "添加运动数据",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/address-list/index",
-			"style": {
-				"navigationBarTitleText": "收货地址",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/message-detail-view/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/message-detail-postcard/index",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/message-detail-data/index",
-			"style": {
-				"navigationBarTitleText": "运动数据",
-				"navigationBarBackgroundColor": "#242A36",
-				"navigationBarTextStyle": "white"
-			}
-		}
-	],
-	"easycom": {
-		"autoscan": true,
-		"custom": {
-			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
-		}
-	},
-	"globalStyle": {
-		"navigationBarTextStyle": "white",
-		"navigationBarTitleText": "1",
-		"navigationBarBackgroundColor": "#242A36",
-		"backgroundColor": "#242A36"
-	},
-	"tabBar": {
-		"color": "#242A36",
-		"selectedColor": "#242A36",
-		"backgroundColor": "#ffffff",
-		"borderStyle": "black",
-		"list": [
-			{
-				"pagePath": "pages/index/index",
-				"text": "首页",
-				"iconPath": "static/icons/home.png",
-				"selectedIconPath": "static/icons/home-active.png"
-			},
-			{
-				"pagePath": "pages/record/index",
-				"text": "记录",
-				"iconPath": "static/icons/record.png",
-				"selectedIconPath": "static/icons/record-active.png"
-			},
-			{
-				"pagePath": "pages/message/index",
-				"text": "消息",
-				"iconPath": "static/icons/message.png",
-				"selectedIconPath": "static/icons/message-active.png"
-			},
-			{
-				"pagePath": "pages/profile/index",
-				"text": "我的",
-				"iconPath": "static/icons/profile.png",
-				"selectedIconPath": "static/icons/profile-active.png"
-			}
-		]
-	},
-	"uniIdRouter": {}
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/challenge-detail/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/message/index",
+      "style": {
+        "navigationBarTitleText": "CONQUEROR",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "CONQUEROR",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/route-detail/index",
+      "style": {
+        "navigationBarTitleText": "路线详情",
+        "navigationBarBackgroundColor": "#165DFF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/join-challenge/index",
+      "style": {
+        "navigationBarTitleText": "加入挑战",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/order-list/index",
+      "style": {
+        "navigationBarTitleText": "商品订单",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/record/index",
+      "style": {
+        "navigationBarTitleText": "CONQUEROR",
+        "navigationBarBackgroundColor": "#242A36"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationBarTitleText": "设置",
+        "navigationBarBackgroundColor": "#242A36"
+      }
+    },
+    {
+      "path": "pages/map-detail/index",
+      "style": {
+        "navigationBarTitleText": "路线地图"
+      }
+    },
+    {
+      "path": "pages/faq-list/index",
+      "style": {
+        "navigationBarTitleText": "常见问题解答",
+        "navigationBarBackgroundColor": "#242A36"
+      }
+    },
+    {
+      "path": "pages/faq-detail/index",
+      "style": {
+        "navigationBarTitleText": "常见问题",
+        "navigationBarBackgroundColor": "#242A36"
+      }
+    },
+    {
+      "path": "pages/challenge-list/index",
+      "style": {
+        "navigationBarTitleText": "全部挑战",
+        "navigationBarBackgroundColor": "#242A36"
+      }
+    },
+    {
+      "path": "pages/order-detail/index",
+      "style": {
+        "navigationBarTitleText": "交易详情",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/address-edit/index",
+      "style": {
+        "navigationBarTitleText": "编辑地址",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/add-sports-data/index",
+      "style": {
+        "navigationBarTitleText": "添加运动数据",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/address-list/index",
+      "style": {
+        "navigationBarTitleText": "收货地址",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/message-detail-view/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/message-detail-postcard/index",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/message-detail-data/index",
+      "style": {
+        "navigationBarTitleText": "运动数据",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/payment/index",
+      "style": {
+        "navigationBarTitleText": "支付"
+      }
+    }
+  ],
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "1",
+    "navigationBarBackgroundColor": "#242A36",
+    "backgroundColor": "#242A36"
+  },
+  "tabBar": {
+    "color": "#242A36",
+    "selectedColor": "#242A36",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/record/index",
+        "text": "记录",
+        "iconPath": "static/icons/record.png",
+        "selectedIconPath": "static/icons/record-active.png"
+      },
+      {
+        "pagePath": "pages/message/index",
+        "text": "消息",
+        "iconPath": "static/icons/message.png",
+        "selectedIconPath": "static/icons/message-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "static/icons/profile.png",
+        "selectedIconPath": "static/icons/profile-active.png"
+      }
+    ]
+  },
+  "uniIdRouter": {}
 }

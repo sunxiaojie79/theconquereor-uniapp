@@ -20,7 +20,7 @@
                   :style="{ marginLeft: item.isRead ? '0' : '32rpx' }"
                   >{{ item.content }}</view
                 >
-                <view class="message-time">{{ item.time }}</view>
+                <view class="message-time">{{ item.updateTime }}</view>
               </view>
             </view>
           </view>
@@ -187,6 +187,9 @@ const initMessageList = async () => {
     data: {},
   });
   console.log("🚀 ~ initMessageList ~ res:", res);
+  if (res.data.code === 200) {
+    messageList.value = res.data.data;
+  }
   // messageList.value = res.data.rows;
 };
 
