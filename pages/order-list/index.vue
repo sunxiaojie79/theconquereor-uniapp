@@ -26,7 +26,7 @@
           <view class="product-top">
             <text class="product-name">{{ order.challengeTitle }}</text>
             <text class="product-status">{{
-              getStatusText(Number(order.status))
+              getStatusText(Number(order.orderStatus))
             }}</text>
           </view>
           <view class="product-bottom">
@@ -40,7 +40,7 @@
                 <text class="product-spec"
                   >规格：{{ order.productDescription }}</text
                 >
-                <text class="product-price">¥{{ order.price }}</text>
+                <text class="product-price">¥{{ order.totalPrice }}</text>
               </view>
 
               <view
@@ -50,7 +50,7 @@
                 class="product-code"
               >
                 <text class="code-label">code：{{ order.code }}</text>
-                <view class="copy-btn" @click="copyCode(order.challengeCode)">
+                <view class="copy-btn" @click="copyCode(order.code)">
                   <text class="copy-text">复制</text>
                 </view>
               </view>
@@ -69,10 +69,7 @@
 
           <!-- 待发货 -->
           <view v-if="order.status === 'shipped'" class="action-buttons">
-            <view
-              class="action-btn primary"
-              @click="joinChallenge(order.challengeCode)"
-            >
+            <view class="action-btn primary" @click="joinChallenge(order.id)">
               <text class="btn-text">加入挑战</text>
             </view>
           </view>
@@ -82,10 +79,7 @@
             <view class="action-btn secondary" @click="viewLogistics(order.id)">
               <text class="btn-text">查看物流</text>
             </view>
-            <view
-              class="action-btn primary"
-              @click="joinChallenge(order.challengeCode)"
-            >
+            <view class="action-btn primary" @click="joinChallenge(order.id)">
               <text class="btn-text">加入挑战</text>
             </view>
           </view>
@@ -103,7 +97,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
+import { imgBaseUrl } from "@/config/dev.env";
 
 // 响应式数据
 const selectedTab = ref(0);
@@ -118,20 +113,6 @@ const orderTabs = [
   { label: "完成/取消", key: "finished" },
 ];
 
-// 计算属性 - 根据选中的tab过滤订单
-// const filteredOrders = computed(() => {
-//   const currentTab = orderTabs[selectedTab.value];
-//   if (currentTab.key === "all") {
-//     return orderList.value;
-//   } else if (currentTab.key === "finished") {
-//     return orderList.value.filter(
-//       (order) => order.status === "completed" || order.status === "cancelled"
-//     );
-//   } else {
-//     return orderList.value.filter((order) => order.status === currentTab.key);
-//   }
-// });
-
 // 切换tab
 const switchTab = (index: number) => {
   selectedTab.value = index;
@@ -140,6 +121,7 @@ const switchTab = (index: number) => {
 // 获取状态文本
 const getStatusText = (status: number) => {
   // 0 - 项目待支付 1 - 待绑定 2 - 待挑战 3 - 挑战中 4 - 挑战成功 5 - 关闭
+  //待支付 - WAIT_PAY 已支付 - PAID 关闭 - CLOSE 待发货 - WAIT_DELIVER 待收货 - WAIT_RECEIVE 完成 - DONE
   const statusMap = {
     0: "待支付",
     1: "待绑定",
@@ -180,9 +162,9 @@ const payOrder = (orderId: string) => {
 };
 
 // 加入挑战
-const joinChallenge = (challengeCode: string) => {
+const joinChallenge = (orderId: string) => {
   uni.navigateTo({
-    url: `/pages/join-challenge/index?code=${challengeCode}`,
+    url: `/pages/order-detail/index?orderId=${orderId}`,
   });
 };
 
@@ -230,6 +212,9 @@ const initOrderList = async () => {
   });
   console.log("🚀 ~ initOrderList ~ res:", res);
   if (res.data.code === 200) {
+    res.data.rows.forEach((item: any) => {
+      item.productCover = imgBaseUrl + item.productCover;
+    });
     orderList.value = res.data.rows;
   } else {
     uni.showToast({

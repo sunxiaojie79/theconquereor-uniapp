@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-
+import { imgBaseUrl } from "@/config/dev.env";
 // 页面参数
 const challengeId = ref("");
 const statusBarHeight = ref(44);
@@ -137,6 +137,11 @@ const getChallengeDetail = async () => {
   console.log("🚀 ~ getChallengeDetail ~ res:", res);
   if (res.data.code === 200) {
     challengeDetail.value = res.data.data;
+    challengeDetail.value.productCover =
+      imgBaseUrl + challengeDetail.value.productCover;
+    challengeDetail.value.productSpecificationList.forEach((item: any) => {
+      item.logo = imgBaseUrl + item.logo;
+    });
   }
   return res.data;
 };

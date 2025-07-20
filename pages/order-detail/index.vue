@@ -19,18 +19,22 @@
       <!-- 有地址状态 -->
       <view v-else class="address-info" @click="handleEditAddress">
         <view class="address-header">
-          <view class="default-tag">默认</view>
-          <text class="address-location">广东省广州市黄埔区</text>
+          <view v-if="addressInfo.defaultFlag" class="default-tag">默认</view>
+          <text class="address-location">{{
+            addressInfo.province + addressInfo.city + addressInfo.district
+          }}</text>
         </view>
         <view class="address-detail-container">
-          <text class="address-detail">这是一个算详细地址详情</text>
+          <text class="address-detail">{{ addressInfo.address }}</text>
           <image
             class="arrow-icon"
             src="/static/arrow-right-black.png"
             mode="aspectFill"
           ></image>
         </view>
-        <text class="recipient-info">收件人 13612345678</text>
+        <text class="recipient-info">{{
+          addressInfo.receiverName + " " + addressInfo.contact
+        }}</text>
       </view>
     </view>
 
@@ -70,6 +74,7 @@ const hasAddress = ref(true);
 const productInfo = ref(uni.getStorageSync("currentProduct"));
 const challengeTitle = ref("");
 const challengeId = ref("");
+const addressInfo = ref(uni.getStorageSync("myAddress"));
 // 方法
 const handleCreateAddress = () => {
   // 跳转到地址列表页面

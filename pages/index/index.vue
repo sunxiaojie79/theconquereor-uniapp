@@ -120,7 +120,7 @@
           v-for="faq in faqList"
           :key="faq.id"
           class="faq-item"
-          @click="handleFaqClick(faq.id)"
+          @click="handleFaqClick(faq)"
         >
           <text class="faq-question">{{ faq.question }}</text>
           <image
@@ -157,6 +157,7 @@ import { onMounted, ref } from "vue";
 import { useUserStore } from "@/stores";
 import ChallengeCard from "@/components/challenge-card/index.vue";
 import { Project } from "@/components/challenge-card/index.vue";
+import { imgBaseUrl } from "@/config/dev.env";
 
 const userStore = useUserStore();
 
@@ -204,7 +205,10 @@ const getMyChallenges = async (page = 1, append = false) => {
     console.log("🚀 ~ getMyChallenges ~ res:", res);
     if (res.data.code === 200) {
       const { data, total: totalCount } = res.data;
-
+      data.forEach((item: any) => {
+        item.productCover = imgBaseUrl + item.productCover;
+      });
+      console.log("🚀 ~ getMyChallenges ~ imgBaseUrl:", imgBaseUrl);
       if (append) {
         // 追加数据
         myChallenges.value = [...myChallenges.value, ...data];
@@ -248,6 +252,9 @@ const getChallengeList = async () => {
   });
   console.log("🚀 ~ getChallengeList ~ res:", res);
   if (res.data.code === 200) {
+    res.data.rows.forEach((item: any) => {
+      item.productCover = imgBaseUrl + item.productCover;
+    });
     challengeProjects.value = res.data.rows;
   }
   return res.data;
@@ -286,6 +293,11 @@ const getMyAddress = async () => {
     data: {},
   });
   console.log("🚀 ~ getMyAddress ~ res:", res);
+  if (res.data.code === 200) {
+    const defaultAddress = res.data.rows.find((item: any) => item.defaultFlag);
+    uni.setStorageSync("myAddress", defaultAddress);
+    console.log("🚀 ~ getMyAddress ~ defaultAddress:", defaultAddress);
+  }
   return res.data;
 };
 // 获取字典数据
@@ -411,12 +423,11 @@ const submitChallengeCode = async () => {
   }, 1000);
 };
 
-const handleFaqClick = (faqId: number) => {
-  console.log("点击FAQ:", faqId);
-  console.log("点击FAQ:", faqId);
+const handleFaqClick = (faq: any) => {
+  uni.setStorageSync("currentFaq", faq);
   // 跳转到问题详情页面
   uni.navigateTo({
-    url: `/pages/faq-detail/index?id=${faqId}`,
+    url: `/pages/faq-detail/index?id=${faq.id}`,
   });
 };
 

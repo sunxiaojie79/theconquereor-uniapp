@@ -276,6 +276,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/stores";
+import { imgBaseUrl } from "@/config/dev.env";
 
 const userStore = useUserStore();
 
