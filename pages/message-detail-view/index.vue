@@ -2,12 +2,23 @@
   <view class="page">
     <!-- 自定义导航栏 -->
     <view class="custom-navbar">
-      <image class="navbar-bg" src="/static/bg/home-bg.jpg" mode="aspectFill"></image>
+      <image
+        class="navbar-bg"
+        src="/static/bg/home-bg.jpg"
+        mode="aspectFill"
+      ></image>
       <view class="navbar-content">
-        <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
-          <view class="navbar-left" @click="goBack">
-            <image class="back-icon" src="/static/arrow-left.png" mode="aspectFill"></image>
-          </view>
+        <view
+          class="status-bar"
+          :style="{ height: statusBarHeight + 'px' }"
+        ></view>
+        <view class="navbar-left" @click="goBack">
+          <image
+            class="back-icon"
+            src="/static/arrow-left.png"
+            mode="aspectFill"
+          ></image>
+        </view>
       </view>
     </view>
 
@@ -60,7 +71,11 @@
           class="media-item"
           @click="playVideo(video)"
         >
-          <image class="media-image" :src="video.cover" mode="aspectFill"></image>
+          <image
+            class="media-image"
+            :src="video.cover"
+            mode="aspectFill"
+          ></image>
           <view class="play-overlay">
             <view class="play-button">
               <text class="play-icon">▶</text>
@@ -71,111 +86,137 @@
     </view>
 
     <!-- 底部安全区域 -->
-    <view class="safe-area-bottom" :style="{ height: safeAreaBottom + 'px' }"></view>
+    <view
+      class="safe-area-bottom"
+      :style="{ height: safeAreaBottom + 'px' }"
+    ></view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 
 // 响应式数据
-const activeTab = ref('photo')
-const statusBarHeight = ref(44)
-const safeAreaBottom = ref(34)
+const activeTab = ref("photo");
+const statusBarHeight = ref(44);
+const safeAreaBottom = ref(34);
 const contentInfo = ref({
-  title: '这是一个标题',
-  description: '吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。'
-})
-const photoList = ref<any[]>([])
-const videoList = ref<any[]>([])
+  title: "这是一个标题",
+  description:
+    "吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。",
+});
+const photoList = ref<any[]>([]);
+const videoList = ref<any[]>([]);
 
+//接口
+// 获取消息详情
+const getMessageDetail = async (id: string) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/notice/detail/${id}`,
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getMessageDetail ~ res:", res);
+  if (res.data.code === 200) {
+    contentInfo.value = res.data.data;
+  }
+};
 // 初始化照片数据
 const initPhotoList = () => {
   const imageUrls = [
-    '/static/bg/home-bg.jpg',
-    '/static/bg/profile-bg.jpg',
-    '/static/challenges/great-wall.jpg',
-    '/static/challenges/sahara.jpg',
-    '/static/challenges/amazon.jpg',
-    '/static/challenges/silk-road.jpg',
-    '/static/maps/default-map.jpg'
-  ]
-  
-  const photos = []
+    "/static/bg/home-bg.jpg",
+    "/static/bg/profile-bg.jpg",
+    "/static/challenges/great-wall.jpg",
+    "/static/challenges/sahara.jpg",
+    "/static/challenges/amazon.jpg",
+    "/static/challenges/silk-road.jpg",
+    "/static/maps/default-map.jpg",
+  ];
+
+  const photos = [];
   for (let i = 1; i <= 10; i++) {
     photos.push({
       id: i,
       url: imageUrls[(i - 1) % imageUrls.length],
       title: `照片${i}`,
-      createTime: '2025.06.11 12:02'
-    })
+      createTime: "2025.06.11 12:02",
+    });
   }
-  photoList.value = photos
-}
+  photoList.value = photos;
+};
 
 // 初始化视频数据
 const initVideoList = () => {
   const imageUrls = [
-    '/static/bg/home-bg.jpg',
-    '/static/bg/profile-bg.jpg',
-    '/static/challenges/great-wall.jpg',
-    '/static/challenges/sahara.jpg',
-    '/static/challenges/amazon.jpg',
-    '/static/challenges/silk-road.jpg',
-    '/static/maps/default-map.jpg'
-  ]
-  
-  const videos = []
+    "/static/bg/home-bg.jpg",
+    "/static/bg/profile-bg.jpg",
+    "/static/challenges/great-wall.jpg",
+    "/static/challenges/sahara.jpg",
+    "/static/challenges/amazon.jpg",
+    "/static/challenges/silk-road.jpg",
+    "/static/maps/default-map.jpg",
+  ];
+
+  const videos = [];
   for (let i = 1; i <= 10; i++) {
     videos.push({
       id: i,
       cover: imageUrls[(i - 1) % imageUrls.length],
-      url: '',
+      url: "",
       title: `视频${i}`,
-      duration: '00:30',
-      createTime: '2025.06.11 12:02'
-    })
+      duration: "00:30",
+      createTime: "2025.06.11 12:02",
+    });
   }
-  videoList.value = videos
-}
+  videoList.value = videos;
+};
 
 // 方法
 const goBack = () => {
-  uni.navigateBack()
-}
+  uni.navigateBack();
+};
 
 const switchTab = (tab: string) => {
-  activeTab.value = tab
-}
+  activeTab.value = tab;
+};
 
 const previewPhoto = (index: number) => {
-  const urls = photoList.value.map(photo => photo.url)
+  const urls = photoList.value.map((photo) => photo.url);
   uni.previewImage({
     current: index,
-    urls: urls
-  })
-}
+    urls: urls,
+  });
+};
 
 const playVideo = (video: any) => {
   uni.showToast({
     title: `播放视频: ${video.title}`,
-    icon: 'none'
-  })
-}
+    icon: "none",
+  });
+};
 
 // 获取系统信息
 const getSystemInfo = () => {
-  const systemInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = systemInfo.statusBarHeight || 44
-  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34
-}
+  const systemInfo = uni.getSystemInfoSync();
+  statusBarHeight.value = systemInfo.statusBarHeight || 44;
+  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34;
+};
 
 onMounted(() => {
-  getSystemInfo()
-  initPhotoList()
-  initVideoList()
-  console.log('内容详情页面加载完成')
-})
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1] as any;
+  getSystemInfo();
+  initPhotoList();
+  initVideoList();
+  console.log("内容详情页面加载完成");
+  const id = currentPage.options.id;
+  console.log("🚀 ~ onMounted ~ id:", id);
+  if (id) {
+    getMessageDetail(id);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -187,7 +228,7 @@ onMounted(() => {
 /* 自定义导航栏 */
 .custom-navbar {
   position: relative;
-  width:750rpx;
+  width: 750rpx;
   height: 426rpx; /* 调整高度以适应图片 */
 }
 
@@ -212,7 +253,6 @@ onMounted(() => {
 .status-bar {
   width: 100%;
 }
-
 
 .navbar-left {
   margin-left: 32rpx;
@@ -276,7 +316,7 @@ onMounted(() => {
   font-size: 32rpx;
   color: #86909c;
   padding: 16rpx 0;
-  
+
   &.active {
     color: #1d2129;
     font-weight: 600;
@@ -355,4 +395,4 @@ onMounted(() => {
 .safe-area-bottom {
   width: 100%;
 }
-</style> 
+</style>

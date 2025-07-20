@@ -100,15 +100,15 @@ const confirmDelete = () => {
 // 读取消息
 const readMessage = (item: any) => {
   // 如果是view类型，跳转到内容详情页面
-  if (item.type === "view") {
+  if (item.templateType === "0") {
     uni.navigateTo({
-      url: "/pages/message-detail-view/index",
+      url: "/pages/message-detail-view/index?id=" + item.id,
     });
-  } else if (item.type === "postCard") {
+  } else if (item.templateType === "1") {
     uni.navigateTo({
       url: "/pages/message-detail-postcard/index",
     });
-  } else if (item.type === "data") {
+  } else if (item.templateType === "3") {
     uni.navigateTo({
       url: "/pages/message-detail-data/index",
     });

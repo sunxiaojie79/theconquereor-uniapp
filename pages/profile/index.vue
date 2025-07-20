@@ -294,8 +294,8 @@ const distanceInfo = ref({
 // 更新用户信息
 const updateUserInfo = async (info) => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/info",
-    method: "PUT",
+    url: "http://113.45.219.231:8005/prod-api/wx/app/update/userInfo",
+    method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
