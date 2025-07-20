@@ -180,7 +180,7 @@ import { ref, onMounted } from "vue";
 
 // 响应式数据
 const formData = ref({
-  distance: "",
+  distance: uni.getStorageSync("today_distance"),
   duration: "",
   dateDisplay: "",
   challengeType: "",

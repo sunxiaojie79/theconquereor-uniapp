@@ -49,7 +49,7 @@
                 "
                 class="product-code"
               >
-                <text class="code-label">code：{{ order.challengeCode }}</text>
+                <text class="code-label">code：{{ order.code }}</text>
                 <view class="copy-btn" @click="copyCode(order.challengeCode)">
                   <text class="copy-text">复制</text>
                 </view>

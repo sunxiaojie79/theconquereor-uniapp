@@ -368,31 +368,47 @@ const handleJoinProject = (projectId: number) => {
   navigateTo(`/pages/challenge-detail/index?projectId=${projectId}`);
 };
 
-const submitChallengeCode = () => {
+// 绑定挑战CODE
+const submitChallengeCode = async () => {
   if (!challengeCode.value.trim()) {
+    uni.showToast({
+      title: "请输入挑战CODE",
+      icon: "none",
+    });
     return;
   }
-
-  // 模拟验证逻辑，这里可以根据实际需求修改
-  // 假设有效的口令包含 "2024" 或 "challenge" 等关键词
-  const validCodes = ["2024", "challenge", "success", "great-wall", "sahara"];
-  const isValid = validCodes.some((code) =>
-    challengeCode.value.toLowerCase().includes(code.toLowerCase())
+  console.log(
+    "🚀 ~ bindChallengeCode ~ challengeCode.value:",
+    challengeCode.value
   );
-
-  if (isValid) {
-    toastType.value = "success";
-    showToast.value = true;
-    challengeCode.value = ""; // 清空输入
+  const res = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/bind/${challengeCode.value}`,
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  uni.showLoading({
+    title: "绑定中...",
+  });
+  console.log("🚀 ~ bindChallengeCode ~ res:", res);
+  if (res.data.code === 200) {
+    uni.showToast({
+      title: "绑定成功",
+      icon: "success",
+    });
+    getMyChallenges();
   } else {
-    toastType.value = "error";
-    showToast.value = true;
+    uni.showToast({
+      title: "绑定失败",
+      icon: "error",
+    });
   }
 
-  // 2秒后自动隐藏弹框
   setTimeout(() => {
-    showToast.value = false;
-  }, 2000);
+    uni.hideLoading();
+    challengeCode.value = "";
+  }, 1000);
 };
 
 const handleFaqClick = (faqId: number) => {
@@ -429,6 +445,7 @@ const loginWX = async () => {
               getMyAddress();
               getDictData("operation_comp");
               getDictData("challenge_type");
+              getDictData("spot_type");
               getFaqList();
             }
           });

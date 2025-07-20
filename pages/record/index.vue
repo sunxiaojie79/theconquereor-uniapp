@@ -175,6 +175,17 @@ const decryptWeChatData = async (encryptedData: string, iv: string) => {
     },
   });
   console.log("🚀 ~ decryptWeChatData ~ res:", res);
+  if (res.data.code === 200) {
+    const wechat_data = res.data.data.stepInfoList;
+    const today_distance =
+      (wechat_data[wechat_data.length - 1].step * 0.7) / 1000;
+    console.log(
+      "🚀 ~ decryptWeChatData ~ wechat_data:",
+      wechat_data,
+      today_distance
+    );
+    uni.setStorageSync("today_distance", today_distance);
+  }
   return res.data;
 };
 // 初始化运动数据

@@ -18,9 +18,9 @@
                 <view
                   class="message-text"
                   :style="{ marginLeft: item.status ? '0' : '32rpx' }"
-                  >{{ item.content }}</view
+                  >{{ item.content || "暂无内容" }}</view
                 >
-                <view class="message-time">{{ item.updateTime }}</view>
+                <view class="message-time">{{ item.createTime }}</view>
               </view>
             </view>
           </view>

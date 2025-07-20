@@ -298,7 +298,23 @@ const distanceInfo = ref({
   yearDistance: 0,
   activitySummaryList: [],
 });
-
+// 更新用户信息
+const updateUserInfo = async (info) => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/info",
+    method: "PUT",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: info,
+  });
+  if (res.data.code === 200) {
+    uni.showToast({
+      title: "更新成功",
+      icon: "success",
+    });
+  }
+};
 // 获取用户信息
 const getUserInfo = async () => {
   const res: any = await uni.request({
@@ -319,11 +335,9 @@ const onChooseAvatar = (e: any) => {
   const { avatarUrl } = e.detail;
   if (avatarUrl) {
     // 更新用户头像
+    updateUserInfo({ avatar: avatarUrl });
     userStore.updateUserInfo({ avatar: avatarUrl });
-    uni.showToast({
-      title: "头像更新成功",
-      icon: "success",
-    });
+    uni.setStorageSync("avatar", avatarUrl);
   }
 };
 
@@ -379,11 +393,9 @@ const confirmNickname = () => {
     });
     return;
   }
+  updateUserInfo({ userNickname: tempNickname.value.trim() });
+  uni.setStorageSync("nickname", tempNickname.value.trim());
   userStore.updateUserInfo({ nickname: tempNickname.value.trim() });
-  uni.showToast({
-    title: "昵称修改成功",
-    icon: "success",
-  });
   closeNicknameModal();
 };
 
@@ -598,68 +610,6 @@ const initSportsList = () => {
       yearDistance: "45.00 km",
     },
   };
-  // sportsList.value = [
-  //   {
-  //     id: "running",
-  //     name: "跑步",
-  //     badgeText: "RUNNING",
-  //     icon: "/static/sports/running.png",
-  //     totalDistance: "161.20 km",
-  //     percentage: "40",
-  //     monthDistance: "0.00 km",
-  //     yearDistance: "45.00 km",
-  //   },
-  //   {
-  //     id: "indoor",
-  //     name: "室内跑步",
-  //     badgeText: "RUNNING INDOOR",
-  //     icon: "/static/sports/runningindoor.png",
-  //     totalDistance: "161.20 km",
-  //     percentage: "40",
-  //     monthDistance: "0.00 km",
-  //     yearDistance: "45.00 km",
-  //   },
-  //   {
-  //     id: "walking",
-  //     name: "步行",
-  //     badgeText: "WALKING",
-  //     icon: "/static/sports/walking.png",
-  //     totalDistance: "161.20 km",
-  //     percentage: "40",
-  //     monthDistance: "0.00 km",
-  //     yearDistance: "45.00 km",
-  //   },
-  //   {
-  //     id: "walkingindoor",
-  //     name: "室内步行",
-  //     badgeText: "WALKING INDOOR",
-  //     icon: "/static/sports/walkingindoor.png",
-  //     totalDistance: "161.20 km",
-  //     percentage: "40",
-  //     monthDistance: "0.00 km",
-  //     yearDistance: "45.00 km",
-  //   },
-  //   {
-  //     id: "cycling",
-  //     name: "骑行",
-  //     badgeText: "CYCLING",
-  //     icon: "/static/sports/cycling.png",
-  //     totalDistance: "161.20 km",
-  //     percentage: "40",
-  //     monthDistance: "0.00 km",
-  //     yearDistance: "45.00 km",
-  //   },
-  //   {
-  //     id: "swimming",
-  //     name: "游泳",
-  //     badgeText: "SWIMMING",
-  //     icon: "/static/sports/swimming.png",
-  //     totalDistance: "161.20 km",
-  //     percentage: "40",
-  //     monthDistance: "0.00 km",
-  //     yearDistance: "45.00 km",
-  //   },
-  // ];
   distanceInfo.value.activitySummaryList.forEach((item) => {
     sportsList.value.push({
       ...sportsMap[item.challengeType],
