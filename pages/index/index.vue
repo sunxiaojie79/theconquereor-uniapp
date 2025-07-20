@@ -457,6 +457,7 @@ const loginWX = async () => {
               getDictData("operation_comp");
               getDictData("challenge_type");
               getDictData("spot_type");
+              getDictData("label_project_distance");
               getFaqList();
             }
           });

@@ -6,8 +6,8 @@
         v-for="(tab, index) in orderTabs"
         :key="index"
         class="tab-item"
-        :class="{ active: selectedTab === index }"
-        @click="switchTab(index)"
+        :class="{ active: selectedTab === tab.key }"
+        @click="switchTab(tab)"
       >
         <text class="tab-text">{{ tab.label }}</text>
       </view>
@@ -26,7 +26,7 @@
           <view class="product-top">
             <text class="product-name">{{ order.challengeTitle }}</text>
             <text class="product-status">{{
-              getStatusText(Number(order.orderStatus))
+              getStatusText(order.orderStatus)
             }}</text>
           </view>
           <view class="product-bottom">
@@ -101,34 +101,33 @@ import { ref, onMounted } from "vue";
 import { imgBaseUrl } from "@/config/dev.env";
 
 // 响应式数据
-const selectedTab = ref(0);
+const selectedTab = ref("");
 const orderList = ref([]);
 
 // 订单分类
 const orderTabs = [
   { label: "全部", key: "" },
-  { label: "待支付", key: 0 },
-  { label: "待发货", key: "shipped" },
-  { label: "待收货", key: "delivered" },
-  { label: "完成/取消", key: "finished" },
+  { label: "待支付", key: "WAIT_PAY" },
+  { label: "待发货", key: "WAIT_DELIVER" },
+  { label: "待收货", key: "WAIT_RECEIVE" },
+  { label: "完成/取消", key: "DONE" },
 ];
 
 // 切换tab
-const switchTab = (index: number) => {
-  selectedTab.value = index;
+const switchTab = (tab: any) => {
+  selectedTab.value = tab.key;
+  initOrderList();
 };
 
 // 获取状态文本
-const getStatusText = (status: number) => {
-  // 0 - 项目待支付 1 - 待绑定 2 - 待挑战 3 - 挑战中 4 - 挑战成功 5 - 关闭
-  //待支付 - WAIT_PAY 已支付 - PAID 关闭 - CLOSE 待发货 - WAIT_DELIVER 待收货 - WAIT_RECEIVE 完成 - DONE
+const getStatusText = (status: string) => {
   const statusMap = {
-    0: "待支付",
-    1: "待绑定",
-    2: "待挑战",
-    3: "挑战中",
-    4: "挑战成功",
-    5: "关闭",
+    WAIT_PAY: "待支付",
+    PAID: "已支付",
+    CLOSE: "关闭",
+    WAIT_DELIVER: "待发货",
+    WAIT_RECEIVE: "待收货",
+    DONE: "完成",
   };
   return statusMap[status] || status;
 };
@@ -197,18 +196,23 @@ const deleteOrder = (orderId: string) => {
 
 // 初始化订单数据
 const initOrderList = async () => {
+  const params = {
+    query: {
+      pageNum: 1,
+      pageSize: 100,
+      orderStatusList: [],
+    },
+  };
+  if (selectedTab.value !== "") {
+    params.query.orderStatusList = [selectedTab.value];
+  }
   const res = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/my/order/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      query: {
-        pageNum: 1,
-        pageSize: 100,
-      },
-    },
+    data: params,
   });
   console.log("🚀 ~ initOrderList ~ res:", res);
   if (res.data.code === 200) {

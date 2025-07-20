@@ -97,27 +97,33 @@
           <view class="distance-options">
             <view
               v-for="option in distanceOptions"
-              :key="option.value"
+              :key="option.dictValue"
               class="distance-option"
               :class="{
-                selected: selectedFilters.distance.includes(option.value),
+                selected: selectedFilters.distanceLabels.includes(
+                  option.dictValue
+                ),
               }"
-              @click="selectDistance(option.value)"
+              @click="selectDistance(option.dictValue)"
             >
               <view
                 class="distance-checkbox"
                 :class="{
-                  selected: selectedFilters.distance.includes(option.value),
+                  selected: selectedFilters.distanceLabels.includes(
+                    option.dictValue
+                  ),
                 }"
               >
                 <image
-                  v-if="selectedFilters.distance.includes(option.value)"
+                  v-if="
+                    selectedFilters.distanceLabels.includes(option.dictValue)
+                  "
                   class="checked-icon"
                   src="/static/checked.png"
                   mode="aspectFill"
                 />
               </view>
-              <text class="distance-text">{{ option.label }}</text>
+              <text class="distance-text">{{ option.dictLabel }}</text>
             </view>
           </view>
         </view>
@@ -210,9 +216,7 @@
 
         <!-- 底部按钮 -->
         <view class="filter-actions">
-          <button class="filter-cancel" @click="showFilterModal = false">
-            取消
-          </button>
+          <button class="filter-cancel" @click="resetFilters">取消</button>
           <button class="filter-confirm" @click="confirmFilters">确认</button>
         </view>
       </view>
@@ -224,7 +228,7 @@
 import { computed, onMounted, ref } from "vue";
 import ChallengeCard from "@/components/challenge-card/index.vue";
 import { Project } from "@/components/challenge-card/index.vue";
-
+import { imgBaseUrl } from "@/config/dev.env";
 // 响应式数据
 const activeTab = ref("all");
 const showSortOptions = ref(false);
@@ -233,20 +237,20 @@ const currentSort = ref("最新");
 
 // 排序选项
 const sortOptions = ref([
-  { label: "最新", value: "newest" },
-  { label: "最热", value: "hottest" },
-  { label: "线路短到长", value: "distance_asc" },
-  { label: "线路长到短", value: "distance_desc" },
+  { label: "最新", value: "release_time-desc" },
+  { label: "最热", value: "hot-desc" },
+  { label: "线路短到长", value: "distance-asc" },
+  { label: "线路长到短", value: "distance-desc" },
 ]);
 
 // 筛选相关数据
-const distanceOptions = ref([
-  { label: "短距离：<161km", value: "short" },
-  { label: "中距离：161-1126km", value: "medium" },
-  { label: "长距离：1127-2414km", value: "long" },
-  { label: "超长距：<2414+km", value: "ultra" },
-]);
-
+// const distanceOptions = ref([
+//   { label: "短距离：<161km", value: "short" },
+//   { label: "中距离：161-1126km", value: "medium" },
+//   { label: "长距离：1127-2414km", value: "long" },
+//   { label: "超长距：<2414+km", value: "ultra" },
+// ]);
+const distanceOptions = uni.getStorageSync("label_project_distance");
 const challengeTypes = uni.getStorageSync("challenge_type");
 
 const brandPartners = uni.getStorageSync("operation_comp");
@@ -257,7 +261,7 @@ const expandState = ref({
 });
 
 const selectedFilters = ref({
-  distance: [] as string[], // 改为多选
+  distanceLabels: [] as string[], // 改为多选
   challengeType: [] as string[], // 改为多选
   cooperationAuthorizations: [] as string[], // 改为多选
   hasPurchase: false,
@@ -307,7 +311,7 @@ const likeCollection = async (id) => {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
   });
-  console.log("🚀 ~ getMyCollection ~ res:", res);
+  console.log("🚀 ~ likeCollection ~ res:", res);
   return res.data;
 };
 // 取消收藏挑战项目
@@ -321,37 +325,43 @@ const cancelCollection = async (id) => {
   });
   return res.data;
 };
-// 方法
-const goBack = () => {
-  const pages = getCurrentPages();
-  if (pages.length > 1) {
-    uni.navigateBack({
-      fail: () => {
-        uni.switchTab({ url: "/pages/index/index" });
-      },
-    });
-  } else {
-    uni.switchTab({ url: "/pages/index/index" });
-  }
-};
 
 const switchTab = (tab: string) => {
   activeTab.value = tab;
+  if (tab === "all") {
+    getChallengeList();
+  } else {
+    getMyCollection();
+  }
+  resetFilters();
 };
 
 const selectSort = (option: any) => {
   currentSort.value = option.label;
+  console.log("🚀 ~ selectSort ~ currentSort:", option.value);
   showSortOptions.value = false;
-  // TODO: 实现排序逻辑
+  const params = {
+    query: {
+      pageNum: 1,
+      pageSize: 10,
+      orderBy: option.value.split("-")[0],
+      orientation: option.value.split("-")[1],
+    },
+  };
+  if (activeTab.value === "all") {
+    getChallengeList(params);
+  } else {
+    getMyCollection(params);
+  }
 };
 
 // 选择距离（多选）
 const selectDistance = (value: string) => {
-  const index = selectedFilters.value.distance.indexOf(value);
+  const index = selectedFilters.value.distanceLabels.indexOf(value);
   if (index > -1) {
-    selectedFilters.value.distance.splice(index, 1);
+    selectedFilters.value.distanceLabels.splice(index, 1);
   } else {
-    selectedFilters.value.distance.push(value);
+    selectedFilters.value.distanceLabels.push(value);
   }
 };
 
@@ -389,18 +399,29 @@ const toggleCheckbox = (type: string, value: string) => {
 
 // 重置筛选
 const resetFilters = () => {
-  // selectedFilters.value.distance = [];
+  selectedFilters.value.distanceLabels = [];
   selectedFilters.value.challengeType = [];
   selectedFilters.value.cooperationAuthorizations = [];
   selectedFilters.value.hasPurchase = false;
+  showFilterModal.value = false;
 };
 
 // 确认筛选
 const confirmFilters = () => {
   showFilterModal.value = false;
-  // TODO: 实现筛选逻辑
+  const params = {
+    query: {
+      pageNum: 1,
+      pageSize: 10,
+      ...selectedFilters.value,
+    },
+  };
   console.log("应用筛选条件:", selectedFilters.value);
-  getChallengeList(selectedFilters.value);
+  if (activeTab.value === "all") {
+    getChallengeList(params);
+  } else {
+    getMyCollection(params);
+  }
 };
 
 const handleLikeChallenge = async (project: Project) => {
@@ -430,44 +451,59 @@ const handleChallengeClick = (challengeId: number) => {
     url: `/pages/route-detail/index?id=${challengeId}`,
   });
 };
-const getChallengeList = async (selectedFilters?: any) => {
+const getChallengeList = async (params?: any) => {
+  if (!params) {
+    params = {
+      query: {
+        pageNum: 1,
+        pageSize: 100,
+        orderBy: "release_time",
+        orientation: "desc",
+      },
+    };
+  }
   const res: any = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      query: {
-        pageNum: 1,
-        pageSize: 10,
-        ...selectedFilters,
-      },
-    },
+    data: params,
   });
   console.log("🚀 ~ getChallengeList ~ res:", res);
   if (res.data.code === 200) {
     allChallenges.value = res.data.rows;
+    allChallenges.value.forEach((item: any) => {
+      item.productCover = imgBaseUrl + item.productCover;
+    });
   }
   return res.data;
 };
-const getMyCollection = async () => {
+const getMyCollection = async (params?: any) => {
+  if (!params) {
+    params = {
+      query: {
+        pageNum: 1,
+        pageSize: 10,
+        orderBy: "release_time",
+        orientation: "desc",
+      },
+    };
+  }
   const res: any = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/my/collection/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {
-      query: {
-        pageNum: 1,
-        pageSize: 10,
-      },
-    },
+    data: params,
   });
   console.log("🚀 ~ getMyCollection ~ res:", res);
   if (res.data.code === 200) {
     favoriteChallenges.value = res.data.rows;
+    favoriteChallenges.value.forEach((item: any) => {
+      item.productCover = imgBaseUrl + item.productCover;
+    });
   }
   return res.data;
 };

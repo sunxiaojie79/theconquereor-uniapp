@@ -473,63 +473,6 @@ const handleChallengeAction = (item: any) => {
 
 // 初始化数据
 const initChallengeList = async () => {
-  // challengeList.value = [
-  //   {
-  //     id: "challenge1",
-  //     name: "挑战名称",
-  //     image: "/static/bg/challenge.png",
-  //     icon: "/static/bg/challenge-icon.png",
-  //     distance: "161.2",
-  //     days: "14",
-  //     status: "success",
-  //     statusText: "挑战成功",
-  //     description: "你在14天内完成了挑战，点击查看详情",
-  //   },
-  //   {
-  //     id: "challenge2",
-  //     name: "挑战名称",
-  //     image: "/static/bg/challenge.png",
-  //     icon: "/static/bg/challenge-icon.png",
-  //     distance: "161.2",
-  //     days: "14",
-  //     status: "progress",
-  //     statusText: "挑战中",
-  //     description: "你在14天内完成了挑战，点击查看详情",
-  //   },
-  //   {
-  //     id: "challenge3",
-  //     name: "挑战名称",
-  //     image: "/static/bg/challenge.png",
-  //     icon: "/static/bg/challenge-icon.png",
-  //     distance: "161.2",
-  //     days: "14",
-  //     status: "not-start",
-  //     statusText: "未开始",
-  //     description: "你在14天内完成了挑战，点击查看详情",
-  //   },
-  //   {
-  //     id: "challenge4",
-  //     name: "挑战名称",
-  //     image: "/static/bg/challenge.png",
-  //     icon: "/static/bg/challenge-icon.png",
-  //     distance: "161.2",
-  //     days: "14",
-  //     status: "progress",
-  //     statusText: "挑战中",
-  //     description: "你在14天内完成了挑战，点击查看详情",
-  //   },
-  //   {
-  //     id: "challenge5",
-  //     name: "挑战名称",
-  //     image: "/static/bg/challenge.png",
-  //     icon: "/static/bg/challenge-icon.png",
-  //     distance: "161.2",
-  //     days: "14",
-  //     status: "progress",
-  //     statusText: "挑战中",
-  //     description: "你在14天内完成了挑战，点击查看详情",
-  //   },
-  // ];
   const res = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
     method: "POST",
@@ -544,6 +487,9 @@ const initChallengeList = async () => {
     },
   });
   if (res.data.code === 200) {
+    res.data.data.forEach((item: any) => {
+      item.productCover = imgBaseUrl + item.productCover;
+    });
     challengeList.value = res.data.data;
   }
 };
