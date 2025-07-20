@@ -256,17 +256,10 @@
           ></image>
           <text class="auth-status">微信运动</text>
         </view>
-        <text
-          class="auth-status-text"
-          :style="{ color: isAuthorized ? '#07C160' : '#242A36' }"
-          >{{ isAuthorized ? "已授权" : "未授权" }}</text
-        >
       </view>
       <view class="auth-footer">
         <view class="auth-btn" @click="handleAuthAction">
-          <text class="auth-btn-text">{{
-            isAuthorized ? "取消授权" : "授权"
-          }}</text>
+          <text class="auth-btn-text">授权</text>
         </view>
       </view>
     </view>
@@ -285,7 +278,6 @@ const currentTab = ref("challenge");
 const challengeList = ref([]);
 const sportsList = ref([]);
 const showAuthModal = ref(false);
-const isAuthorized = ref(false); // 授权状态，这里可以从用户数据中获取
 
 // 昵称编辑相关
 const showNicknameEdit = ref(false);
@@ -402,48 +394,56 @@ const confirmNickname = () => {
 
 // 操作按钮事件
 const handleAuth = () => {
-  // 这里可以从用户数据或本地存储中获取授权状态
-  // 示例：从用户store中获取授权状态
-  // isAuthorized.value = userStore.isWeChatSportAuthorized;
-
   showAuthModal.value = true;
 };
 
 const closeAuthModal = () => {
   showAuthModal.value = false;
 };
-
-const handleAuthAction = () => {
-  if (isAuthorized.value) {
-    // 取消授权
-    uni.showModal({
-      title: "取消授权",
-      content: "确定要取消微信运动授权吗？",
-      success: (res) => {
-        if (res.confirm) {
-          isAuthorized.value = false;
-          // 这里可以调用API取消授权
-          // userStore.cancelWeChatSportAuth();
-          uni.showToast({
-            title: "已取消授权",
-            icon: "success",
-          });
-          closeAuthModal();
-        }
-      },
-    });
-  } else {
-    // 授权
-    // 这里可以调用微信运动授权API
-    // 模拟授权成功
-    isAuthorized.value = true;
-    // userStore.authorizeWeChatSport();
-    uni.showToast({
-      title: "授权成功",
-      icon: "success",
-    });
-    closeAuthModal();
+// 解密微信运动数据
+const decryptWeChatData = async (encryptedData: string, iv: string) => {
+  const res: any = await uni.request({
+    url: "http://113.45.219.231:8005/prod-api/wx/app/getWxStepInfo",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {
+      encryptedData,
+      iv,
+    },
+  });
+  console.log("🚀 ~ decryptWeChatData ~ res:", res);
+  if (res.data.code === 200) {
+    const wechat_data = res.data.data.stepInfoList;
+    const today_distance =
+      (wechat_data[wechat_data.length - 1].step * 0.7) / 1000;
+    console.log(
+      "🚀 ~ decryptWeChatData ~ wechat_data:",
+      wechat_data,
+      today_distance
+    );
+    uni.setStorageSync("today_distance", today_distance);
   }
+  return res.data;
+};
+const handleAuthAction = () => {
+  wx.getWeRunData({
+    success: async (res) => {
+      console.log("🚀 ~ success ~ res:", res);
+      // 拿 encryptedData 到开发者后台解密开放数据
+      const encryptedData = res.encryptedData;
+      // 或拿 cloudID 通过云调用直接获取开放数据
+      const iv = res.iv;
+      const res2 = await decryptWeChatData(encryptedData, iv);
+      console.log("🚀 ~ success ~ res2:", res2);
+    },
+  });
+  uni.showToast({
+    title: "授权成功",
+    icon: "success",
+  });
+  closeAuthModal();
 };
 
 const handleOrder = () => {
@@ -572,15 +572,6 @@ onMounted(() => {
 
   // 初始化昵称
   tempNickname.value = userStore.userInfo.nickname;
-
-  // 模拟从用户数据中获取授权状态
-  // 这里可以从userStore或本地存储中获取
-  // isAuthorized.value = userStore.isWeChatSportAuthorized;
-
-  // 为了测试目的，随机设置授权状态
-  isAuthorized.value = Math.random() > 0.5;
-
-  console.log("我的页面加载完成", { isAuthorized: isAuthorized.value });
 });
 </script>
 

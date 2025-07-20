@@ -180,7 +180,7 @@ const selectAddress = (item) => {
 
   // 设置当前地址为选中状态
   item.isSelected = true;
-
+  uni.setStorageSync("myCurrentAddress", item);
   // 可以在这里添加选择地址后的逻辑，比如返回上一页
   uni.showToast({
     title: "已选择该地址",

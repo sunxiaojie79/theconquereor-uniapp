@@ -64,120 +64,6 @@ const deleteIndex = ref(-1);
 
 // 初始化消息列表数据
 const initMessageList = async () => {
-  messageList.value = [
-    {
-      id: 2,
-      type: "view",
-      avatar: "/static/avatars/friend1.png",
-      content: "这是一段风景消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 3,
-      type: "postCard",
-      avatar: "/static/avatars/friend2.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 4,
-      type: "data",
-      avatar: "/static/avatars/friend3.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-    {
-      id: 5,
-      type: "view",
-      avatar: "/static/avatars/friend4.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-    {
-      id: 6,
-      type: "postCard",
-      avatar: "/static/avatars/friend1.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 7,
-      type: "data",
-      avatar: "/static/avatars/friend2.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-    {
-      id: 8,
-      type: "view",
-      avatar: "/static/avatars/friend3.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 9,
-      type: "postCard",
-      avatar: "/static/avatars/friend4.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-    {
-      id: 10,
-      type: "view",
-      avatar: "/static/avatars/friend1.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 11,
-      type: "postCard",
-      avatar: "/static/avatars/friend2.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-    {
-      id: 12,
-      type: "data",
-      avatar: "/static/avatars/friend3.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 13,
-      type: "view",
-      avatar: "/static/avatars/friend4.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-    {
-      id: 14,
-      type: "postCard",
-      avatar: "/static/avatars/friend1.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: false,
-    },
-    {
-      id: 15,
-      type: "data",
-      avatar: "/static/avatars/friend2.png",
-      content: "这是一段消息内容文案内容文案内容...",
-      time: "2025.06.11 12:02",
-      isRead: true,
-    },
-  ];
   const res: any = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/my/notice/list",
     method: "POST",
@@ -190,7 +76,6 @@ const initMessageList = async () => {
   if (res.data.code === 200) {
     messageList.value = res.data.data;
   }
-  // messageList.value = res.data.rows;
 };
 
 // 删除消息

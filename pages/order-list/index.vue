@@ -38,14 +38,15 @@
             <view class="product-bottom-right">
               <view class="product-bottom-right-top">
                 <text class="product-spec"
-                  >规格：{{ order.productDescription }}</text
+                  >规格：{{ order.productSpecification }}</text
                 >
                 <text class="product-price">¥{{ order.totalPrice }}</text>
               </view>
 
               <view
                 v-if="
-                  order.status !== 'pending' && order.status !== 'cancelled'
+                  order.orderStatus !== 'WAIT_PAY' &&
+                  order.orderStatus !== 'CLOSE'
                 "
                 class="product-code"
               >
@@ -59,37 +60,49 @@
         </view>
 
         <!-- 操作按钮 -->
-        <view v-if="order.status !== 'completed'" class="order-actions">
+        <view v-if="order.orderStatus !== 'DONE'" class="order-actions">
           <!-- 待支付 -->
-          <view v-if="order.status === 'pending'" class="action-buttons">
-            <view class="action-btn primary" @click="payOrder(order.id)">
+          <view v-if="order.orderStatus === 'WAIT_PAY'" class="action-buttons">
+            <view class="action-btn primary" @click="gotoOrderDetail(order.id)">
               <text class="btn-text">立即支付</text>
             </view>
           </view>
 
           <!-- 待发货 -->
-          <view v-if="order.status === 'shipped'" class="action-buttons">
-            <view class="action-btn primary" @click="joinChallenge(order.id)">
+          <view
+            v-if="
+              order.orderStatus === 'WAIT_DELIVER' ||
+              order.orderStatus === 'PAID'
+            "
+            class="action-buttons"
+          >
+            <view class="action-btn primary" @click="gotoOrderDetail(order.id)">
               <text class="btn-text">加入挑战</text>
             </view>
           </view>
 
           <!-- 待收货 -->
-          <view v-if="order.status === 'delivered'" class="action-buttons">
-            <view class="action-btn secondary" @click="viewLogistics(order.id)">
+          <view
+            v-if="order.orderStatus === 'WAIT_RECEIVE'"
+            class="action-buttons"
+          >
+            <view
+              class="action-btn secondary"
+              @click="gotoOrderDetail(order.id)"
+            >
               <text class="btn-text">查看物流</text>
             </view>
-            <view class="action-btn primary" @click="joinChallenge(order.id)">
+            <view class="action-btn primary" @click="gotoOrderDetail(order.id)">
               <text class="btn-text">加入挑战</text>
             </view>
           </view>
 
           <!-- 交易取消 -->
-          <view v-if="order.status === 'cancelled'" class="action-buttons">
+          <!-- <view v-if="order.orderStatus === 'CLOSE'" class="action-buttons">
             <view class="action-btn secondary" @click="deleteOrder(order.id)">
               <text class="btn-text">删除订单</text>
             </view>
-          </view>
+          </view> -->
         </view>
       </view>
     </view>
@@ -102,20 +115,22 @@ import { imgBaseUrl } from "@/config/dev.env";
 
 // 响应式数据
 const selectedTab = ref("");
+const selectedTabValue = ref([]);
 const orderList = ref([]);
 
 // 订单分类
 const orderTabs = [
-  { label: "全部", key: "" },
-  { label: "待支付", key: "WAIT_PAY" },
-  { label: "待发货", key: "WAIT_DELIVER" },
-  { label: "待收货", key: "WAIT_RECEIVE" },
-  { label: "完成/取消", key: "DONE" },
+  { label: "全部", value: [""], key: "" },
+  { label: "待支付", value: ["WAIT_PAY"], key: "WAIT_PAY" },
+  { label: "待发货", value: ["WAIT_DELIVER"], key: "WAIT_DELIVER" },
+  { label: "待收货", value: ["WAIT_RECEIVE"], key: "WAIT_RECEIVE" },
+  { label: "完成/取消", value: ["DONE", "CLOSE"], key: "DONE_AND_CLOSE" },
 ];
 
 // 切换tab
 const switchTab = (tab: any) => {
   selectedTab.value = tab.key;
+  selectedTabValue.value = tab.value;
   initOrderList();
 };
 
@@ -151,46 +166,10 @@ const copyCode = (code: string) => {
   });
 };
 
-// 支付订单
-const payOrder = (orderId: string) => {
-  uni.showToast({
-    title: "跳转支付...",
-    icon: "loading",
-  });
-  // 这里可以调用支付接口
-};
-
 // 加入挑战
-const joinChallenge = (orderId: string) => {
+const gotoOrderDetail = (orderId: string) => {
   uni.navigateTo({
-    url: `/pages/order-detail/index?orderId=${orderId}`,
-  });
-};
-
-// 查看物流
-const viewLogistics = (orderId: string) => {
-  uni.showToast({
-    title: "查看物流功能开发中",
-    icon: "none",
-  });
-};
-
-// 删除订单
-const deleteOrder = (orderId: string) => {
-  uni.showModal({
-    title: "确认删除",
-    content: "确定要删除这个订单吗？",
-    success: (res) => {
-      if (res.confirm) {
-        orderList.value = orderList.value.filter(
-          (order) => order.id !== orderId
-        );
-        uni.showToast({
-          title: "删除成功",
-          icon: "success",
-        });
-      }
-    },
+    url: `/pages/order-detail/old?orderId=${orderId}`,
   });
 };
 
@@ -204,7 +183,7 @@ const initOrderList = async () => {
     },
   };
   if (selectedTab.value !== "") {
-    params.query.orderStatusList = [selectedTab.value];
+    params.query.orderStatusList = selectedTabValue.value;
   }
   const res = await uni.request({
     url: "http://113.45.219.231:8005/prod-api/wx/app/my/order/list",

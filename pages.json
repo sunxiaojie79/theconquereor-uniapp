@@ -100,6 +100,14 @@
       }
     },
     {
+      "path": "pages/order-detail/old",
+      "style": {
+        "navigationBarTitleText": "交易详情",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/address-edit/index",
       "style": {
         "navigationBarTitleText": "编辑地址",

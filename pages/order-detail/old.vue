@@ -2,30 +2,16 @@
   <view class="page">
     <!-- 地址信息区域 -->
     <view class="address-section">
-      <!-- 无地址状态 -->
-      <view
-        v-if="!hasAddress"
-        class="create-address"
-        @click="handleCreateAddress"
-      >
-        <text class="create-address-text">创建地址</text>
-        <image
-          class="arrow-icon"
-          src="/static/arrow-right-black.png"
-          mode="aspectFill"
-        ></image>
-      </view>
-
-      <!-- 有地址状态 -->
-      <view v-else class="address-info" @click="handleEditAddress">
+      <view class="address-info" @click="handleEditAddress">
         <view class="address-header">
-          <view v-if="addressInfo.defaultFlag" class="default-tag">默认</view>
           <text class="address-location">{{
-            addressInfo.province + addressInfo.city + addressInfo.district
+            currentAddress.province +
+            currentAddress.city +
+            currentAddress.district
           }}</text>
         </view>
         <view class="address-detail-container">
-          <text class="address-detail">{{ addressInfo.address }}</text>
+          <text class="address-detail">{{ currentAddress.address }}</text>
           <image
             class="arrow-icon"
             src="/static/arrow-right-black.png"
@@ -33,7 +19,7 @@
           ></image>
         </view>
         <text class="recipient-info">{{
-          addressInfo.receiverName + " " + addressInfo.contact
+          currentAddress.receiverName + " " + currentAddress.contact
         }}</text>
       </view>
     </view>
@@ -41,78 +27,135 @@
     <!-- 商品信息区域 -->
     <view class="product-section">
       <view class="product-header">
-        <text class="product-name">{{ challengeTitle }}</text>
-        <text class="order-status">待支付</text>
+        <text class="product-name">{{ orderDetail.challengeTitle }}</text>
+        <text class="order-status">{{
+          getStatusText(orderDetail.orderStatus)
+        }}</text>
       </view>
 
       <view class="product-content">
         <image
           class="product-image"
-          :src="productInfo.image"
+          :src="imgBaseUrl + orderDetail.orderDetailList[0].logo"
           mode="aspectFill"
         ></image>
         <view class="product-details">
-          <text class="product-spec">规格：{{ productInfo.title }}</text>
-          <text class="product-price">¥{{ productInfo.price }}</text>
+          <text class="product-spec"
+            >规格：{{ orderDetail.orderDetailList[0].title }}</text
+          >
+          <text class="product-price"
+            >¥{{ orderDetail.orderDetailList[0].unitPrice }}</text
+          >
         </view>
       </view>
     </view>
     <!-- 底部支付按钮 -->
-    <view class="pay-section">
-      <button class="pay-btn" @click="handlePayment">
-        <text class="pay-text">立即支付</text>
+    <view v-if="orderDetail.orderStatus === 'WAIT_PAY'" class="btn-section">
+      <button class="main-btn" @click="handlePayment">
+        <text class="btn-text">立即支付</text>
+      </button>
+    </view>
+    <view
+      v-if="
+        orderDetail.orderStatus === 'WAIT_DELIVER' ||
+        orderDetail.orderStatus === 'PAID'
+      "
+      class="btn-section"
+    >
+      <button class="main-btn" @click="handlePayment">
+        <text class="btn-text">加入挑战</text>
+      </button>
+    </view>
+    <view v-if="orderDetail.orderStatus === 'WAIT_RECEIVE'" class="btn-section">
+      <button class="sub-btn" @click="handlePayment">
+        <text class="btn-text">查看物流</text>
+      </button>
+      <button class="primary-btn" @click="handlePayment">
+        <text class="btn-text">加入挑战</text>
       </button>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
-
+import { ref, onMounted } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import { imgBaseUrl } from "@/config/dev.env";
 // 页面状态
-const productInfo = ref(uni.getStorageSync("currentProduct"));
-const challengeTitle = ref("");
-const challengeId = ref("");
-const addressInfo = ref(uni.getStorageSync("myDefaultAddress"));
-const hasAddress = ref(!!addressInfo.value);
-
-// 方法
-const handleCreateAddress = () => {
-  // 跳转到地址列表页面
-  uni.navigateTo({
-    url: "/pages/address-edit/index",
+const orderDetail = ref({
+  challengeTitle: "",
+  challengeId: "",
+  orderDetailList: [],
+  orderStatus: "",
+  deliveryAddress: "",
+  receiverName: "",
+  contact: "",
+  province: "",
+  city: "",
+  district: "",
+  id: "",
+});
+const currentAddress = ref();
+// 获取订单详情
+const getOrderDetail = async (orderId: string) => {
+  const res = await uni.request({
+    url: `http://113.45.219.231:8005//prod-api/wx/app/my/order/detail/${orderId}`,
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
   });
+  console.log("🚀 ~ getOrderDetail ~ res:", res);
+  if (res.data.code === 200) {
+    orderDetail.value = res.data.data;
+    currentAddress.value = {
+      address: orderDetail.value.deliveryAddress,
+      city: orderDetail.value.city,
+      contact: orderDetail.value.contact,
+      defaultFlag: false,
+      district: orderDetail.value.district,
+      province: orderDetail.value.province,
+      receiverName: orderDetail.value.receiverName,
+    };
+    uni.setStorageSync("myCurrentAddress", currentAddress.value);
+    uni.setNavigationBarTitle({
+      title: getStatusText(orderDetail.value.orderStatus),
+    });
+  }
 };
-
+// 获取状态文本
+const getStatusText = (status: string) => {
+  const statusMap = {
+    WAIT_PAY: "待支付",
+    PAID: "已支付",
+    CLOSE: "关闭",
+    WAIT_DELIVER: "待发货",
+    WAIT_RECEIVE: "待收货",
+    DONE: "完成",
+  };
+  return statusMap[status] || status;
+};
 const handleEditAddress = () => {
-  // 跳转到地址列表页面
-  uni.navigateTo({
-    url: "/pages/address-list/index",
-  });
+  if (orderDetail.value.orderStatus === "WAIT_PAY") {
+    // 跳转到地址列表页面
+    uni.navigateTo({
+      url: "/pages/address-list/index",
+    });
+  }
 };
 
 const handlePayment = async () => {
-  if (!hasAddress.value) {
-    uni.showToast({
-      title: "请先创建收货地址",
-      icon: "none",
-      duration: 2000,
-    });
-    return;
-  }
   const params = {
     appDeliveryAddress: {
-      address: "555",
-      city: "长春市",
-      contact: "13333333333",
-      defaultFlag: false,
-      district: "南关区",
-      id: "1946548578777890817",
-      province: "吉林省",
-      receiverName: "test",
+      address: currentAddress.value.address,
+      city: currentAddress.value.city,
+      contact: currentAddress.value.contact,
+      defaultFlag: currentAddress.value.defaultFlag,
+      district: currentAddress.value.district,
+      province: currentAddress.value.province,
+      receiverName: currentAddress.value.receiverName,
     },
-    challengeId: challengeId.value,
-    productId: productInfo.value.id,
+    orderId: orderDetail.value.id,
   };
   const res = await uni.request({
     url: "http://113.45.219.231:8005//prod-api/wx/pay/createOrder",
@@ -154,15 +197,14 @@ onMounted(() => {
   const currentPage = pages[pages.length - 1] as any;
 
   // 从 URL 参数获取商品信息
-  if (currentPage.options?.challengeTitle) {
-    challengeTitle.value = currentPage.options.challengeTitle;
-    challengeId.value = currentPage.options.challengeId;
-    console.log("挑战标题:", challengeTitle, challengeId);
+  if (currentPage.options?.orderId) {
+    console.log("订单ID:", currentPage.options.orderId);
+    getOrderDetail(currentPage.options.orderId);
   }
 });
-
-onUnmounted(() => {
-  uni.removeStorageSync("currentProduct");
+onShow(() => {
+  console.log("onShow", uni.getStorageSync("myCurrentAddress"));
+  currentAddress.value = uni.getStorageSync("myCurrentAddress");
 });
 </script>
 
@@ -315,7 +357,8 @@ onUnmounted(() => {
 }
 
 /* 底部支付按钮 */
-.pay-section {
+.btn-section {
+  display: flex;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -327,7 +370,7 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
-.pay-btn {
+.main-btn {
   width: 100%;
   height: 80rpx;
   background: #fadb47;
@@ -338,7 +381,25 @@ onUnmounted(() => {
   justify-content: center;
 }
 
-.pay-text {
+.primary-btn {
+  width: 392rpx;
+  height: 80rpx;
+  background: #fadb47;
+  border: none;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sub-btn {
+  width: 278rpx;
+  height: 80rpx;
+  background: #ffffff;
+  border: 1rpx solid rgba(0, 0, 0, 0.45);
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+}
+.btn-text {
   font-size: 34rpx;
   font-weight: 500;
   color: #242a36;

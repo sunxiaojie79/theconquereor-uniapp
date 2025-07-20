@@ -295,7 +295,7 @@ const getMyAddress = async () => {
   console.log("🚀 ~ getMyAddress ~ res:", res);
   if (res.data.code === 200) {
     const defaultAddress = res.data.rows.find((item: any) => item.defaultFlag);
-    uni.setStorageSync("myAddress", defaultAddress);
+    uni.setStorageSync("myDefaultAddress", defaultAddress);
     console.log("🚀 ~ getMyAddress ~ defaultAddress:", defaultAddress);
   }
   return res.data;
