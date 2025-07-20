@@ -19,7 +19,7 @@
         <text class="label"> <text class="required">*</text>时间 </text>
         <picker
           mode="date"
-          :value="formData.createTime"
+          :value="formData.duration"
           @change="onDateChange"
           class="date-picker"
         >
@@ -45,9 +45,9 @@
         <view class="picker-content" @click="showSportsTypeModal = true">
           <text
             class="picker-text"
-            :class="{ placeholder: !formData.sportsType }"
+            :class="{ placeholder: !formData.challengeType }"
           >
-            {{ formData.sportsType || "默认第一个运动" }}
+            {{ formData.challengeType || "默认第一个运动" }}
           </text>
           <image
             class="arrow-icon"
@@ -133,7 +133,7 @@
             v-for="option in sportsTypeOptions"
             :key="option.value"
             class="modal-option"
-            :class="{ selected: formData.sportsType === option.dictValue }"
+            :class="{ selected: formData.challengeType === option.dictValue }"
             @click="selectSportsType(option)"
           >
             <text class="modal-option-text">{{ option.dictLabel }}</text>
@@ -181,9 +181,9 @@ import { ref, onMounted } from "vue";
 // 响应式数据
 const formData = ref({
   distance: "",
-  createTime: "",
+  duration: "",
   dateDisplay: "",
-  sportsType: "",
+  challengeType: "",
   challengeProjectId: "",
   content: "",
   image: "",
@@ -200,10 +200,10 @@ const sportsTypeOptions = ref(uni.getStorageSync("challenge_type"));
 // 挑战项目选项
 const challengeOptions = ref([]);
 // 接口
-// 获取挑战项目
+// 获取我的挑战项目
 const getMyChallenges = async () => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
+    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -216,8 +216,8 @@ const getMyChallenges = async () => {
     },
   });
   console.log("🚀 ~ getMyChallenges ~ res:", res);
-  if (res.data.code === 200 && res.data.rows.length > 0) {
-    challengeOptions.value = res.data.rows;
+  if (res.data.code === 200 && res.data.data.length > 0) {
+    challengeOptions.value = res.data.data;
     challengeProjectTitle.value = challengeOptions.value[0].challengeTitle;
   }
 };
@@ -279,7 +279,7 @@ const onDistanceInput = (event: any) => {
 };
 
 const onDateChange = (event: any) => {
-  formData.value.createTime = event.detail.value;
+  formData.value.duration = event.detail.value;
   // 格式化日期显示
   const date = new Date(event.detail.value);
   const year = date.getFullYear();
@@ -289,7 +289,7 @@ const onDateChange = (event: any) => {
 };
 
 const selectSportsType = (option: any) => {
-  formData.value.sportsType = option.dictValue;
+  formData.value.challengeType = option.dictValue;
   showSportsTypeModal.value = false;
 };
 
@@ -334,7 +334,7 @@ const onSubmit = async () => {
     return;
   }
 
-  if (!formData.value.createTime) {
+  if (!formData.value.duration) {
     uni.showToast({
       title: "请选择时间",
       icon: "none",
@@ -342,7 +342,7 @@ const onSubmit = async () => {
     return;
   }
 
-  if (!formData.value.sportsType) {
+  if (!formData.value.challengeType) {
     uni.showToast({
       title: "请选择运动类型",
       icon: "none",
@@ -362,8 +362,8 @@ const onSubmit = async () => {
 
   const res = await addSportsData({
     distance: formData.value.distance,
-    createTime: formData.value.createTime,
-    sportsType: formData.value.sportsType,
+    duration: formData.value.duration,
+    challengeType: formData.value.challengeType,
     challengeProjectId: formData.value.challengeProjectId,
     content: formData.value.content,
     image: formData.value.image,
@@ -388,11 +388,11 @@ const initFormData = () => {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
-  formData.value.createTime = `${year}-${month}-${day}`;
+  formData.value.duration = `${year}-${month}-${day}`;
   formData.value.dateDisplay = `${year}.${month}.${day}`;
 
   // 设置默认运动类型
-  formData.value.sportsType = sportsTypeOptions.value[0].dictValue;
+  formData.value.challengeType = sportsTypeOptions.value[0].dictValue;
 
   // 设置默认挑战项目
   formData.value.challengeProjectId = challengeOptions.value[0].id;

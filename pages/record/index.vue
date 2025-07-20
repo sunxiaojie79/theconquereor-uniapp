@@ -99,7 +99,9 @@
                       src="/static/wechat2.png"
                       mode="aspectFill"
                     ></image>
-                    <text class="source-text">{{ item.dataSource }}</text>
+                    <text class="source-text">{{
+                      item.dataSource || "手动录入"
+                    }}</text>
                   </view>
                 </view>
                 <view class="item-right">
@@ -150,6 +152,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 // 响应式数据
@@ -364,8 +367,7 @@ const confirmAddAuth = async () => {
   });
 };
 
-onMounted(() => {
-  console.log("记录页面加载完成");
+onShow(() => {
   getSportList();
 });
 </script>
