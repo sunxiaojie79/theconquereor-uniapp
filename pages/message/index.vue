@@ -14,10 +14,10 @@
                 <image class="avatar" :src="item.avatar" mode="aspectFill" />
               </view>
               <view class="message-right">
-                <view v-if="!item.isRead" class="unread-dot"></view>
+                <view v-if="!item.status" class="unread-dot"></view>
                 <view
                   class="message-text"
-                  :style="{ marginLeft: item.isRead ? '0' : '32rpx' }"
+                  :style="{ marginLeft: item.status ? '0' : '32rpx' }"
                   >{{ item.content }}</view
                 >
                 <view class="message-time">{{ item.updateTime }}</view>

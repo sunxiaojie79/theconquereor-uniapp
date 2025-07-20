@@ -94,16 +94,16 @@
                   </view>
                   <view class="source-info">
                     <image
-                      v-if="item.source === 'wechat'"
+                      v-if="item.dataSource === '微信运动'"
                       class="source-icon"
                       src="/static/wechat2.png"
                       mode="aspectFill"
                     ></image>
-                    <text class="source-text">{{ item.sourceText }}</text>
+                    <text class="source-text">{{ item.dataSource }}</text>
                   </view>
                 </view>
                 <view class="item-right">
-                  <text class="date-text">{{ item.date }}</text>
+                  <text class="date-text">{{ item.duration }}</text>
                 </view>
               </view>
             </view>
@@ -114,7 +114,7 @@
                     class="delete-icon"
                     src="/static/delete.png"
                     mode="aspectFill"
-                    @click.stop="deleteSportsData(index)"
+                    @click.stop="deleteSportsData(item.id)"
                   ></image>
                 </view>
               </view>
@@ -156,7 +156,7 @@ import ConfirmDialog from "../../components/ConfirmDialog.vue";
 const activeTab = ref("add");
 const sportsDataList = ref([]);
 const showDeleteModal = ref(false);
-const deleteIndex = ref(-1);
+const deleteId = ref("");
 const showAddAuthModal = ref(false);
 // 解密微信运动数据
 const decryptWeChatData = async (encryptedData: string, iv: string) => {
@@ -311,24 +311,38 @@ const addNewAuth = () => {
 };
 
 // 删除运动数据
-const deleteSportsData = (index: number) => {
-  deleteIndex.value = index;
+const deleteSportsData = (id: string) => {
+  deleteId.value = id;
   showDeleteModal.value = true;
 };
 
 // 确认删除
-const confirmDelete = () => {
-  if (deleteIndex.value !== -1) {
-    sportsDataList.value.splice(deleteIndex.value, 1);
-
-    uni.showToast({
-      title: "删除成功",
-      icon: "success",
+const confirmDelete = async () => {
+  if (deleteId.value !== "") {
+    const res = await uni.request({
+      url: `http://113.45.219.231:8005/prod-api/wx/app/my/distance/${deleteId.value}`,
+      method: "DELETE",
+      header: {
+        "X-WX-TOKEN": uni.getStorageSync("token"),
+      },
     });
+    console.log("🚀 ~ confirmDelete ~ res:", res);
+    if (res.data.code === 200) {
+      uni.showToast({
+        title: "删除成功",
+        icon: "success",
+      });
+      getSportList();
+    } else {
+      uni.showToast({
+        title: "删除失败",
+        icon: "error",
+      });
+    }
   }
 
   showDeleteModal.value = false;
-  deleteIndex.value = -1;
+  deleteId.value = "";
 };
 
 const confirmAddAuth = async () => {
