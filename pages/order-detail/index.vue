@@ -68,13 +68,17 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
-
+import { onShow } from "@dcloudio/uni-app";
 // 页面状态
 const productInfo = ref(uni.getStorageSync("currentProduct"));
 const challengeTitle = ref("");
 const challengeId = ref("");
-const addressInfo = ref(uni.getStorageSync("myDefaultAddress"));
+const addressInfo = ref(
+  uni.getStorageSync("myDefaultAddress") ||
+    uni.getStorageSync("myCurrentAddress")
+);
 const hasAddress = ref(!!addressInfo.value);
+console.log("🚀 ~ hasAddress:", hasAddress.value);
 
 // 方法
 const handleCreateAddress = () => {
@@ -163,6 +167,13 @@ onMounted(() => {
 
 onUnmounted(() => {
   uni.removeStorageSync("currentProduct");
+});
+
+onShow(() => {
+  addressInfo.value =
+    uni.getStorageSync("myDefaultAddress") ||
+    uni.getStorageSync("myCurrentAddress");
+  hasAddress.value = !!addressInfo.value;
 });
 </script>
 

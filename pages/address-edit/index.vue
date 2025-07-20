@@ -176,6 +176,9 @@ const handleConfirm = async () => {
       icon: "success",
       duration: 2000,
     });
+    if (!isEdit.value) {
+      uni.setStorageSync("myCurrentAddress", params);
+    }
   }
   // 延迟返回上一页
   setTimeout(() => {

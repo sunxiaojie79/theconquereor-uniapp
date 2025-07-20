@@ -4,7 +4,7 @@
     <view class="custom-navbar">
       <image
         class="navbar-bg"
-        src="/static/bg/home-bg.jpg"
+        :src="imgBaseUrl + contentInfo.appChallengeProject.productCover"
         mode="aspectFill"
       ></image>
       <view class="navbar-content">
@@ -25,8 +25,12 @@
     <!-- 内容区域 -->
     <view class="content-section">
       <view class="content-header">
-        <text class="content-title">{{ contentInfo.title }}</text>
-        <text class="content-description">{{ contentInfo.description }}</text>
+        <text class="content-title">{{
+          contentInfo.appChallengeProject.challengeTitle
+        }}</text>
+        <text class="content-description">{{
+          contentInfo.appChallengeProject.productDescription
+        }}</text>
       </view>
 
       <!-- Tab切换 -->
@@ -95,16 +99,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-
+import { imgBaseUrl } from "@/config/dev.env";
 // 响应式数据
 const activeTab = ref("photo");
 const statusBarHeight = ref(44);
 const safeAreaBottom = ref(34);
-const contentInfo = ref({
-  title: "这是一个标题",
-  description:
-    "吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。",
-});
+const contentInfo = ref<any>({});
 const photoList = ref<any[]>([]);
 const videoList = ref<any[]>([]);
 
