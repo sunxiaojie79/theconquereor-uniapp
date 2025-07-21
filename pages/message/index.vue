@@ -38,6 +38,9 @@
           </template>
         </uni-swipe-action-item>
       </uni-swipe-action>
+      <view class="empty-message" v-if="messageList.length === 0">
+        <view class="empty-message-text">暂无消息</view>
+      </view>
     </view>
 
     <!-- 删除确认弹框 -->
@@ -219,5 +222,15 @@ onMounted(() => {
 .delete-icon {
   width: 32rpx;
   height: 32rpx;
+}
+.empty-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.empty-message-text {
+  font-size: 32rpx;
+  color: rgba(0, 0, 0, 0.45);
 }
 </style>

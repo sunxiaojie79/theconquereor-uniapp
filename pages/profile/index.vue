@@ -15,7 +15,7 @@
           ></image>
         </button>
         <text class="user-name" @click="showNicknameModal">{{
-          userInfo.nickname
+          userInfo.userNickname
         }}</text>
         <!-- <input type="nickname" class="user-name" placeholder="微信用户" /> -->
       </view>
@@ -93,7 +93,11 @@
       </view>
     </view>
     <!-- 挑战项目提示 -->
-    <text class="content-tip">你有2个进行中，1个挑战成功</text>
+    <text class="content-tip"
+      >你有{{ distanceInfo.challengingCount }}个进行中，{{
+        distanceInfo.challengeSuccessCount
+      }}个挑战成功</text
+    >
     <!-- 挑战项目内容 -->
     <view class="content-section" v-if="currentTab === 'challenge'">
       <scroll-view class="card-scroll" scroll-x="true" show-scrollbar="false">
@@ -268,6 +272,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores";
 import { imgBaseUrl } from "@/config/dev.env";
 
@@ -290,6 +295,8 @@ const distanceInfo = ref({
   totalDistance: 0,
   yearDistance: 0,
   activitySummaryList: [],
+  challengingCount: 0,
+  challengeSuccessCount: 0,
 });
 // 更新用户信息
 const updateUserInfo = async (info) => {
@@ -360,13 +367,18 @@ const navigateToSports = (id: string) => {
 
 const planNextChallenge = () => {
   uni.navigateTo({
-    url: "/pages/challenge-square/index",
+    url: "/pages/challenge-list/index",
   });
 };
 
 // 昵称编辑相关方法
 const showNicknameModal = () => {
-  tempNickname.value = userInfo.value.nickname;
+  console.log(
+    "🚀 ~ showNicknameModal ~ userInfo.value.userNickname:",
+    userInfo.value.userNickname
+  );
+
+  tempNickname.value = userInfo.value.userNickname;
   showNicknameEdit.value = true;
 };
 
@@ -386,9 +398,14 @@ const confirmNickname = () => {
     });
     return;
   }
+  console.log(
+    "🚀 ~ confirmNickname ~ tempNickname.value.trim():",
+    tempNickname.value.trim()
+  );
   updateUserInfo({ userNickname: tempNickname.value.trim() });
-  uni.setStorageSync("nickname", tempNickname.value.trim());
-  userStore.updateUserInfo({ nickname: tempNickname.value.trim() });
+  uni.setStorageSync("userNickname", tempNickname.value.trim());
+  userStore.updateUserInfo({ userNickname: tempNickname.value.trim() });
+  console.log("🚀 ~ confirmNickname ~ userStore.userInfo:", userStore.userInfo);
   closeNicknameModal();
 };
 
@@ -557,6 +574,7 @@ const initSportsList = () => {
       yearDistance: "45.00 km",
     },
   };
+  sportsList.value = [];
   distanceInfo.value.activitySummaryList.forEach((item) => {
     sportsList.value.push({
       ...sportsMap[item.challengeType],
@@ -567,11 +585,14 @@ const initSportsList = () => {
 };
 
 onMounted(() => {
+  console.log("🚀 ~ onMounted ~ userStore.userInfo:", userStore.userInfo);
+  // 初始化昵称
+  tempNickname.value = userStore.userInfo.userNickname;
+});
+
+onShow(() => {
   initChallengeList();
   getUserInfo();
-
-  // 初始化昵称
-  tempNickname.value = userStore.userInfo.nickname;
 });
 </script>
 

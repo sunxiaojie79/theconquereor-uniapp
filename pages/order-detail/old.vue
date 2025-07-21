@@ -47,6 +47,26 @@
             >¥{{ orderDetail.orderDetailList[0].unitPrice }}</text
           >
         </view>
+        <view
+          v-if="
+            orderDetail.orderStatus === 'WAIT_DELIVER' ||
+            orderDetail.orderStatus === 'PAID' ||
+            orderDetail.orderStatus === 'WAIT_RECEIVE'
+          "
+          class="product-code-container"
+        >
+          <image
+            class="key-icon"
+            src="/static/key.png"
+            mode="aspectFill"
+          ></image>
+          <text class="product-code">
+            {{ orderDetail.code }}
+          </text>
+          <view class="copy-btn" @click="copyCode(orderDetail.code)">
+            <text class="copy-text">复制</text>
+          </view>
+        </view>
       </view>
     </view>
     <!-- 底部支付按钮 -->
@@ -62,15 +82,15 @@
       "
       class="btn-section"
     >
-      <button class="main-btn" @click="handlePayment">
+      <button class="main-btn" @click="handleBind">
         <text class="btn-text">加入挑战</text>
       </button>
     </view>
     <view v-if="orderDetail.orderStatus === 'WAIT_RECEIVE'" class="btn-section">
-      <button class="sub-btn" @click="handlePayment">
+      <button class="sub-btn" @click="handleLogistics">
         <text class="btn-text">查看物流</text>
       </button>
-      <button class="primary-btn" @click="handlePayment">
+      <button class="primary-btn" @click="handleBind">
         <text class="btn-text">加入挑战</text>
       </button>
     </view>
@@ -94,6 +114,7 @@ const orderDetail = ref({
   city: "",
   district: "",
   id: "",
+  code: "",
 });
 const currentAddress = ref();
 // 获取订单详情
@@ -143,7 +164,68 @@ const handleEditAddress = () => {
     });
   }
 };
+const handleLogistics = () => {
+  uni.showToast({
+    title: "敬请期待",
+    icon: "none",
+  });
+};
 
+// 绑定挑战CODE
+const handleBind = async () => {
+  if (!orderDetail.value.code.trim()) {
+    uni.showToast({
+      title: "请输入挑战CODE",
+      icon: "none",
+    });
+    return;
+  }
+  const res = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/bind/${orderDetail.value.code}`,
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  uni.showLoading({
+    title: "绑定中...",
+  });
+  console.log("🚀 ~ bindChallengeCode ~ res:", res);
+  if (res.data.code === 200 && res.data.data !== false) {
+    uni.showToast({
+      title: "绑定成功",
+      icon: "success",
+    });
+  } else {
+    uni.showToast({
+      title: "绑定失败",
+      icon: "error",
+    });
+  }
+
+  setTimeout(() => {
+    uni.hideLoading();
+    uni.navigateBack();
+  }, 1000);
+};
+// 复制CODE
+const copyCode = (code: string) => {
+  uni.setClipboardData({
+    data: code,
+    success: () => {
+      uni.showToast({
+        title: "复制成功",
+        icon: "success",
+      });
+    },
+    fail: () => {
+      uni.showToast({
+        title: "复制失败",
+        icon: "none",
+      });
+    },
+  });
+};
 const handlePayment = async () => {
   const params = {
     appDeliveryAddress: {
@@ -340,6 +422,45 @@ onShow(() => {
   flex-direction: column;
 }
 
+.product-code-container {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx;
+  box-sizing: border-box;
+  background: #f4f5f9;
+}
+.key-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
+.product-code {
+  width: 494rpx;
+  // 换行
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 34rpx;
+  color: rgba(0, 0, 0, 0.65);
+  margin: 0 16rpx;
+}
+.copy-btn {
+  width: 64rpx;
+  height: 40rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx 4rpx;
+  background: #ffffff;
+  box-sizing: border-box;
+  border: 2rpx solid rgba(0, 0, 0, 0.45);
+}
 .product-spec {
   font-size: 34rpx;
   color: rgba(0, 0, 0, 0.65);

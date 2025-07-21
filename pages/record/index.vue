@@ -61,7 +61,7 @@
 
           <!-- 添加新授权按钮 -->
           <button class="add-auth-btn" @click="addNewAuth">
-            <text class="add-auth-text">添加新授权</text>
+            <text class="add-auth-text">获取数据</text>
           </button>
         </view>
       </view>

@@ -154,6 +154,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores";
 import ChallengeCard from "@/components/challenge-card/index.vue";
 import { Project } from "@/components/challenge-card/index.vue";
@@ -404,7 +405,7 @@ const submitChallengeCode = async () => {
     title: "绑定中...",
   });
   console.log("🚀 ~ bindChallengeCode ~ res:", res);
-  if (res.data.code === 200) {
+  if (res.data.code === 200 && res.data.data !== false) {
     uni.showToast({
       title: "绑定成功",
       icon: "success",
@@ -468,11 +469,6 @@ const loginWX = async () => {
   });
 };
 onMounted(async () => {
-  console.log("首页加载完成");
-  console.log("我的挑战数量:", myChallenges.value.length);
-  console.log("挑战项目数量:", challengeProjects.value.length);
-  console.log("FAQ数量:", faqList.value.length);
-
   // 重置分页状态
   pageNum.value = 1;
   total.value = 0;
@@ -481,34 +477,43 @@ onMounted(async () => {
 
   await loginWX();
 });
+onShow(() => {
+  console.log("🚀 ~ onShow ~ userStore.userInfo:", userStore.userInfo);
+  if (uni.getStorageSync("token")) {
+    getChallengeList();
+    getMyChallenges(1, false); // 首次加载第1页数据
+    getMyAddress();
+    getFaqList();
+  }
+});
 </script>
 
 <style lang="scss" scoped>
 .page {
-  background-color: #1c1f26;
+  background-color: #242a36;
   min-height: 100vh;
-  color: #ffffff;
+  // color: #ffffff;
 }
 
 /* 顶部搜索栏 */
 .search-header {
-  background-color: #1c1f26;
-  padding: 100rpx 30rpx 20rpx 30rpx;
+  background-color: #242a36;
+  padding: 0rpx 30rpx 20rpx 30rpx;
 }
 
-.search-bar {
-  width: 70%;
-  background: #2a2d36;
-  border-radius: 50rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  padding: 0 30rpx;
-  margin-right: 20rpx;
-  .item-input {
-    background: transparent;
-  }
-}
+// .search-bar {
+//   width: 70%;
+//   background: #2a2d36;
+//   border-radius: 50rpx;
+//   height: 60rpx;
+//   display: flex;
+//   align-items: center;
+//   padding: 0 30rpx;
+//   margin-right: 20rpx;
+//   .item-input {
+//     background: transparent;
+//   }
+// }
 
 /* 挑战口令输入区域 */
 .challenge-code-section {

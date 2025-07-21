@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 
 export interface UserInfo {
   id: string;
-  nickname: string;
+  userNickname: string;
   avatar: string;
   level: number;
   levelName: string;
@@ -17,16 +17,16 @@ export interface UserInfo {
 export const useUserStore = defineStore("user", () => {
   const userInfo = ref<UserInfo>({
     id: "",
-    nickname: "微信用户",
+    userNickname: "微信用户",
     avatar:
       "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0",
-    level: 7,
+    level: 0,
     levelName: "环球探险家",
-    totalDistance: 4286,
+    totalDistance: 0,
     totalSteps: 0,
     completedChallenges: 8,
-    medals: 15,
-    points: 4286,
+    medals: 0,
+    points: 0,
   });
 
   const todaySteps = ref(6728);
@@ -53,7 +53,9 @@ export const useUserStore = defineStore("user", () => {
   }
 
   function updateUserInfo(info: Partial<UserInfo>) {
+    console.log("🚀 ~ updateUserInfo ~ info:", info);
     userInfo.value = { ...userInfo.value, ...info };
+    console.log("🚀 ~ updateUserInfo ~ userInfo.value:", userInfo.value);
   }
 
   function addDistance(distance: number) {
