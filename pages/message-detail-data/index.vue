@@ -2,23 +2,19 @@
   <view class="page">
     <!-- 数据列表 -->
     <view class="data-list">
-      <view v-for="(item, index) in dataList" :key="item.id" class="data-item">
+      <view class="data-item">
         <!-- 用户信息头部 -->
         <view class="user-header">
           <view class="user-info">
-            <image
-              class="user-avatar"
-              :src="item.avatar"
-              mode="aspectFill"
-            ></image>
-            <text class="user-name">{{ item.userName }}</text>
+            <image class="user-avatar" :src="avatar" mode="aspectFill"></image>
+            <text class="user-name">{{ userNickname }}</text>
           </view>
-          <view class="delete-btn" @click="deleteData(index)">
-            <image
+          <view class="delete-btn" @click="deleteData()">
+            <!-- <image
               class="delete-icon"
               src="/static/delete-gray.png"
               mode="aspectFill"
-            ></image>
+            ></image> -->
           </view>
         </view>
         <!-- 运动数据部分 -->
@@ -31,21 +27,30 @@
             ></image>
             <view class="sports-info">
               <view class="distance-info">
-                <text class="distance-number">{{ item.distance }}</text>
+                <text class="distance-number">{{
+                  (contentInfo.appChallengeProject?.distance *
+                    contentInfo.appScenicSpot?.completionProgress) /
+                    100 || 0
+                }}</text>
                 <text class="distance-unit">km</text>
               </view>
               <view class="date-info">
-                <text class="date-text">{{ item.date }}</text>
+                <text class="date-text">{{
+                  contentInfo.appScenicSpot?.date
+                }}</text>
               </view>
             </view>
           </view>
           <view class="source-info">
             <image
+              v-if="contentInfo.appScenicSpot?.source === '微信运动'"
               class="source-icon"
               src="/static/wechat2.png"
               mode="aspectFill"
             ></image>
-            <text class="source-text">{{ item.source }}</text>
+            <text class="source-text">{{
+              contentInfo.appScenicSpot?.source
+            }}</text>
           </view>
         </view>
       </view>
@@ -66,94 +71,62 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { useUserStore } from "@/stores";
+const userStore = useUserStore();
 
+const contentInfo = ref({
+  appChallengeProject: { distance: 0 },
+  appScenicSpot: {
+    completionProgress: 0,
+    date: "暂无数据",
+    source: "暂无数据",
+  },
+});
+const avatar = uni.getStorageSync("avatar");
+const userNickname =
+  userStore.userInfo.userNickname || uni.getStorageSync("userNickname");
 const showDeleteModal = ref(false);
-const deleteIndex = ref(-1);
-
-// 响应式数据
-const dataList = ref<any[]>([]);
-
-// 初始化数据列表
-const initDataList = () => {
-  const mockData = [];
-  const userNames = [
-    "用户名",
-    "李四",
-    "王五",
-    "赵六",
-    "钱七",
-    "孙八",
-    "周九",
-    "吴十",
-    "郑十一",
-    "王十二",
-  ];
-  const avatars = [
-    "/static/avatars/friend1.png",
-    "/static/avatars/friend2.png",
-    "/static/avatars/friend3.png",
-    "/static/avatars/friend4.png",
-  ];
-  const distances = [
-    "78.121",
-    "65.432",
-    "89.567",
-    "45.321",
-    "92.876",
-    "34.567",
-    "76.543",
-    "58.901",
-    "82.345",
-    "71.890",
-  ];
-  const dates = [
-    "2025.06.11",
-    "2025.06.10",
-    "2025.06.09",
-    "2025.06.08",
-    "2025.06.07",
-    "2025.06.06",
-    "2025.06.05",
-    "2025.06.04",
-    "2025.06.03",
-    "2025.06.02",
-  ];
-
-  for (let i = 1; i <= 10; i++) {
-    mockData.push({
-      id: i,
-      userName: userNames[i - 1],
-      avatar: avatars[(i - 1) % 4],
-      distance: distances[i - 1],
-      date: dates[i - 1],
-      source: "来自微信运动",
-    });
-  }
-
-  dataList.value = mockData;
-};
 
 // 删除数据
-const deleteData = (index: number) => {
-  deleteIndex.value = index;
-  showDeleteModal.value = true;
+const deleteData = () => {
+  // deleteIndex.value = index;
+  // showDeleteModal.value = true;
 };
 
 const confirmDelete = () => {
-  if (deleteIndex.value !== -1) {
-    dataList.value.splice(deleteIndex.value, 1);
-    uni.showToast({
-      title: "删除成功",
-      icon: "success",
-    });
-  }
-  showDeleteModal.value = false;
-  deleteIndex.value = -1;
+  // if (deleteIndex.value !== -1) {
+  //   dataList.value.splice(deleteIndex.value, 1);
+  //   uni.showToast({
+  //     title: "删除成功",
+  //     icon: "success",
+  //   });
+  // }
+  // showDeleteModal.value = false;
+  // deleteIndex.value = -1;
 };
-
+// 获取消息详情
+const getMessageDetail = async (id: string) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/notice/detail/${id}`,
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getMessageDetail ~ res:", res);
+  if (res.data.code === 200) {
+    contentInfo.value = res.data.data;
+  }
+};
 onMounted(() => {
-  initDataList();
-  console.log("运动数据页面加载完成");
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1] as any;
+  console.log("内容详情页面加载完成");
+  const id = currentPage.options.id;
+  console.log("🚀 ~ onMounted ~ id:", id);
+  if (id) {
+    getMessageDetail(id);
+  }
 });
 </script>
 
