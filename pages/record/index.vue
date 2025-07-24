@@ -154,6 +154,7 @@
 import { ref, onMounted } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { baseurl } from "@/config/dev.env";
 
 // 响应式数据
 const activeTab = ref("add");
@@ -164,7 +165,7 @@ const showAddAuthModal = ref(false);
 // 解密微信运动数据
 const decryptWeChatData = async (encryptedData: string, iv: string) => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/getWxStepInfo",
+    url: baseurl + "/wx/app/getWxStepInfo",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -190,115 +191,8 @@ const decryptWeChatData = async (encryptedData: string, iv: string) => {
 };
 // 初始化运动数据
 const getSportList = async () => {
-  const mockData = [
-    {
-      id: 1,
-      distance: "78.121",
-      source: "manual",
-      sourceText: "手动录入",
-      date: "2025.06.11",
-    },
-    {
-      id: 2,
-      distance: "78.121",
-      source: "manual",
-      sourceText: "手动录入",
-      date: "2025.06.11",
-    },
-    {
-      id: 3,
-      distance: "78.121",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.11",
-    },
-    {
-      id: 4,
-      distance: "78.121",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.11",
-    },
-    {
-      id: 5,
-      distance: "78.121",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.11",
-    },
-    {
-      id: 6,
-      distance: "78.121",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.11",
-    },
-    {
-      id: 7,
-      distance: "78.121",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.11",
-    },
-    {
-      id: 8,
-      distance: "45.256",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.10",
-    },
-    {
-      id: 9,
-      distance: "32.789",
-      source: "manual",
-      sourceText: "手动录入",
-      date: "2025.06.10",
-    },
-    {
-      id: 10,
-      distance: "67.543",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.09",
-    },
-    {
-      id: 11,
-      distance: "89.012",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.09",
-    },
-    {
-      id: 12,
-      distance: "23.456",
-      source: "manual",
-      sourceText: "手动录入",
-      date: "2025.06.08",
-    },
-    {
-      id: 13,
-      distance: "56.789",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.08",
-    },
-    {
-      id: 14,
-      distance: "41.234",
-      source: "wechat",
-      sourceText: "来自微信运动",
-      date: "2025.06.07",
-    },
-    {
-      id: 15,
-      distance: "72.901",
-      source: "manual",
-      sourceText: "手动录入",
-      date: "2025.06.07",
-    },
-  ];
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/distance/list",
+    url: baseurl + "/wx/app/my/distance/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -334,7 +228,7 @@ const deleteSportsData = (id: string) => {
 const confirmDelete = async () => {
   if (deleteId.value !== "") {
     const res = await uni.request({
-      url: `http://113.45.219.231:8005/prod-api/wx/app/my/distance/${deleteId.value}`,
+      url: baseurl + `/wx/app/my/distance/${deleteId.value}`,
       method: "DELETE",
       header: {
         "X-WX-TOKEN": uni.getStorageSync("token"),

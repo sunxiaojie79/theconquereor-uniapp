@@ -100,7 +100,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { onShow } from "@dcloudio/uni-app";
-import { imgBaseUrl } from "@/config/dev.env";
+import { imgBaseUrl, baseurl } from "@/config/dev.env";
 // 页面状态
 const orderDetail = ref({
   challengeTitle: "",
@@ -120,7 +120,7 @@ const currentAddress = ref();
 // 获取订单详情
 const getOrderDetail = async (orderId: string) => {
   const res = await uni.request({
-    url: `http://113.45.219.231:8005//prod-api/wx/app/my/order/detail/${orderId}`,
+    url: baseurl + `/wx/app/my/order/detail/${orderId}`,
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -181,7 +181,7 @@ const handleBind = async () => {
     return;
   }
   const res = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/bind/${orderDetail.value.code}`,
+    url: baseurl + `/wx/app/bind/${orderDetail.value.code}`,
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -240,7 +240,7 @@ const handlePayment = async () => {
     orderId: orderDetail.value.id,
   };
   const res = await uni.request({
-    url: "http://113.45.219.231:8005//prod-api/wx/pay/createOrder",
+    url: baseurl + "/wx/pay/createOrder",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

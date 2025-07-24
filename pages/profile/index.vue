@@ -274,7 +274,7 @@
 import { ref, computed, onMounted } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores";
-import { imgBaseUrl } from "@/config/dev.env";
+import { imgBaseUrl, baseurl } from "@/config/dev.env";
 
 const userStore = useUserStore();
 
@@ -301,7 +301,7 @@ const distanceInfo = ref({
 // 更新用户信息
 const updateUserInfo = async (info) => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/update/userInfo",
+    url: baseurl + "/wx/app/update/userInfo",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -318,7 +318,7 @@ const updateUserInfo = async (info) => {
 // 获取用户信息
 const getUserInfo = async () => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/info",
+    url: baseurl + "/wx/app/my/info",
     method: "GET",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -420,7 +420,7 @@ const closeAuthModal = () => {
 // 解密微信运动数据
 const decryptWeChatData = async (encryptedData: string, iv: string) => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/getWxStepInfo",
+    url: baseurl + "/wx/app/getWxStepInfo",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -491,7 +491,7 @@ const handleChallengeAction = (item: any) => {
 // 初始化数据
 const initChallengeList = async () => {
   const res = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
+    url: baseurl + "/wx/app/my/challengeProject",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -518,60 +518,60 @@ const initSportsList = () => {
       name: "跑步",
       badgeText: "RUNNING",
       icon: "/static/sports/running.png",
-      totalDistance: "161.20 km",
-      percentage: "40",
+      totalDistance: "0.00 km",
+      percentage: "0",
       monthDistance: "0.00 km",
-      yearDistance: "45.00 km",
+      yearDistance: "0.00 km",
     },
     室内跑步: {
       id: "indoor",
       name: "室内跑步",
       badgeText: "RUNNING INDOOR",
       icon: "/static/sports/runningindoor.png",
-      totalDistance: "161.20 km",
-      percentage: "40",
+      totalDistance: "0.00 km",
+      percentage: "0",
       monthDistance: "0.00 km",
-      yearDistance: "45.00 km",
+      yearDistance: "0.00 km",
     },
     步行: {
       id: "walking",
       name: "步行",
       badgeText: "WALKING",
       icon: "/static/sports/walking.png",
-      totalDistance: "161.20 km",
-      percentage: "40",
+      totalDistance: "0.00 km",
+      percentage: "0",
       monthDistance: "0.00 km",
-      yearDistance: "45.00 km",
+      yearDistance: "0.00 km",
     },
     室内步行: {
       id: "walkingindoor",
       name: "室内步行",
       badgeText: "WALKING INDOOR",
       icon: "/static/sports/walkingindoor.png",
-      totalDistance: "161.20 km",
-      percentage: "40",
+      totalDistance: "0.00 km",
+      percentage: "0",
       monthDistance: "0.00 km",
-      yearDistance: "45.00 km",
+      yearDistance: "0.00 km",
     },
     骑行: {
       id: "cycling",
       name: "骑行",
       badgeText: "CYCLING",
       icon: "/static/sports/cycling.png",
-      totalDistance: "161.20 km",
-      percentage: "40",
+      totalDistance: "0.00 km",
+      percentage: "0",
       monthDistance: "0.00 km",
-      yearDistance: "45.00 km",
+      yearDistance: "0.00 km",
     },
     游泳: {
       id: "swimming",
       name: "游泳",
       badgeText: "SWIMMING",
       icon: "/static/sports/swimming.png",
-      totalDistance: "161.20 km",
-      percentage: "40",
+      totalDistance: "0.00 km",
+      percentage: "0",
       monthDistance: "0.00 km",
-      yearDistance: "45.00 km",
+      yearDistance: "0.00 km",
     },
   };
   sportsList.value = [];

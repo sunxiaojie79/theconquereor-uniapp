@@ -60,6 +60,7 @@
 import { ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
+import { baseurl } from "@/config/dev.env";
 
 // 响应式数据
 const messageList = ref<any[]>([]);
@@ -69,7 +70,7 @@ const deleteIndex = ref(-1);
 // 初始化消息列表数据
 const initMessageList = async () => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/notice/list",
+    url: baseurl + "/wx/app/my/notice/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

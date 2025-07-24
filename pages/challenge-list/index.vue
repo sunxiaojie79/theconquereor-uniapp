@@ -228,7 +228,7 @@
 import { computed, onMounted, ref } from "vue";
 import ChallengeCard from "@/components/challenge-card/index.vue";
 import { Project } from "@/components/challenge-card/index.vue";
-import { imgBaseUrl } from "@/config/dev.env";
+import { imgBaseUrl, baseurl } from "@/config/dev.env";
 // 响应式数据
 const activeTab = ref("all");
 const showSortOptions = ref(false);
@@ -305,7 +305,7 @@ const displayBrandPartners = computed(() => {
 // 收藏挑战项目
 const likeCollection = async (id) => {
   const res: any = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/my/collection/${id}`,
+    url: baseurl + `/wx/app/my/collection/${id}`,
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -317,7 +317,7 @@ const likeCollection = async (id) => {
 // 取消收藏挑战项目
 const cancelCollection = async (id) => {
   const res: any = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/my/collection/remove/${id}`,
+    url: baseurl + `/wx/app/my/collection/remove/${id}`,
     method: "DELETE",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -463,7 +463,7 @@ const getChallengeList = async (params?: any) => {
     };
   }
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/challengeProject/list",
+    url: baseurl + "/wx/app/challengeProject/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -491,7 +491,7 @@ const getMyCollection = async (params?: any) => {
     };
   }
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/collection/list",
+    url: baseurl + "/wx/app/my/collection/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

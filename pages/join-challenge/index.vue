@@ -56,6 +56,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { baseurl } from "@/config/dev.env";
 
 // 响应式数据
 const challengeCode = ref("");
@@ -75,7 +76,7 @@ const bindChallengeCode = async () => {
     challengeCode.value
   );
   const res = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/bind/${challengeCode.value}`,
+    url: baseurl + `/wx/app/bind/${challengeCode.value}`,
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -125,49 +126,8 @@ const copyCode = (code: string) => {
 
 // 初始化数据
 const initChallengeCodeList = async () => {
-  const mockData = [];
-  const challengeNames = [
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-    "挑战名称",
-  ];
-  const avatars = [
-    "/static/challenges/great-wall.jpg",
-    "/static/challenges/silk-road.jpg",
-    "/static/challenges/sahara.jpg",
-    "/static/challenges/amazon.jpg",
-  ];
-  const dates = [
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-    "2025-06-07",
-  ];
-
-  for (let i = 0; i < 10; i++) {
-    mockData.push({
-      id: i + 1,
-      name: challengeNames[i],
-      avatar: avatars[i % avatars.length],
-      bindDate: dates[i],
-      code: "DGDFGDFHFGDSFDGHFDG",
-    });
-  }
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
+    url: baseurl + "/wx/app/my/challengeProject",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

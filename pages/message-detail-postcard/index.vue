@@ -115,7 +115,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { imgBaseUrl } from "@/config/dev.env";
+import { imgBaseUrl, baseurl } from "@/config/dev.env";
 // 响应式数据
 const avartarImg = uni.getStorageSync("avatar");
 const postcardBg = ref("/static/postcard-bg.png");
@@ -142,7 +142,7 @@ const goBack = () => {
 // 获取消息详情
 const getMessageDetail = async (id: string) => {
   const res: any = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/my/notice/detail/${id}`,
+    url: baseurl + `/wx/app/my/notice/detail/${id}`,
     method: "GET",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

@@ -19,13 +19,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { baseurl } from "@/config/dev.env";
 
 // FAQ数据
 const faqList = ref([]);
 // 获取Q&A列表
 const getFaqList = async () => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/qa/list",
+    url: baseurl + "/wx/app/qa/list",
     method: "GET",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

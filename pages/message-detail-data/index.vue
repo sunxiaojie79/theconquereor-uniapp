@@ -72,6 +72,7 @@
 import { ref, onMounted } from "vue";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 import { useUserStore } from "@/stores";
+import { baseurl } from "@/config/dev.env";
 const userStore = useUserStore();
 
 const contentInfo = ref({
@@ -107,7 +108,7 @@ const confirmDelete = () => {
 // 获取消息详情
 const getMessageDetail = async (id: string) => {
   const res: any = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/my/notice/detail/${id}`,
+    url: baseurl + `/wx/app/my/notice/detail/${id}`,
     method: "GET",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

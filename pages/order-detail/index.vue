@@ -69,6 +69,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { onShow } from "@dcloudio/uni-app";
+import { baseurl } from "@/config/dev.env";
 // 页面状态
 const productInfo = ref(uni.getStorageSync("currentProduct"));
 const challengeTitle = ref("");
@@ -119,7 +120,7 @@ const handlePayment = async () => {
     productId: productInfo.value.id,
   };
   const res = await uni.request({
-    url: "http://113.45.219.231:8005//prod-api/wx/pay/createOrder",
+    url: baseurl + "/wx/pay/createOrder",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -128,21 +129,36 @@ const handlePayment = async () => {
   });
   console.log("🚀 ~ handlePayment ~ res:", res);
   if (res.data.code === 200) {
-    uni.showToast({
-      title: "支付成功！",
-      icon: "success",
-      duration: 2000,
-    });
-    uni.navigateTo({
-      url: `/pages/payment/index?codeUrl=${encodeURIComponent(
-        res.data.data.codeUrl
-      )}`,
-    });
-  } else {
-    uni.showToast({
-      title: "支付失败！",
-      icon: "none",
-      duration: 2000,
+    const response = res.data.data.response;
+    const { appId, nonceStr, packageValue, paySign, signType, timeStamp } =
+      response;
+    const params = {
+      appId: appId,
+      timeStamp: timeStamp,
+      nonceStr: nonceStr,
+      package: packageValue,
+      signType: signType,
+      paySign: paySign,
+    };
+    console.log("🚀 ~ handlePayment ~ params:", params);
+    wx.requestPayment({
+      ...params,
+      success: (res) => {
+        console.log("🚀 ~ handlePayment ~ res:", res);
+        uni.showToast({
+          title: "支付成功！",
+          icon: "success",
+          duration: 2000,
+        });
+      },
+      fail: (err) => {
+        console.log("🚀 ~ handlePayment ~ err:", err);
+        uni.showToast({
+          title: "支付失败！",
+          icon: "none",
+          duration: 2000,
+        });
+      },
     });
   }
 

@@ -80,7 +80,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { onShow } from "@dcloudio/uni-app"; // 页面生命周期从 uni-app 导入
-
+import { baseurl } from "@/config/dev.env";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 // 响应式数据
@@ -91,7 +91,7 @@ const deleteIndex = ref(-1);
 // 获取我的收货地址
 const getMyAddress = async () => {
   const res = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/address/list",
+    url: baseurl + "/wx/app/my/address/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -144,7 +144,7 @@ const confirmDelete = async () => {
       }
     }
     const res = await uni.request({
-      url: `http://113.45.219.231:8005/prod-api/wx/app/my/address/${deleteIndex.value}`,
+      url: baseurl + `/wx/app/my/address/${deleteIndex.value}`,
       method: "DELETE",
       header: {
         "X-WX-TOKEN": uni.getStorageSync("token"),

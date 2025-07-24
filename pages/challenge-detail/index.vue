@@ -85,7 +85,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { imgBaseUrl } from "@/config/dev.env";
+import { imgBaseUrl, baseurl } from "@/config/dev.env";
 // 页面参数
 const challengeId = ref("");
 const statusBarHeight = ref(44);
@@ -93,42 +93,34 @@ const safeAreaBottom = ref(34);
 
 // 挑战详情数据
 const challengeDetail = ref({
-  challengeTitle: "12",
+  challengeTitle: "",
   collectFlag: false,
-  cooperationAuthorization: "李宁",
-  createBy: "admin",
-  createTime: "2025-07-07 16:27:05",
-  distance: 1000.2,
-  id: "1942138284374474754",
+  cooperationAuthorization: "",
+  distance: 0,
+  id: "",
   params: {},
-  productCover:
-    "/profile/upload/2025/07/11/2c30-hutwezf6832339_20250711150903A001.jpg",
-  productDescription: "商品描述",
+  productCover: "",
+  productDescription: "",
   productSpecificationList: [
     {
-      challengeId: "1942138284374474754",
-      createBy: "admin",
-      discount: 0.87,
-      id: "1",
-      logo: "/profile/upload/2025/07/14/2c30-hutwezf6832339_20250714180129A003.jpg",
+      challengeId: "",
+      discount: 0,
+      id: "",
+      logo: "",
       params: {},
-      price: 1.33,
-      title: "test",
-      updateBy: "admin",
-      updateTime: "2025-07-14 19:18:17",
+      price: 0,
+      title: "",
     },
   ],
   scenicSpotList: [{}],
-  subtitle: "2121",
-  updateBy: "admin",
-  updateTime: "2025-07-14 19:18:17",
+  subtitle: "",
 });
 
 // 接口
 // 获取挑战详情
 const getChallengeDetail = async () => {
   const res: any = await uni.request({
-    url: `http://113.45.219.231:8005/prod-api/wx/app/challengeProject/detail/${challengeId.value}`,
+    url: baseurl + `/wx/app/challengeProject/detail/${challengeId.value}`,
     method: "GET",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

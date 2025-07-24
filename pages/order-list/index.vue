@@ -111,7 +111,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { imgBaseUrl } from "@/config/dev.env";
+import { imgBaseUrl, baseurl } from "@/config/dev.env";
 
 // 响应式数据
 const selectedTab = ref("");
@@ -186,7 +186,7 @@ const initOrderList = async () => {
     params.query.orderStatusList = selectedTabValue.value;
   }
   const res = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/order/list",
+    url: baseurl + "/wx/app/my/order/list",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),

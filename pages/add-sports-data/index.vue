@@ -177,6 +177,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { baseurl } from "@/config/dev.env";
 
 // 响应式数据
 const formData = ref({
@@ -203,7 +204,7 @@ const challengeOptions = ref([]);
 // 获取我的挑战项目
 const getMyChallenges = async () => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/challengeProject",
+    url: baseurl + "/wx/app/my/challengeProject",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -224,7 +225,7 @@ const getMyChallenges = async () => {
 // 手动新增运动记录
 const addSportsData = async (data: any) => {
   const res: any = await uni.request({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/my/distance/add",
+    url: baseurl + "/wx/app/my/distance/add",
     method: "POST",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -237,7 +238,7 @@ const addSportsData = async (data: any) => {
 // 图片上传
 const uploadImage = async (file: string) => {
   uni.uploadFile({
-    url: "http://113.45.219.231:8005/prod-api/wx/app/upload",
+    url: baseurl + "/wx/app/upload",
     filePath: file,
     name: "file", // 后端接收文件的字段名
     formData: {

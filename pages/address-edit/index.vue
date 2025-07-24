@@ -81,7 +81,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-
+import { baseurl } from "@/config/dev.env";
 // 表单数据
 const formData = ref({
   receiverName: "",
@@ -162,7 +162,7 @@ const handleConfirm = async () => {
   // 提交数据
   console.log("提交表单数据:", formData.value, params);
   const res = await uni.request({
-    url: "http://113.45.219.231:8005//prod-api/wx/app/my/address",
+    url: baseurl + "/wx/app/my/address",
     method: "POST",
     data: params,
     header: {
