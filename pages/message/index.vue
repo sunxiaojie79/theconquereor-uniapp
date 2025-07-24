@@ -110,11 +110,11 @@ const readMessage = (item: any) => {
     });
   } else if (item.templateType === "1") {
     uni.navigateTo({
-      url: "/pages/message-detail-postcard/index",
+      url: "/pages/message-detail-postcard/index?id=" + item.id,
     });
   } else if (item.templateType === "3") {
     uni.navigateTo({
-      url: "/pages/message-detail-data/index",
+      url: "/pages/message-detail-data/index?id=" + item.id,
     });
   }
 

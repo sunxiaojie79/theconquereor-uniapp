@@ -2,174 +2,184 @@
   <view class="page">
     <!-- 自定义导航栏 -->
     <view class="custom-navbar">
-      <image class="navbar-bg" src="/static/bg/home-bg.jpg" mode="aspectFill"></image>
+      <image class="navbar-bg" :src="postcardBg" mode="aspectFill"></image>
       <view class="navbar-content">
-        <view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
-          <view class="navbar-left" @click="goBack">
-            <image class="back-icon" src="/static/arrow-left.png" mode="aspectFill"></image>
-          </view>
+        <view
+          class="status-bar"
+          :style="{ height: statusBarHeight + 'px' }"
+        ></view>
+        <view class="navbar-left" @click="goBack">
+          <image
+            class="back-icon"
+            src="/static/arrow-left.png"
+            mode="aspectFill"
+          ></image>
+        </view>
       </view>
     </view>
     <view class="content-section">
-    <!-- 明信片 -->
-    <view class="postcard-section">
-          <!-- 左侧图片区域 -->
-          <view class="postcard-left">
-              <!-- <image class="city-image" src="/static/bg/home-bg.jpg" mode="aspectFill"></image> -->
-              <!-- 城市名称 -->
-              <view class="city-name-overlay">
-                <text class="city-name">城市名称</text>
-              </view>
-              <!-- 底部信息 -->
-              <view class="bottom-info">
-                <view class="progress-info">
-                  <text class="progress-text">完成：78.121</text>
-                  <text class="progress-text">剩余：78.121</text>
-                </view>
-                <view class="avatar-container">
-                  <image class="user-avatar" src="/static/avatars/friend1.png" mode="aspectFill"></image>
-                </view>
-              </view>
+      <!-- 明信片 -->
+      <view class="postcard-section">
+        <!-- 左侧图片区域 -->
+        <view
+          class="postcard-left"
+          :style="{
+            backgroundImage: `url(${postcardBg})`,
+          }"
+        >
+          <!-- <image class="city-image" src="/static/bg/home-bg.jpg" mode="aspectFill"></image> -->
+          <!-- 城市名称 -->
+          <view class="city-name-overlay">
+            <text class="city-name">{{
+              contentInfo.appScenicSpot?.title || "加载中..."
+            }}</text>
           </view>
-          
-          <!-- 右侧内容区域 -->
-          <view class="postcard-right">
-            <!-- 邮票区域 -->
-            <view class="stamp-section">
-              <view class="stamp-container">
-                <image class="stamp-image" src="/static/challenges/great-wall.jpg" mode="aspectFill"></image>
-                <!-- 邮戳 -->
-                <view class="postmark-container">
-                  <image class="postmark-bg" src="/static/postmark.png" mode="aspectFit"></image>
-                  <view class="postmark-content">
-                    <text class="postmark-date">12.30</text>
-                    <text class="postmark-year">2025</text>
-                  </view>
+          <!-- 底部信息 -->
+          <view class="bottom-info">
+            <view class="progress-info">
+              <text class="progress-text"
+                >完成：{{
+                  (contentInfo.appChallengeProject?.distance *
+                    contentInfo.appScenicSpot?.completionProgress) /
+                    100 || "0"
+                }}km</text
+              >
+              <text class="progress-text"
+                >剩余：{{
+                  contentInfo.appChallengeProject?.distance *
+                    (1 - contentInfo.appScenicSpot?.completionProgress / 100) ||
+                  "0"
+                }}km</text
+              >
+            </view>
+            <view class="avatar-container">
+              <image
+                class="user-avatar"
+                :src="avartarImg"
+                mode="aspectFill"
+              ></image>
+            </view>
+          </view>
+        </view>
+
+        <!-- 右侧内容区域 -->
+        <view class="postcard-right">
+          <!-- 邮票区域 -->
+          <view class="stamp-section">
+            <view class="stamp-container">
+              <image
+                class="stamp-image"
+                :src="postcardStamp"
+                mode="aspectFill"
+              ></image>
+              <!-- 邮戳 -->
+              <view class="postmark-container">
+                <image
+                  class="postmark-bg"
+                  src="/static/postmark.png"
+                  mode="aspectFit"
+                ></image>
+                <view class="postmark-content">
+                  <text class="postmark-date">12.30</text>
+                  <text class="postmark-year">2025</text>
                 </view>
               </view>
             </view>
-            
-            <!-- 右侧文字内容 -->
-            <view class="right-text-content">
-              <text class="greeting-text">你好，</text>
-              <text class="main-text">{{ postcardText }}</text>
-            </view>
           </view>
-    </view>
-    <!-- 内容区域 -->
-    
+
+          <!-- 右侧文字内容 -->
+          <view class="right-text-content">
+            <text class="greeting-text">你好，</text>
+            <text class="main-text">{{
+              contentInfo.appScenicSpot?.description || "正在加载内容..."
+            }}</text>
+          </view>
+        </view>
+      </view>
+      <!-- 内容区域 -->
+
       <view class="content-header">
-        <text class="content-description">{{ contentInfo.description }}</text>
+        <text class="content-description">{{
+          contentInfo.appScenicSpot?.postcardTemplateList?.[0]?.content || ""
+        }}</text>
       </view>
     </view>
 
     <!-- 底部安全区域 -->
-    <view class="safe-area-bottom" :style="{ height: safeAreaBottom + 'px' }"></view>
+    <view
+      class="safe-area-bottom"
+      :style="{ height: safeAreaBottom + 'px' }"
+    ></view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-
+import { ref, onMounted } from "vue";
+import { imgBaseUrl } from "@/config/dev.env";
 // 响应式数据
-const activeTab = ref('photo')
-const statusBarHeight = ref(44)
-const safeAreaBottom = ref(34)
+const avartarImg = uni.getStorageSync("avatar");
+const postcardBg = ref("/static/postcard-bg.png");
+const postcardStamp = ref("/static/postcard-stamp.png");
+const statusBarHeight = ref(44);
+const safeAreaBottom = ref(34);
 const contentInfo = ref({
-  title: '这是一个标题',
-  description: '吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。'
-})
-const postcardText = ref('吾生也有涯，而知也无涯。以有涯随无涯，殆已！已而为知者，殆而已矣！为善无近名，为恶无近刑。缘督以为经，可以保身，可以全生，可以养亲，可以尽年。')
-const photoList = ref<any[]>([])
-const videoList = ref<any[]>([])
-
-// 初始化照片数据
-const initPhotoList = () => {
-  const imageUrls = [
-    '/static/bg/home-bg.jpg',
-    '/static/bg/profile-bg.jpg',
-    '/static/challenges/great-wall.jpg',
-    '/static/challenges/sahara.jpg',
-    '/static/challenges/amazon.jpg',
-    '/static/challenges/silk-road.jpg',
-    '/static/maps/default-map.jpg'
-  ]
-  
-  const photos = []
-  for (let i = 1; i <= 10; i++) {
-    photos.push({
-      id: i,
-      url: imageUrls[(i - 1) % imageUrls.length],
-      title: `照片${i}`,
-      createTime: '2025.06.11 12:02'
-    })
-  }
-  photoList.value = photos
-}
-
-// 初始化视频数据
-const initVideoList = () => {
-  const imageUrls = [
-    '/static/bg/home-bg.jpg',
-    '/static/bg/profile-bg.jpg',
-    '/static/challenges/great-wall.jpg',
-    '/static/challenges/sahara.jpg',
-    '/static/challenges/amazon.jpg',
-    '/static/challenges/silk-road.jpg',
-    '/static/maps/default-map.jpg'
-  ]
-  
-  const videos = []
-  for (let i = 1; i <= 10; i++) {
-    videos.push({
-      id: i,
-      cover: imageUrls[(i - 1) % imageUrls.length],
-      url: '',
-      title: `视频${i}`,
-      duration: '00:30',
-      createTime: '2025.06.11 12:02'
-    })
-  }
-  videoList.value = videos
-}
+  appChallengeProject: { distance: 0 },
+  appScenicSpot: {
+    completionProgress: 0,
+    title: "这是一个标题",
+    description: "这是一个描述",
+    resourceList: [{ path: "/static/postcard-bg.png" }],
+    postcardTemplateList: [
+      { content: "这是一个内容", stamp: "/static/postcard-stamp.png" },
+    ],
+  },
+});
 
 // 方法
 const goBack = () => {
-  uni.navigateBack()
-}
-
-const switchTab = (tab: string) => {
-  activeTab.value = tab
-}
-
-const previewPhoto = (index: number) => {
-  const urls = photoList.value.map(photo => photo.url)
-  uni.previewImage({
-    current: index,
-    urls: urls
-  })
-}
-
-const playVideo = (video: any) => {
-  uni.showToast({
-    title: `播放视频: ${video.title}`,
-    icon: 'none'
-  })
-}
-
+  uni.navigateBack();
+};
+// 获取消息详情
+const getMessageDetail = async (id: string) => {
+  const res: any = await uni.request({
+    url: `http://113.45.219.231:8005/prod-api/wx/app/my/notice/detail/${id}`,
+    method: "GET",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  console.log("🚀 ~ getMessageDetail ~ res:", res);
+  if (res.data.code === 200) {
+    contentInfo.value = res.data.data;
+    if (contentInfo.value.appScenicSpot?.resourceList?.[0]?.path) {
+      postcardBg.value =
+        imgBaseUrl + contentInfo.value.appScenicSpot.resourceList[0].path;
+    }
+    if (contentInfo.value.appScenicSpot?.postcardTemplateList?.[0]?.stamp) {
+      postcardStamp.value =
+        imgBaseUrl +
+        contentInfo.value.appScenicSpot.postcardTemplateList[0].stamp;
+    }
+  }
+};
 // 获取系统信息
 const getSystemInfo = () => {
-  const systemInfo = uni.getSystemInfoSync()
-  statusBarHeight.value = systemInfo.statusBarHeight || 44
-  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34
-}
+  const systemInfo = uni.getSystemInfoSync();
+  statusBarHeight.value = systemInfo.statusBarHeight || 44;
+  safeAreaBottom.value = systemInfo.safeAreaInsets?.bottom || 34;
+};
 
 onMounted(() => {
-  getSystemInfo()
-  initPhotoList()
-  initVideoList()
-  console.log('内容详情页面加载完成')
-})
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1] as any;
+  getSystemInfo();
+  console.log("内容详情页面加载完成");
+  const id = currentPage.options.id;
+  console.log("🚀 ~ onMounted ~ id:", id);
+  if (id) {
+    getMessageDetail(id);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
@@ -183,7 +193,7 @@ onMounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  width:750rpx;
+  width: 750rpx;
   height: 176rpx; /* 调整高度以适应图片 */
 }
 
@@ -191,7 +201,7 @@ onMounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  width:750rpx;
+  width: 750rpx;
   height: 176rpx;
   z-index: 1;
 }
@@ -200,7 +210,7 @@ onMounted(() => {
   position: fixed;
   top: 0;
   left: 0;
-  width:750rpx;
+  width: 750rpx;
   height: 176rpx;
   z-index: 2;
 }
@@ -208,7 +218,6 @@ onMounted(() => {
 .status-bar {
   width: 100%;
 }
-
 
 .navbar-left {
   margin-left: 32rpx;
@@ -227,7 +236,7 @@ onMounted(() => {
   top: 176rpx;
   min-height: calc(100vh - 176rpx - 34rpx);
   z-index: 3;
-  padding: 32rpx ;
+  padding: 32rpx;
 }
 
 .content-header {
@@ -251,7 +260,6 @@ onMounted(() => {
   text-align: justify;
 }
 
-
 /* 底部安全区域 */
 .safe-area-bottom {
   position: fixed;
@@ -264,8 +272,8 @@ onMounted(() => {
 .postcard-section {
   display: flex;
   height: 480rpx;
-  background: #FDF7F1;
-  border: 6rpx solid #DBCDBF;
+  background: #fdf7f1;
+  border: 6rpx solid #dbcdbf;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.1);
   z-index: 10;
   margin-bottom: 64rpx;
@@ -280,7 +288,7 @@ onMounted(() => {
   justify-content: space-between;
   width: 318rpx;
   height: 440rpx;
-  background-image: url('/static/bg/home-bg.jpg');
+  background-image: url("/static/bg/home-bg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -321,7 +329,7 @@ onMounted(() => {
 
 .progress-text {
   display: block;
-  color:rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 24rpx;
   line-height: 1.3;
   font-weight: normal;
@@ -332,7 +340,7 @@ onMounted(() => {
   height: 48rpx;
   border-radius: 50%;
   overflow: hidden;
-  border: 2rpx solid #CDD5D7;
+  border: 2rpx solid #cdd5d7;
 }
 
 .user-avatar {
@@ -403,15 +411,14 @@ onMounted(() => {
 
 .postmark-date {
   font-size: 16rpx;
-  color: #3D3D3D;
+  color: #3d3d3d;
   font-weight: 500;
   text-align: center;
-  
 }
 
 .postmark-year {
   font-size: 12rpx;
-  color: #3D3D3D;
+  color: #3d3d3d;
   font-weight: 500;
   text-align: center;
 }
@@ -434,4 +441,4 @@ onMounted(() => {
   line-height: 1.6;
   display: block;
 }
-</style> 
+</style>
