@@ -63,21 +63,25 @@
           class="media-item"
           @click="previewPhoto(index)"
         >
-          <image class="media-image" :src="photo.url" mode="aspectFill"></image>
+          <image
+            class="media-image"
+            :src="imgBaseUrl + photo.url"
+            mode="aspectFill"
+          ></image>
         </view>
       </view>
 
       <!-- 视频列表 -->
       <view v-if="activeTab === 'video'" class="media-grid">
         <view
-          v-for="video in videoList"
+          v-for="(video, index) in videoList"
           :key="video.id"
           class="media-item"
-          @click="playVideo(video)"
+          @click="playVideo(index)"
         >
           <image
             class="media-image"
-            :src="video.cover"
+            :src="imgBaseUrl + video.url"
             mode="aspectFill"
           ></image>
           <view class="play-overlay">
@@ -88,7 +92,18 @@
         </view>
       </view>
     </view>
-
+    <view v-if="showVideo" class="video-container">
+      <view class="video-close" @click="showVideo = false">
+        <icon type="cancel" size="40" color="#fff"></icon>
+      </view>
+      <video
+        id="myVideo"
+        class="video-content"
+        :src="currentVideoUrl"
+        controls
+        object-fit="cover"
+      ></video>
+    </view>
     <!-- 底部安全区域 -->
     <view
       class="safe-area-bottom"
@@ -107,7 +122,8 @@ const safeAreaBottom = ref(34);
 const contentInfo = ref<any>({});
 const photoList = ref<any[]>([]);
 const videoList = ref<any[]>([]);
-
+const currentVideoUrl = ref<string>("");
+const showVideo = ref<boolean>(false);
 //接口
 // 获取消息详情
 const getMessageDetail = async (id: string) => {
@@ -121,56 +137,37 @@ const getMessageDetail = async (id: string) => {
   console.log("🚀 ~ getMessageDetail ~ res:", res);
   if (res.data.code === 200) {
     contentInfo.value = res.data.data;
+    initPhotoList();
   }
 };
 // 初始化照片数据
 const initPhotoList = () => {
-  const imageUrls = [
-    "/static/bg/home-bg.jpg",
-    "/static/bg/profile-bg.jpg",
-    "/static/challenges/great-wall.jpg",
-    "/static/challenges/sahara.jpg",
-    "/static/challenges/amazon.jpg",
-    "/static/challenges/silk-road.jpg",
-    "/static/maps/default-map.jpg",
-  ];
-
   const photos = [];
-  for (let i = 1; i <= 10; i++) {
-    photos.push({
-      id: i,
-      url: imageUrls[(i - 1) % imageUrls.length],
-      title: `照片${i}`,
-      createTime: "2025.06.11 12:02",
-    });
+  const imageUrls = [];
+  for (
+    let i = 0;
+    i < contentInfo.value.appScenicSpot.resourceList.length;
+    i++
+  ) {
+    const resource = contentInfo.value.appScenicSpot.resourceList[i];
+    if (resource.resourceType === "0") {
+      photos.push({
+        id: i,
+        url: contentInfo.value.appScenicSpot.resourceList[i].path,
+        title: `照片${i}`,
+      });
+    } else if (resource.resourceType === "1") {
+      imageUrls.push({
+        id: i,
+        url: contentInfo.value.appScenicSpot.resourceList[i].path,
+        title: `视频${i}`,
+      });
+    }
   }
+  console.log("🚀 ~ initPhotoList ~ photos:", photos);
+  console.log("🚀 ~ initPhotoList ~ imageUrls:", imageUrls);
   photoList.value = photos;
-};
-
-// 初始化视频数据
-const initVideoList = () => {
-  const imageUrls = [
-    "/static/bg/home-bg.jpg",
-    "/static/bg/profile-bg.jpg",
-    "/static/challenges/great-wall.jpg",
-    "/static/challenges/sahara.jpg",
-    "/static/challenges/amazon.jpg",
-    "/static/challenges/silk-road.jpg",
-    "/static/maps/default-map.jpg",
-  ];
-
-  const videos = [];
-  for (let i = 1; i <= 10; i++) {
-    videos.push({
-      id: i,
-      cover: imageUrls[(i - 1) % imageUrls.length],
-      url: "",
-      title: `视频${i}`,
-      duration: "00:30",
-      createTime: "2025.06.11 12:02",
-    });
-  }
-  videoList.value = videos;
+  videoList.value = imageUrls;
 };
 
 // 方法
@@ -183,18 +180,17 @@ const switchTab = (tab: string) => {
 };
 
 const previewPhoto = (index: number) => {
-  const urls = photoList.value.map((photo) => photo.url);
+  const urls = photoList.value.map((photo) => imgBaseUrl + photo.url);
   uni.previewImage({
     current: index,
     urls: urls,
   });
 };
 
-const playVideo = (video: any) => {
-  uni.showToast({
-    title: `播放视频: ${video.title}`,
-    icon: "none",
-  });
+const playVideo = (index: number) => {
+  currentVideoUrl.value = imgBaseUrl + videoList.value[index].url;
+  console.log("🚀 ~ playVideo ~ currentVideoUrl:", currentVideoUrl.value);
+  showVideo.value = true;
 };
 
 // 获取系统信息
@@ -208,8 +204,6 @@ onMounted(() => {
   const pages = getCurrentPages();
   const currentPage = pages[pages.length - 1] as any;
   getSystemInfo();
-  initPhotoList();
-  initVideoList();
   console.log("内容详情页面加载完成");
   const id = currentPage.options.id;
   console.log("🚀 ~ onMounted ~ id:", id);
@@ -394,5 +388,28 @@ onMounted(() => {
 /* 底部安全区域 */
 .safe-area-bottom {
   width: 100%;
+}
+.video-container {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.video-content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.video-close {
+  position: absolute;
+  top: 40rpx;
+  right: 40rpx;
+  z-index: 1001;
 }
 </style>

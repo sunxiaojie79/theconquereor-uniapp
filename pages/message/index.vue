@@ -57,7 +57,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
 
 // 响应式数据
@@ -126,9 +127,8 @@ const readMessage = (item: any) => {
   }
 };
 
-onMounted(() => {
+onShow(() => {
   initMessageList();
-  console.log("消息列表页面加载完成");
 });
 </script>
 
