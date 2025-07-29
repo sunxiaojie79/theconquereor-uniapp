@@ -4,7 +4,7 @@
     <view class="custom-navbar">
       <image
         class="navbar-bg"
-        :src="imgBaseUrl + contentInfo.appChallengeProject.productCover"
+        :src="imgBaseUrl + contentInfo.appChallengeProject?.productCover"
         mode="aspectFill"
       ></image>
       <view class="navbar-content">
@@ -26,10 +26,10 @@
     <view class="content-section">
       <view class="content-header">
         <text class="content-title">{{
-          contentInfo.appChallengeProject.challengeTitle
+          contentInfo.appChallengeProject?.challengeTitle
         }}</text>
         <text class="content-description">{{
-          contentInfo.appChallengeProject.productDescription
+          contentInfo.appChallengeProject?.productDescription
         }}</text>
       </view>
 
@@ -146,7 +146,7 @@ const initPhotoList = () => {
   const imageUrls = [];
   for (
     let i = 0;
-    i < contentInfo.value.appScenicSpot.resourceList.length;
+    i < contentInfo.value.appScenicSpot.resourceList?.length;
     i++
   ) {
     const resource = contentInfo.value.appScenicSpot.resourceList[i];

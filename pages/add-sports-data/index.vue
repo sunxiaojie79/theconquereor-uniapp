@@ -11,6 +11,7 @@
           placeholder="请输入"
           placeholder-style="color: #C9CDD4;"
           @input="onDistanceInput"
+          :disabled="type === 'wechat'"
         />
       </view>
 
@@ -22,6 +23,7 @@
           :value="formData.duration"
           @change="onDateChange"
           class="date-picker"
+          :disabled="type === 'wechat'"
         >
           <view class="picker-content">
             <text
@@ -182,8 +184,8 @@ import { baseurl } from "@/config/dev.env";
 // 响应式数据
 const formData = ref({
   distance: uni.getStorageSync("today_distance"),
-  duration: "",
-  dateDisplay: "",
+  duration: new Date().toISOString().split("T")[0],
+  dateDisplay: new Date().toISOString().split("T")[0], // 默认今天
   challengeType: "",
   challengeProjectId: "",
   content: "",
@@ -191,7 +193,7 @@ const formData = ref({
 });
 
 const challengeProjectTitle = ref("");
-
+const type = ref("");
 const showSportsTypeModal = ref(false);
 const showChallengeModal = ref(false);
 
@@ -327,7 +329,7 @@ const previewImage = () => {
 
 const onSubmit = async () => {
   // 验证必填项
-  if (!formData.value.distance) {
+  if (type.value === "hand" && !formData.value.distance) {
     uni.showToast({
       title: "请输入公里数",
       icon: "none",
@@ -389,9 +391,18 @@ const initFormData = () => {
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
-  formData.value.duration = `${year}-${month}-${day}`;
+  if (type.value === "wechat") {
+    formData.value.distance = uni.getStorageSync("today_distance");
+    formData.value.duration = new Date().toISOString().split("T")[0];
+  } else {
+    formData.value.distance = "";
+    formData.value.duration = "";
+  }
   formData.value.dateDisplay = `${year}.${month}.${day}`;
-
+  console.log(
+    "🚀 ~ initFormData ~ formData.value.dateDisplay:",
+    formData.value.dateDisplay
+  );
   // 设置默认运动类型
   formData.value.challengeType = sportsTypeOptions.value[0].dictValue;
 
@@ -401,6 +412,12 @@ const initFormData = () => {
 
 onMounted(async () => {
   console.log("添加运动数据页面加载完成");
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1] as any;
+  console.log("🚀 ~ onMounted ~ currentPage:", currentPage);
+  if (currentPage.options?.type) {
+    type.value = currentPage.options.type;
+  }
   await getMyChallenges();
   initFormData();
 });

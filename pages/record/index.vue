@@ -23,7 +23,7 @@
     <!-- 添加数据页面 -->
     <view v-if="activeTab === 'add'" class="add-data-content">
       <!-- 添加运动数据卡片 -->
-      <view class="add-data-card" @click="addSportsData">
+      <view class="add-data-card" @click="addSportsData('hand')">
         <view class="card-left">
           <image
             class="card-icon"
@@ -55,14 +55,37 @@
                 src="/static/wechat.png"
                 mode="aspectFill"
               ></image>
-              <text class="app-name">微信计步器</text>
+              <text class="app-name">微信运动</text>
+            </view>
+            <view class="" hover-class="none" hover-stop-propagation="false">
+              <text
+                class="step-text"
+                selectable="false"
+                space="false"
+                decode="false"
+              >
+                {{ step }}步
+              </text>
+              <text
+                class="step-text"
+                selectable="false"
+                space="false"
+                decode="false"
+              >
+                {{ distance.toFixed(2) }}km
+              </text>
             </view>
           </view>
 
           <!-- 添加新授权按钮 -->
-          <button class="add-auth-btn" @click="addNewAuth">
-            <text class="add-auth-text">获取数据</text>
-          </button>
+          <view class="btn-container">
+            <button class="add-auth-btn" @click="addNewAuth">
+              <text class="add-auth-text">获取数据</text>
+            </button>
+            <button class="add-auth-btn" @click="addSportsData('wechat')">
+              <text class="add-auth-text"> 添加运动数据</text>
+            </button>
+          </view>
         </view>
       </view>
     </view>
@@ -162,6 +185,8 @@ const sportsDataList = ref([]);
 const showDeleteModal = ref(false);
 const deleteId = ref("");
 const showAddAuthModal = ref(false);
+const step = ref(0);
+const distance = ref(0);
 // 解密微信运动数据
 const decryptWeChatData = async (encryptedData: string, iv: string) => {
   const res: any = await uni.request({
@@ -180,6 +205,8 @@ const decryptWeChatData = async (encryptedData: string, iv: string) => {
     const wechat_data = res.data.data.stepInfoList;
     const today_distance =
       (wechat_data[wechat_data.length - 1].step * 0.7) / 1000;
+    step.value = wechat_data[wechat_data.length - 1].step;
+    distance.value = today_distance;
     console.log(
       "🚀 ~ decryptWeChatData ~ wechat_data:",
       wechat_data,
@@ -208,9 +235,9 @@ const switchTab = (tab: string) => {
   activeTab.value = tab;
 };
 
-const addSportsData = () => {
+const addSportsData = (type: string) => {
   uni.navigateTo({
-    url: "/pages/add-sports-data/index",
+    url: `/pages/add-sports-data/index?type=${type}`,
   });
 };
 
@@ -392,6 +419,9 @@ onShow(() => {
   background: #313743;
 }
 .app-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 32rpx;
 }
 
@@ -412,8 +442,22 @@ onShow(() => {
   font-weight: 500;
 }
 
+.step-text {
+  font-size: 32rpx;
+  color: #ffffff;
+  font-weight: 500;
+  margin-right: 26rpx;
+}
+
+.btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 26rpx;
+}
+
 .add-auth-btn {
-  width: 100%;
+  flex: 1;
   height: 88rpx;
   background-color: transparent;
   border: 2rpx solid rgba(255, 255, 255, 0.3);

@@ -1,12 +1,21 @@
 <template>
-  <web-view src="http://192.168.43.14:9977/#/test"></web-view>
+  <web-view :src="src"></web-view>
 </template>
-<script>
-export default {
-  data() {
-    return {
-      src: "https://www.baidu.com",
-    };
-  },
-};
+<script lang="ts" setup>
+import { onMounted, ref } from "vue";
+
+// const src = ref("https://theconqueror.cn/map/#/home");
+const src = ref("https://43.138.250.170/map/#/home");
+
+onMounted(async () => {
+  const pages = getCurrentPages();
+  const currentPage = pages[pages.length - 1] as any;
+  console.log("🚀 ~ onMounted ~ currentPage:", currentPage);
+  if (currentPage.options?.id) {
+    src.value += `?id=${currentPage.options.id}&token=${uni.getStorageSync(
+      "token"
+    )}`;
+  }
+  console.log("🚀 ~ onMounted ~ src:", src.value);
+});
 </script>
