@@ -249,21 +249,52 @@ const handlePayment = async () => {
   });
   console.log("🚀 ~ handlePayment ~ res:", res);
   if (res.data.code === 200) {
-    uni.showToast({
-      title: "支付成功！",
-      icon: "success",
-      duration: 2000,
-    });
-    uni.navigateTo({
-      url: `/pages/payment/index?codeUrl=${encodeURIComponent(
-        res.data.data.codeUrl
-      )}`,
-    });
-  } else {
-    uni.showToast({
-      title: "支付失败！",
-      icon: "none",
-      duration: 2000,
+    //   uni.showToast({
+    //     title: "支付成功！",
+    //     icon: "success",
+    //     duration: 2000,
+    //   });
+    //   uni.navigateTo({
+    //     url: `/pages/payment/index?codeUrl=${encodeURIComponent(
+    //       res.data.data.codeUrl
+    //     )}`,
+    //   });
+    // } else {
+    //   uni.showToast({
+    //     title: "支付失败！",
+    //     icon: "none",
+    //     duration: 2000,
+    //   });
+    const response = res.data.data.response;
+    const { appId, nonceStr, packageValue, paySign, signType, timeStamp } =
+      response;
+    const params = {
+      appId: appId,
+      timeStamp: timeStamp,
+      nonceStr: nonceStr,
+      package: packageValue,
+      signType: signType,
+      paySign: paySign,
+    };
+    console.log("🚀 ~ handlePayment ~ params:", params);
+    wx.requestPayment({
+      ...params,
+      success: (res) => {
+        console.log("🚀 ~ handlePayment ~ res:", res);
+        uni.showToast({
+          title: "支付成功！",
+          icon: "success",
+          duration: 2000,
+        });
+      },
+      fail: (err) => {
+        console.log("🚀 ~ handlePayment ~ err:", err);
+        uni.showToast({
+          title: "支付失败！",
+          icon: "none",
+          duration: 2000,
+        });
+      },
     });
   }
 
