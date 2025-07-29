@@ -11,7 +11,7 @@
           <view class="message-item" @click="readMessage(item)">
             <view class="message-content">
               <view class="message-left">
-                <image class="avatar" :src="item.avatar" mode="aspectFill" />
+                <image class="avatar" :src="item.imageUrl" mode="aspectFill" />
               </view>
               <view class="message-right">
                 <view v-if="!item.status" class="unread-dot"></view>
