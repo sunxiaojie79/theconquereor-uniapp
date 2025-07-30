@@ -122,8 +122,8 @@ const readMessage = (item: any) => {
     });
   }
 
-  if (!item.isRead) {
-    item.isRead = true;
+  if (item.status === 0) {
+    item.status = 1;
     uni.showToast({
       title: "消息已读",
       icon: "success",
