@@ -3,9 +3,9 @@
 </template>
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
-
+import { h5Url } from "@/config/dev.env";
 // const src = ref("https://theconqueror.cn/map/#/home");
-const src = ref("https://43.138.250.170/map/#/home");
+const src = ref(`${h5Url}/map/#/home`);
 
 onMounted(async () => {
   const pages = getCurrentPages();

@@ -76,8 +76,11 @@
             "
             class="action-buttons"
           >
-            <view class="action-btn primary" @click="gotoOrderDetail(order.id)">
-              <text class="btn-text">加入挑战</text>
+            <view
+              class="action-btn primary action-btn-join"
+              @click="gotoOrderDetail(order.id)"
+            >
+              <text class="btn-text-join">加入挑战</text>
             </view>
           </view>
 
@@ -92,8 +95,11 @@
             >
               <text class="btn-text">查看物流</text>
             </view>
-            <view class="action-btn primary" @click="gotoOrderDetail(order.id)">
-              <text class="btn-text">加入挑战</text>
+            <view
+              class="action-btn primary action-btn-join"
+              @click="gotoOrderDetail(order.id)"
+            >
+              <text class="btn-text-join">加入挑战</text>
             </view>
           </view>
 
@@ -420,5 +426,13 @@ onMounted(() => {
 
 .btn-text {
   font-size: 28rpx;
+}
+.btn-text-join {
+  font-size: 28rpx;
+  color: #ffffff;
+  background: #242a36;
+}
+.action-btn-join {
+  background: #242a36 !important;
 }
 </style>
