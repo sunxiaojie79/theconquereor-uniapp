@@ -1,5 +1,5 @@
 <template>
-  <view class="project-card">
+  <view class="project-card" @click.stop="handleJoinClick">
     <view class="card-header">
       <image
         class="project-image"
@@ -28,7 +28,7 @@
     <view class="card-content">
       <text class="project-title">{{ project.challengeTitle }}</text>
       <text class="project-desc">{{ project.subtitle }}</text>
-      <button class="join-btn" @click.stop="handleJoinClick">加入挑战</button>
+      <button class="join-btn">加入挑战</button>
     </view>
   </view>
 </template>

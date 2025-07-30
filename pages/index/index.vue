@@ -31,11 +31,11 @@
     <view class="my-challenges">
       <view class="section-header">
         <text class="section-title">我的挑战</text>
-        <image
+        <!-- <image
           class="more-icon"
           src="/static/arrow-right.png"
           mode="aspectFill"
-        ></image>
+        ></image> -->
       </view>
       <scroll-view
         class="challenge-scroll"
@@ -84,6 +84,7 @@
           class="more-icon"
           src="/static/arrow-right.png"
           mode="aspectFill"
+          @click="navigateTo('/pages/challenge-list/index')"
         ></image>
       </view>
       <view class="projects-grid">

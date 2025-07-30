@@ -11,7 +11,11 @@
           <view class="message-item" @click="readMessage(item)">
             <view class="message-content">
               <view class="message-left">
-                <image class="avatar" :src="item.imageUrl" mode="aspectFill" />
+                <image
+                  class="avatar"
+                  :src="imgBaseUrl + item.imageUrl"
+                  mode="aspectFill"
+                />
               </view>
               <view class="message-right">
                 <view v-if="!item.status" class="unread-dot"></view>
@@ -60,8 +64,7 @@
 import { ref } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import ConfirmDialog from "../../components/ConfirmDialog.vue";
-import { baseurl } from "@/config/dev.env";
-
+import { baseurl, imgBaseUrl } from "@/config/dev.env";
 // 响应式数据
 const messageList = ref<any[]>([]);
 const showDeleteModal = ref(false);

@@ -8,6 +8,7 @@
           v-model="formData.distance"
           type="number"
           class="input"
+          :style="{ color: type === 'wechat' ? '#C9CDD4' : '#000' }"
           placeholder="请输入"
           placeholder-style="color: #C9CDD4;"
           @input="onDistanceInput"
@@ -28,6 +29,7 @@
           <view class="picker-content">
             <text
               class="picker-text"
+              :style="{ color: type === 'wechat' ? '#C9CDD4' : '#000' }"
               :class="{ placeholder: !formData.dateDisplay }"
             >
               {{ formData.dateDisplay || "默认今天" }}
@@ -393,10 +395,8 @@ const initFormData = () => {
   const day = String(today.getDate()).padStart(2, "0");
   if (type.value === "wechat") {
     formData.value.distance = uni.getStorageSync("today_distance");
-    formData.value.duration = new Date().toISOString().split("T")[0];
   } else {
     formData.value.distance = "";
-    formData.value.duration = "";
   }
   formData.value.dateDisplay = `${year}.${month}.${day}`;
   console.log(
