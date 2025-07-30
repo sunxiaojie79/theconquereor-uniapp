@@ -150,14 +150,47 @@ const goBack = () => {
     uni.switchTab({ url: "/pages/index/index" });
   }
 };
-
-const toggleLike = () => {
-  challengeDetail.value.collectFlag = !challengeDetail.value.collectFlag;
-  uni.showToast({
-    title: challengeDetail.value.collectFlag ? "已收藏" : "已取消收藏",
-    icon: "none",
-    duration: 1500,
+// 收藏挑战项目
+const likeCollection = async (id) => {
+  const res: any = await uni.request({
+    url: baseurl + `/wx/app/my/collection/${id}`,
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
   });
+  console.log("🚀 ~ getMyCollection ~ res:", res);
+  return res.data;
+};
+// 取消收藏挑战项目
+const cancelCollection = async (id) => {
+  const res: any = await uni.request({
+    url: baseurl + `/wx/app/my/collection/remove/${id}`,
+    method: "DELETE",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+  });
+  return res.data;
+};
+const toggleLike = async () => {
+  console.log(
+    "🚀 ~ toggleLike ~ challengeDetail.value.collectFlag:",
+    challengeDetail.value.collectFlag
+  );
+  if (challengeDetail.value.collectFlag) {
+    const res = await cancelCollection(challengeDetail.value.id);
+    console.log("🚀 ~ cancelCollection ~ res:", res);
+    if (res.code === 200) {
+      challengeDetail.value.collectFlag = false;
+    }
+  } else {
+    const res = await likeCollection(challengeDetail.value.id);
+    console.log("🚀 ~ likeCollection ~ res:", res);
+    if (res.code === 200) {
+      challengeDetail.value.collectFlag = true;
+    }
+  }
 };
 
 const handleProductClick = (productId: string) => {
@@ -246,6 +279,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  z-index: 3;
   .like-icon {
     width: 48rpx;
     height: 48rpx;

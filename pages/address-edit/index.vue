@@ -174,7 +174,7 @@ const handleConfirm = async () => {
     uni.showToast({
       title: isEdit.value ? "地址修改成功" : "地址创建成功",
       icon: "success",
-      duration: 2000,
+      duration: 500,
     });
     if (!isEdit.value) {
       uni.setStorageSync("myCurrentAddress", params);
@@ -183,7 +183,7 @@ const handleConfirm = async () => {
   // 延迟返回上一页
   setTimeout(() => {
     uni.navigateBack();
-  }, 2000);
+  }, 500);
 };
 
 // 获取页面参数

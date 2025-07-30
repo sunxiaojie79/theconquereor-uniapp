@@ -48,7 +48,7 @@
       <view class="product-content">
         <image
           class="product-image"
-          :src="productInfo.image"
+          :src="productInfo.logo"
           mode="aspectFill"
         ></image>
         <view class="product-details">
