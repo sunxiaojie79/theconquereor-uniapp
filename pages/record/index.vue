@@ -213,6 +213,11 @@ const decryptWeChatData = async (encryptedData: string, iv: string) => {
       today_distance
     );
     uni.setStorageSync("today_distance", today_distance);
+
+    uni.showToast({
+      title: "授权成功",
+      icon: "success",
+    });
   }
   return res.data;
 };
@@ -291,11 +296,6 @@ const confirmAddAuth = async () => {
       const res2 = await decryptWeChatData(encryptedData, iv);
       console.log("🚀 ~ success ~ res2:", res2);
     },
-  });
-
-  uni.showToast({
-    title: "授权成功",
-    icon: "success",
   });
 };
 
