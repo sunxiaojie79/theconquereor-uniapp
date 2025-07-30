@@ -126,9 +126,15 @@ const currentVideoUrl = ref<string>("");
 const showVideo = ref<boolean>(false);
 //接口
 // 获取消息详情
-const getMessageDetail = async (id: string) => {
+const getMessageDetail = async (id: string, type?: string) => {
+  let url = "";
+  if (type === "detail") {
+    url = baseurl + `/wx/app/my/resource/${id}`;
+  } else if (type === "message") {
+    url = baseurl + `/wx/app/my/notice/detail/${id}`;
+  }
   const res: any = await uni.request({
-    url: baseurl + `/wx/app/my/notice/detail/${id}`,
+    url: url,
     method: "GET",
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
@@ -207,8 +213,9 @@ onMounted(() => {
   console.log("内容详情页面加载完成");
   const id = currentPage.options.id;
   console.log("🚀 ~ onMounted ~ id:", id);
+  const type = currentPage.options.type || "message";
   if (id) {
-    getMessageDetail(id);
+    getMessageDetail(id, type);
   }
 });
 </script>
