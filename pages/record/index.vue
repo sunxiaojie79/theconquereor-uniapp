@@ -105,7 +105,7 @@
                   <view class="sport-icon">
                     <image
                       class="icon-image"
-                      src="/static/sports/running.png"
+                      :src="`/static/sports/${item.sportIcon}.png`"
                       mode="aspectFill"
                     ></image>
                   </view>
@@ -233,6 +233,25 @@ const getSportList = async () => {
   });
   console.log("🚀 ~ getSportList ~ res:", res);
   sportsDataList.value = res.data.rows;
+  if (sportsDataList.value.length > 0) {
+    sportsDataList.value.forEach((item) => {
+      if (item.challengeType === "跑步") {
+        item.sportIcon = "running";
+      } else if (item.challengeType === "骑行") {
+        item.sportIcon = "cycling";
+      } else if (item.challengeType === "游泳") {
+        item.sportIcon = "swimming";
+      } else if (item.challengeType === "室内跑步") {
+        item.sportIcon = "runningindoor";
+      } else if (item.challengeType === "步行") {
+        item.sportIcon = "walking";
+      } else if (item.challengeType === "室内步行") {
+        item.sportIcon = "walkingindoor";
+      } else {
+        item.sportIcon = "running";
+      }
+    });
+  }
 };
 
 // 方法

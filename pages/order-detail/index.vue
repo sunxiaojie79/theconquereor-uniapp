@@ -75,8 +75,8 @@ const productInfo = ref(uni.getStorageSync("currentProduct"));
 const challengeTitle = ref("");
 const challengeId = ref("");
 const addressInfo = ref(
-  uni.getStorageSync("myDefaultAddress") ||
-    uni.getStorageSync("myCurrentAddress")
+  uni.getStorageSync("myCurrentAddress") ||
+    uni.getStorageSync("myDefaultAddress")
 );
 const hasAddress = ref(!!addressInfo.value);
 console.log("🚀 ~ hasAddress:", hasAddress.value);
@@ -197,8 +197,8 @@ onUnmounted(() => {
 
 onShow(() => {
   addressInfo.value =
-    uni.getStorageSync("myDefaultAddress") ||
-    uni.getStorageSync("myCurrentAddress");
+    uni.getStorageSync("myCurrentAddress") ||
+    uni.getStorageSync("myDefaultAddress");
   hasAddress.value = !!addressInfo.value;
 });
 </script>
