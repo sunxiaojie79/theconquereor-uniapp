@@ -265,6 +265,7 @@ const handlePayment = async () => {
     //     icon: "none",
     //     duration: 2000,
     //   });
+    const orderId = res.data.data.orderId;
     const response = res.data.data.response;
     const { appId, nonceStr, packageValue, paySign, signType, timeStamp } =
       response;
@@ -286,6 +287,7 @@ const handlePayment = async () => {
           icon: "success",
           duration: 2000,
         });
+        getOrderDetail(orderId);
       },
       fail: (err) => {
         console.log("🚀 ~ handlePayment ~ err:", err);

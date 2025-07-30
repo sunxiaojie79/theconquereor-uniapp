@@ -95,7 +95,11 @@ const handleEditAddress = () => {
     url: "/pages/address-list/index",
   });
 };
-
+const gotoOrderDetail = (orderId: string) => {
+  uni.navigateTo({
+    url: `/pages/order-detail/old?orderId=${orderId}`,
+  });
+};
 const handlePayment = async () => {
   if (!hasAddress.value) {
     uni.showToast({
@@ -138,7 +142,7 @@ const handlePayment = async () => {
     //     res.data.data.codeUrl
     //   )}`,
     // });
-
+    const orderId = res.data.data.orderId;
     const response = res.data.data.response;
     const { appId, nonceStr, packageValue, paySign, signType, timeStamp } =
       response;
@@ -160,6 +164,7 @@ const handlePayment = async () => {
           icon: "success",
           duration: 2000,
         });
+        gotoOrderDetail(orderId);
       },
       fail: (err) => {
         console.log("🚀 ~ handlePayment ~ err:", err);

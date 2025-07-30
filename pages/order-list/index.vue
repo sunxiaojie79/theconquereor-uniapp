@@ -22,7 +22,7 @@
         :style="{ height: order.status === 'completed' ? '232rpx' : '328rpx' }"
       >
         <!-- 商品信息 -->
-        <view class="product-info">
+        <view class="product-info" @click="gotoOrderDetail(order.id)">
           <view class="product-top">
             <text class="product-name">{{ order.challengeTitle }}</text>
             <text class="product-status">{{
@@ -51,7 +51,7 @@
                 class="product-code"
               >
                 <text class="code-label">code：{{ order.code }}</text>
-                <view class="copy-btn" @click="copyCode(order.code)">
+                <view class="copy-btn" @click.stop="copyCode(order.code)">
                   <text class="copy-text">复制</text>
                 </view>
               </view>
@@ -116,7 +116,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { onShow } from "@dcloudio/uni-app";
 import { imgBaseUrl, baseurl } from "@/config/dev.env";
 
 // 响应式数据
@@ -213,7 +214,7 @@ const initOrderList = async () => {
   }
 };
 
-onMounted(() => {
+onShow(() => {
   initOrderList();
   console.log("商品订单页面加载完成");
 });
