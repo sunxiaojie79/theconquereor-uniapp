@@ -117,13 +117,13 @@
                   </view>
                   <view class="source-info">
                     <image
-                      v-if="item.dataSource === '微信运动'"
+                      v-if="item.dataSource === 'wechat'"
                       class="source-icon"
                       src="/static/wechat2.png"
                       mode="aspectFill"
                     ></image>
                     <text class="source-text">{{
-                      item.dataSource || "手动录入"
+                      item.dataSource === "wechat" ? "微信运动" : "手动录入"
                     }}</text>
                   </view>
                 </view>

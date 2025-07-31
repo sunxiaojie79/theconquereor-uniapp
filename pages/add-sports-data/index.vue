@@ -372,6 +372,7 @@ const onSubmit = async () => {
     challengeProjectId: formData.value.challengeProjectId,
     content: formData.value.content,
     image: formData.value.image,
+    dataSource: type.value,
   });
   if (res.code === 200) {
     uni.showToast({
