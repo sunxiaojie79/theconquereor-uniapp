@@ -334,13 +334,44 @@ const getUserInfo = async () => {
 const onChooseAvatar = (e: any) => {
   const { avatarUrl } = e.detail;
   if (avatarUrl) {
+    console.log("🚀 ~ onChooseAvatar ~ avatarUrl:", avatarUrl);
+
     // 更新用户头像
+    uploadImage(avatarUrl);
     updateUserInfo({ avatar: avatarUrl });
     userStore.updateUserInfo({ avatar: avatarUrl });
     uni.setStorageSync("avatar", avatarUrl);
   }
 };
+// 图片上传
+const uploadImage = async (file: string) => {
+  console.log("🚀 ~ uploadImage ~ file:", file);
+  uni.uploadFile({
+    url: baseurl + "/wx/app/upload",
+    filePath: file,
+    name: "file", // 后端接收文件的字段名
+    formData: {
+      userId: uni.getStorageSync("userInfo").id, // 示例：传递用户ID
+    },
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+      "Content-Type": "multipart/form-data",
+    },
+    success: (uploadRes) => {
+      console.log("111上传成功", uploadRes);
 
+      const data = JSON.parse(uploadRes.data);
+      console.log("🚀 ~ uploadImage ~ data:", data);
+    },
+    fail: (err) => {
+      console.error("上传失败", err);
+      uni.showToast({
+        title: `图片上传失败: ${err.errMsg}`,
+        icon: "none",
+      });
+    },
+  });
+};
 // Tab切换
 const switchTab = (tab: string) => {
   currentTab.value = tab;
