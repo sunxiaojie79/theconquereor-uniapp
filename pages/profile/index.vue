@@ -309,6 +309,7 @@ const updateUserInfo = async (info) => {
     data: info,
   });
   if (res.data.code === 200) {
+    console.log("🚀 ~ updateUserInfo ~ res:", res);
     uni.showToast({
       title: "更新成功",
       icon: "success",
@@ -338,7 +339,6 @@ const onChooseAvatar = (e: any) => {
 
     // 更新用户头像
     uploadImage(avatarUrl);
-    updateUserInfo({ avatar: avatarUrl });
     userStore.updateUserInfo({ avatar: avatarUrl });
     uni.setStorageSync("avatar", avatarUrl);
   }
@@ -359,9 +359,7 @@ const uploadImage = async (file: string) => {
     },
     success: (uploadRes) => {
       console.log("111上传成功", uploadRes);
-
-      const data = JSON.parse(uploadRes.data);
-      console.log("🚀 ~ uploadImage ~ data:", data);
+      updateUserInfo({ avatar: file });
     },
     fail: (err) => {
       console.error("上传失败", err);
