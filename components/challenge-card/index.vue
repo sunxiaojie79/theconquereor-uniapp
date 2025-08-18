@@ -1,34 +1,41 @@
 <template>
-  <view class="project-card" @click.stop="handleJoinClick">
-    <view class="card-header">
-      <image
-        class="project-image"
-        :src="project.productCover"
-        mode="aspectFill"
-      ></image>
-      <view
-        class="like-btn"
-        :class="{ liked: project.collectFlag }"
-        @click.stop="handleLikeClick"
-      >
+  <view class="project-card-container">
+    <image
+      class="project-image-cover"
+      :src="project.productCover"
+      mode="aspectFill"
+    ></image>
+    <view class="project-card" @click.stop="handleJoinClick">
+      <view class="card-header">
         <image
-          v-if="project.collectFlag"
-          class="like-icon"
-          src="/static/heart-fill.png"
+          class="project-image"
+          :src="project.backgroundImgUrl"
           mode="aspectFill"
         ></image>
-        <image
-          v-else
-          class="like-icon"
-          src="/static/heart-empty.png"
-          mode="aspectFill"
-        ></image>
+        <view
+          class="like-btn"
+          :class="{ liked: project.collectFlag }"
+          @click.stop="handleLikeClick"
+        >
+          <image
+            v-if="project.collectFlag"
+            class="like-icon"
+            src="/static/heart-fill.png"
+            mode="aspectFill"
+          ></image>
+          <image
+            v-else
+            class="like-icon"
+            src="/static/heart-empty.png"
+            mode="aspectFill"
+          ></image>
+        </view>
       </view>
-    </view>
-    <view class="card-content">
-      <text class="project-title">{{ project.challengeTitle }}</text>
-      <text class="project-desc">{{ project.subtitle }}</text>
-      <button class="join-btn">加入挑战</button>
+      <view class="card-content">
+        <text class="project-title">{{ project.challengeTitle }}</text>
+        <text class="project-desc">{{ project.subtitle }}</text>
+        <button class="join-btn">加入挑战</button>
+      </view>
     </view>
   </view>
 </template>
@@ -41,6 +48,7 @@ export interface Project {
   productDescription: string;
   productCover: string;
   collectFlag: boolean;
+  backgroundImgUrl: string;
 }
 
 interface Props {
@@ -65,18 +73,33 @@ const handleJoinClick = () => {
 </script>
 
 <style lang="scss" scoped>
+.project-card-container {
+  position: relative;
+  width: 331rpx;
+  height: 496rpx;
+}
+.project-image-cover {
+  position: absolute;
+  top: 26rpx;
+  left: 0;
+  width: 100%;
+  height: 208rpx;
+  z-index: 99;
+}
 .project-card {
+  position: absolute;
+  top: 48rpx;
+  left: 0;
   background: #fff;
   border-radius: 8rpx;
   overflow: hidden;
   width: 331rpx;
-  height: 472rpx;
+  height: 448rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 0rpx 0rpx 24rpx 0rpx;
   flex-grow: 1;
-  z-index: 0;
   box-sizing: border-box;
 }
 
@@ -93,6 +116,7 @@ const handleJoinClick = () => {
 
 .like-btn {
   position: absolute;
+  z-index: 999;
   top: 20rpx;
   left: 20rpx;
   width: 48rpx;

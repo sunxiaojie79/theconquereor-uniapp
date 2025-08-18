@@ -254,6 +254,7 @@ const getChallengeList = async () => {
   if (res.data.code === 200) {
     res.data.rows.forEach((item: any) => {
       item.productCover = imgBaseUrl + item.productCover;
+      item.backgroundImgUrl = imgBaseUrl + item.backgroundImgUrl;
     });
     challengeProjects.value = res.data.rows;
   }

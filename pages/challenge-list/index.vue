@@ -475,6 +475,7 @@ const getChallengeList = async (params?: any) => {
     allChallenges.value = res.data.rows;
     allChallenges.value.forEach((item: any) => {
       item.productCover = imgBaseUrl + item.productCover;
+      item.backgroundImgUrl = imgBaseUrl + item.backgroundImgUrl;
     });
   }
   return res.data;
@@ -503,6 +504,7 @@ const getMyCollection = async (params?: any) => {
     favoriteChallenges.value = res.data.rows;
     favoriteChallenges.value.forEach((item: any) => {
       item.productCover = imgBaseUrl + item.productCover;
+      item.backgroundImgUrl = imgBaseUrl + item.backgroundImgUrl;
     });
   }
   return res.data;
