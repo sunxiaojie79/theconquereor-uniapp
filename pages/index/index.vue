@@ -467,6 +467,30 @@ const loginWX = async () => {
     },
   });
 };
+
+const initMessageList = async () => {
+  const res: any = await uni.request({
+    url: baseurl + "/wx/app/my/notice/list",
+    method: "POST",
+    header: {
+      "X-WX-TOKEN": uni.getStorageSync("token"),
+    },
+    data: {},
+  });
+  console.log("🚀 ~ initMessageList ~ res:", res);
+  if (res.data.code === 200) {
+    const hasUnread = res.data.data.some((item: any) => !item.status);
+    if (hasUnread) {
+      uni.showTabBarRedDot({
+        index: 2,
+      });
+    } else {
+      uni.hideTabBarRedDot({
+        index: 2,
+      });
+    }
+  }
+};
 onMounted(async () => {
   // 重置分页状态
   pageNum.value = 1;
@@ -483,6 +507,7 @@ onShow(() => {
     getMyChallenges(1, false); // 首次加载第1页数据
     getMyAddress();
     getFaqList();
+    initMessageList();
   }
 });
 </script>

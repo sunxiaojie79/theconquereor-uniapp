@@ -194,7 +194,8 @@
         "pagePath": "pages/message/index",
         "text": "消息",
         "iconPath": "static/icons/message.png",
-        "selectedIconPath": "static/icons/message-active.png"
+        "selectedIconPath": "static/icons/message-active.png",
+        "redDot": false
       },
       {
         "pagePath": "pages/profile/index",

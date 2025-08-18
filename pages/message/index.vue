@@ -86,6 +86,16 @@ const initMessageList = async () => {
   console.log("🚀 ~ initMessageList ~ res:", res);
   if (res.data.code === 200) {
     messageList.value = res.data.data;
+    const hasUnread = messageList.value.some((item: any) => !item.status);
+    if (hasUnread) {
+      uni.showTabBarRedDot({
+        index: 2,
+      });
+    } else {
+      uni.hideTabBarRedDot({
+        index: 2,
+      });
+    }
   }
 };
 
