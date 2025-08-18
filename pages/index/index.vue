@@ -28,7 +28,7 @@
     </view>
 
     <!-- 我的挑战 -->
-    <view class="my-challenges">
+    <view v-if="myChallenges.length > 0" class="my-challenges">
       <view class="section-header">
         <text class="section-title">我的挑战</text>
         <!-- <image
@@ -174,8 +174,6 @@ const pageSize = ref(10);
 const total = ref(0);
 const loading = ref(false);
 const hasMore = ref(true);
-
-// mock数据
 const myChallenges = ref<any[]>([]);
 
 const challengeProjects = ref<Project[]>([]);

@@ -21,7 +21,10 @@
                 <view v-if="!item.status" class="unread-dot"></view>
                 <view
                   class="message-text"
-                  :style="{ marginLeft: item.status ? '0' : '32rpx' }"
+                  :style="{
+                    marginLeft: item.status ? '0' : '32rpx',
+                    fontSize: item.status ? '32rpx' : '36rpx',
+                  }"
                   >{{ item.content || "暂无内容" }}</view
                 >
                 <view class="message-time">{{ item.createTime }}</view>

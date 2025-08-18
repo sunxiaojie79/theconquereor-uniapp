@@ -229,7 +229,12 @@ const getSportList = async () => {
     header: {
       "X-WX-TOKEN": uni.getStorageSync("token"),
     },
-    data: {},
+    data: {
+      query: {
+        pageNum: 1,
+        pageSize: 100,
+      },
+    },
   });
   console.log("🚀 ~ getSportList ~ res:", res);
   sportsDataList.value = res.data.rows;

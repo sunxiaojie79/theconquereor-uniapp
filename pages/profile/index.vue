@@ -52,7 +52,7 @@
             src="/static/auth.png"
             mode="aspectFill"
           ></image>
-          <text class="action-text">授权</text>
+          <text class="action-text">连接设备</text>
         </view>
         <view class="action-btn" @click="handleOrder">
           <image
@@ -60,7 +60,7 @@
             src="/static/shopping-bag.png"
             mode="aspectFill"
           ></image>
-          <text class="action-text">订单</text>
+          <text class="action-text">我的订单</text>
         </view>
         <view class="action-btn" @click="handleJoin">
           <image
@@ -68,7 +68,7 @@
             src="/static/join.png"
             mode="aspectFill"
           ></image>
-          <text class="action-text">加入</text>
+          <text class="action-text">加入挑战</text>
         </view>
       </view>
     </view>
@@ -251,7 +251,7 @@
       <view class="auth-header">
         <text class="auth-title">授权</text>
       </view>
-      <view class="auth-body">
+      <view class="auth-body" @click="handleAuthAction">
         <view class="auth-body-left">
           <image
             class="wechat-icon"
@@ -262,8 +262,8 @@
         </view>
       </view>
       <view class="auth-footer">
-        <view class="auth-btn" @click="handleAuthAction">
-          <text class="auth-btn-text">授权</text>
+        <view class="auth-btn">
+          <text class="auth-btn-text">此功能正在开发中...</text>
         </view>
       </view>
     </view>
