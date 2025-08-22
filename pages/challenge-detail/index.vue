@@ -223,7 +223,13 @@ onMounted(() => {
     challengeId.value = currentPage.options.projectId;
   } else if (currentPage.options?.id) {
     challengeId.value = currentPage.options.id;
+  } else if (currentPage.options?.scene) {
+    const decoded = decodeURIComponent(currentPage.options.scene);
+    const [key, value] = decoded.split("=");
+    challengeId.value = value;
   }
+  console.log("🚀 ~ challengeId.value:", challengeId.value);
+
   getChallengeDetail();
 });
 </script>
