@@ -3,7 +3,7 @@
     <image
       class="project-image-cover"
       :src="project.productCover"
-      mode="aspectFill"
+      mode="aspectFit"
     ></image>
     <view class="project-card" @click.stop="handleJoinClick">
       <view class="card-header">
@@ -80,10 +80,11 @@ const handleJoinClick = () => {
 }
 .project-image-cover {
   position: absolute;
-  top: 26rpx;
-  left: 0;
-  width: 100%;
-  height: 208rpx;
+  top: 12rpx;
+  left: 46rpx;
+  width: 240rpx;
+  height: 240rpx;
+  object-fit: contain;
   z-index: 99;
 }
 .project-card {
@@ -98,7 +99,7 @@ const handleJoinClick = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0rpx 0rpx 24rpx 0rpx;
+  // padding: 0rpx 0rpx 24rpx 0rpx;
   flex-grow: 1;
   box-sizing: border-box;
 }
@@ -144,12 +145,13 @@ const handleJoinClick = () => {
 }
 
 .project-title {
-  height: 48rpx;
+  height: 40rpx;
   color: rgba(0, 0, 0, 0.85);
-  font-size: 34rpx;
+  font-size: 28rpx;
   font-weight: 500;
   margin-bottom: 8rpx;
   display: block;
+  margin-top: 14rpx;
 }
 
 .project-desc {
@@ -157,7 +159,7 @@ const handleJoinClick = () => {
   color: rgba(0, 0, 0, 0.65);
   font-size: 28rpx;
   line-height: 1.4;
-  margin-bottom: 25rpx;
+  margin-bottom: 6rpx;
   height: 80rpx;
   display: block;
   text-align: center;
@@ -174,7 +176,7 @@ const handleJoinClick = () => {
   gap: 20rpx;
   align-self: stretch;
   z-index: 1;
-  font-size: 34rpx;
+  font-size: 28rpx;
   font-weight: 500;
   color: #fff;
   background: #242a36;

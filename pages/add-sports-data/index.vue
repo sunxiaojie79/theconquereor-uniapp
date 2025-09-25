@@ -222,7 +222,9 @@ const getMyChallenges = async () => {
   });
   console.log("🚀 ~ getMyChallenges ~ res:", res);
   if (res.data.code === 200 && res.data.data.length > 0) {
-    challengeOptions.value = res.data.data;
+    challengeOptions.value = res.data.data.filter(
+      (item) => item.process !== 100
+    );
     challengeProjectTitle.value = challengeOptions.value[0].challengeTitle;
   }
 };

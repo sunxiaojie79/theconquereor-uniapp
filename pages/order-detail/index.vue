@@ -175,6 +175,12 @@ const handlePayment = async () => {
         });
       },
     });
+  } else {
+    uni.showToast({
+      title: "支付失败！" + res.data.msg,
+      icon: "none",
+      duration: 2000,
+    });
   }
 
   // 延迟跳转

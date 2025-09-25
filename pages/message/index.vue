@@ -106,13 +106,31 @@ const deleteMessage = (index: number) => {
 };
 
 // 确认删除
-const confirmDelete = () => {
+const confirmDelete = async () => {
   if (deleteIndex.value !== -1) {
-    messageList.value.splice(deleteIndex.value, 1);
-    uni.showToast({
-      title: "删除成功",
-      icon: "success",
+    const res: any = await uni.request({
+      url:
+        baseurl +
+        "/wx/app/my/notice/detail/" +
+        messageList.value[deleteIndex.value].id,
+      method: "DELETE",
+      header: {
+        "X-WX-TOKEN": uni.getStorageSync("token"),
+      },
     });
+    console.log("🚀 ~ confirmDelete ~ res:", res);
+    if (res.data.code === 200) {
+      messageList.value.splice(deleteIndex.value, 1);
+      uni.showToast({
+        title: "删除成功",
+        icon: "success",
+      });
+    } else {
+      uni.showToast({
+        title: "删除失败",
+        icon: "none",
+      });
+    }
   }
   showDeleteModal.value = false;
   deleteIndex.value = -1;

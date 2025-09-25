@@ -261,11 +261,21 @@
           <text class="auth-status">微信运动</text>
         </view>
       </view>
-      <view class="auth-footer">
+      <view class="auth-body" style="margin-bottom: 0rpx">
+        <view class="auth-body-left">
+          <image
+            class="wechat-icon"
+            src="/static/huawei.jpeg"
+            mode="aspectFill"
+          ></image>
+          <text class="auth-status">华为运动健康 开发中</text>
+        </view>
+      </view>
+      <!-- <view class="auth-footer">
         <view class="auth-btn">
           <text class="auth-btn-text">此功能正在开发中...</text>
         </view>
-      </view>
+      </view> -->
     </view>
   </view>
 </template>
@@ -358,8 +368,8 @@ const uploadImage = async (file: string) => {
       "Content-Type": "multipart/form-data",
     },
     success: (uploadRes) => {
-      console.log("111上传成功", uploadRes);
-      updateUserInfo({ avatar: file });
+      console.log("111上传成功1", JSON.parse(uploadRes.data).fileName);
+      updateUserInfo({ avatar: JSON.parse(uploadRes.data).fileName });
     },
     fail: (err) => {
       console.error("上传失败", err);
@@ -370,6 +380,7 @@ const uploadImage = async (file: string) => {
     },
   });
 };
+
 // Tab切换
 const switchTab = (tab: string) => {
   currentTab.value = tab;
@@ -1147,6 +1158,7 @@ onShow(() => {
   box-sizing: border-box;
   border-radius: 8rpx;
   background: #f4f5f9;
+  margin-bottom: 24rpx;
 }
 
 .auth-body-left {

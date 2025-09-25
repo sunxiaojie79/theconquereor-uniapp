@@ -208,13 +208,14 @@ const getMyChallenges = async (page = 1, append = false) => {
       data.forEach((item: any) => {
         item.productCover = imgBaseUrl + item.productCover;
       });
+      const tempData = data.filter((item) => item.process !== 100);
       console.log("🚀 ~ getMyChallenges ~ imgBaseUrl:", imgBaseUrl);
       if (append) {
         // 追加数据
-        myChallenges.value = [...myChallenges.value, ...data];
+        myChallenges.value = [...myChallenges.value, ...tempData];
       } else {
         // 替换数据（首次加载）
-        myChallenges.value = data;
+        myChallenges.value = tempData;
       }
 
       total.value = totalCount;
