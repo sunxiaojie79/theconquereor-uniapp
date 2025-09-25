@@ -195,6 +195,7 @@ const formData = ref({
 });
 
 const challengeProjectTitle = ref("");
+const productCover = ref("");
 const type = ref("");
 const showSportsTypeModal = ref(false);
 const showChallengeModal = ref(false);
@@ -226,6 +227,7 @@ const getMyChallenges = async () => {
       (item) => item.process !== 100
     );
     challengeProjectTitle.value = challengeOptions.value[0].challengeTitle;
+    productCover.value = challengeOptions.value[0].productCover;
   }
 };
 // 手动新增运动记录
@@ -304,6 +306,7 @@ const selectChallenge = (option: any) => {
   formData.value.challengeProjectId = option.id;
   showChallengeModal.value = false;
   challengeProjectTitle.value = option.challengeTitle;
+  productCover.value = option.productCover;
 };
 
 const chooseImage = () => {
@@ -367,26 +370,30 @@ const onSubmit = async () => {
 
   console.log("提交数据:", formData.value);
 
-  const res = await addSportsData({
-    distance: formData.value.distance,
-    duration: formData.value.duration,
-    challengeType: formData.value.challengeType,
-    challengeProjectId: formData.value.challengeProjectId,
-    content: formData.value.content,
-    image: formData.value.image,
-    dataSource: type.value,
+  // const res = await addSportsData({
+  //   distance: formData.value.distance,
+  //   duration: formData.value.duration,
+  //   challengeType: formData.value.challengeType,
+  //   challengeProjectId: formData.value.challengeProjectId,
+  //   content: formData.value.content,
+  //   image: formData.value.image,
+  //   dataSource: type.value,
+  // });
+  // if (res.code === 200) {
+  uni.redirectTo({
+    url:
+      "/pages/add-sports-data/result?distance=" +
+      formData.value.distance +
+      "&productCover=" +
+      productCover.value +
+      "&challengeProjectTitle=" +
+      challengeProjectTitle.value +
+      "&dateDisplay=" +
+      formData.value.dateDisplay +
+      "&challengeProjectId=" +
+      formData.value.challengeProjectId,
   });
-  if (res.code === 200) {
-    uni.showToast({
-      title: "提交成功",
-      icon: "success",
-    });
-  }
-
-  // 延时返回上一页
-  setTimeout(() => {
-    uni.navigateBack();
-  }, 1500);
+  // }
 };
 
 // 初始化数据

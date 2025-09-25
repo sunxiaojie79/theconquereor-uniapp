@@ -126,6 +126,14 @@
       }
     },
     {
+      "path": "pages/add-sports-data/result",
+      "style": {
+        "navigationBarTitleText": "添加结果",
+        "navigationBarBackgroundColor": "#242A36",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
       "path": "pages/address-list/index",
       "style": {
         "navigationBarTitleText": "收货地址",
