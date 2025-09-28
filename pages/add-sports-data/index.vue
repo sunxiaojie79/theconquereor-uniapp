@@ -370,30 +370,38 @@ const onSubmit = async () => {
 
   console.log("提交数据:", formData.value);
 
-  // const res = await addSportsData({
-  //   distance: formData.value.distance,
-  //   duration: formData.value.duration,
-  //   challengeType: formData.value.challengeType,
-  //   challengeProjectId: formData.value.challengeProjectId,
-  //   content: formData.value.content,
-  //   image: formData.value.image,
-  //   dataSource: type.value,
-  // });
-  // if (res.code === 200) {
-  uni.redirectTo({
-    url:
-      "/pages/add-sports-data/result?distance=" +
-      formData.value.distance +
-      "&productCover=" +
-      productCover.value +
-      "&challengeProjectTitle=" +
-      challengeProjectTitle.value +
-      "&dateDisplay=" +
-      formData.value.dateDisplay +
-      "&challengeProjectId=" +
-      formData.value.challengeProjectId,
+  const res = await addSportsData({
+    distance: formData.value.distance,
+    duration: formData.value.duration,
+    challengeType: formData.value.challengeType,
+    challengeProjectId: formData.value.challengeProjectId,
+    content: formData.value.content,
+    image: formData.value.image,
+    dataSource: type.value,
   });
-  // }
+  if (res.code === 200) {
+    console.log(1111, res);
+    uni.redirectTo({
+      url:
+        "/pages/add-sports-data/result?distance=" +
+        formData.value.distance +
+        "&productCover=" +
+        productCover.value +
+        "&challengeProjectTitle=" +
+        challengeProjectTitle.value +
+        "&dateDisplay=" +
+        formData.value.dateDisplay +
+        "&challengeProjectId=" +
+        formData.value.challengeProjectId +
+        "&nextKilometer=" +
+        res.data.nextKilometer,
+    });
+  } else {
+    uni.showToast({
+      title: "提交失败，请重试",
+      icon: "none",
+    });
+  }
 };
 
 // 初始化数据

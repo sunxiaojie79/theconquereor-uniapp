@@ -49,7 +49,7 @@
       <view class="progress-info">
         <text class="progress-text">还剩 </text>
         <text class="remaining-distance"
-          >{{ challengeData.distance || "5.00" }}km</text
+          >{{ challengeData.nextKilometer }}km</text
         >
         <text class="progress-text"> 解锁下一个里程碑</text>
       </view>
@@ -76,6 +76,7 @@ const challengeData = ref({
   challengeProjectTitle: "",
   dateDisplay: "",
   challengeProjectId: "",
+  nextKilometer: "",
 });
 
 // 返回挑战地图
@@ -93,6 +94,7 @@ const addSportsData = (type: string) => {
 };
 // 转换距离
 const convertDistance = (distance: number) => {
+  if (distance === 0) return "0";
   return distance.toFixed(2);
 };
 onMounted(() => {
@@ -108,6 +110,7 @@ onMounted(() => {
       challengeProjectTitle: currentPage.options.challengeProjectTitle,
       dateDisplay: currentPage.options.dateDisplay,
       challengeProjectId: currentPage.options.challengeProjectId,
+      nextKilometer: convertDistance(Number(currentPage.options.nextKilometer)),
     };
   }
 });

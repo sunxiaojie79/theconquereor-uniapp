@@ -155,7 +155,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { onShow } from "@dcloudio/uni-app";
+import { onShow, onShareAppMessage, onShareTimeline } from "@dcloudio/uni-app";
 import { useUserStore } from "@/stores";
 import ChallengeCard from "@/components/challenge-card/index.vue";
 import { Project } from "@/components/challenge-card/index.vue";
@@ -512,6 +512,27 @@ onShow(() => {
     initMessageList();
   }
 });
+
+// #ifdef MP-WEIXIN
+// 分享给朋友
+onShareAppMessage((res) => {
+  console.log("分享给朋友", res);
+  return {
+    title: "The Conqueror - 征服者挑战",
+    path: "/pages/index/index",
+    // imageUrl: '/static/logo.png'
+  };
+});
+
+// 分享到朋友圈
+onShareTimeline(() => {
+  console.log("分享到朋友圈");
+  return {
+    title: "The Conqueror - 征服者挑战，开启你的虚拟挑战之旅！",
+    // imageUrl: "/static/logo.png",
+  };
+});
+// #endif
 </script>
 
 <style lang="scss" scoped>

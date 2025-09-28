@@ -85,6 +85,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { onShareAppMessage, onShareTimeline } from "@dcloudio/uni-app";
 import { imgBaseUrl, baseurl } from "@/config/dev.env";
 // 页面参数
 const challengeId = ref("");
@@ -232,6 +233,30 @@ onMounted(() => {
 
   getChallengeDetail();
 });
+
+// #ifdef MP-WEIXIN
+// 分享给朋友
+onShareAppMessage((res) => {
+  console.log("分享挑战详情给朋友", res);
+  return {
+    title: challengeDetail.value.challengeTitle || "The Conqueror - 征服者挑战",
+    path: `/pages/challenge-detail/index?id=${challengeId.value}`,
+    // imageUrl: challengeDetail.value.productCover || '/static/logo.png'
+  };
+});
+
+// 分享到朋友圈
+onShareTimeline(() => {
+  console.log("分享挑战详情到朋友圈");
+  return {
+    title: `${
+      challengeDetail.value.challengeTitle || "The Conqueror"
+    } - 征服者挑战，开启你的虚拟挑战之旅！`,
+    query: `id=${challengeId.value}`,
+    // imageUrl: challengeDetail.value.productCover || '/static/logo.png'
+  };
+});
+// #endif
 </script>
 
 <style lang="scss" scoped>
