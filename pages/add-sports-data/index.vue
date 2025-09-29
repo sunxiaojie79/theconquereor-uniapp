@@ -394,7 +394,11 @@ const onSubmit = async () => {
         "&challengeProjectId=" +
         formData.value.challengeProjectId +
         "&nextKilometer=" +
-        res.data.nextKilometer,
+        res.data.nextKilometer +
+        "&finishSpot=" +
+        res.data.finishSpot +
+        "&finishPostcard=" +
+        res.data.finishPostcard,
     });
   } else {
     uni.showToast({

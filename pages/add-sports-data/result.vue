@@ -45,7 +45,19 @@
 
     <!-- 进度展示区域 -->
     <view class="progress-section">
-      <text class="progress-title">继续前进</text>
+      <text class="progress-title">恭喜您，</text>
+      <view
+        class="progress-info"
+        v-if="challengeData.finishSpot > 0 || challengeData.finishPostcard > 0"
+      >
+        <text class="progress-text">已解锁 </text>
+        <text class="remaining-distance" v-if="challengeData.finishSpot > 0"
+          >{{ challengeData.finishSpot }}个风景，</text
+        >
+        <text class="remaining-distance" v-if="challengeData.finishPostcard > 0"
+          >{{ challengeData.finishPostcard }}个明信片，</text
+        >
+      </view>
       <view class="progress-info">
         <text class="progress-text">还剩 </text>
         <text class="remaining-distance"
@@ -77,6 +89,8 @@ const challengeData = ref({
   dateDisplay: "",
   challengeProjectId: "",
   nextKilometer: "",
+  finishSpot: 0,
+  finishPostcard: 0,
 });
 
 // 返回挑战地图
@@ -111,6 +125,8 @@ onMounted(() => {
       dateDisplay: currentPage.options.dateDisplay,
       challengeProjectId: currentPage.options.challengeProjectId,
       nextKilometer: convertDistance(Number(currentPage.options.nextKilometer)),
+      finishSpot: Number(currentPage.options.finishSpot),
+      finishPostcard: Number(currentPage.options.finishPostcard),
     };
   }
 });
@@ -251,7 +267,7 @@ onMounted(() => {
 /* 进度展示区域 */
 .progress-section {
   width: 686rpx;
-  height: 170rpx;
+  height: auto;
   background-color: #313743;
   border-radius: 8rpx;
   display: flex;
@@ -270,12 +286,14 @@ onMounted(() => {
 
 .progress-info {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 }
 
 .progress-text {
   font-size: 28rpx;
   color: rgba(255, 255, 255, 0.7);
+  display: inline;
 }
 
 .remaining-distance {
@@ -283,6 +301,7 @@ onMounted(() => {
   font-weight: 600;
   color: #fadb47;
   margin: 0 8rpx;
+  display: inline;
 }
 
 /* 底部按钮区域 */
